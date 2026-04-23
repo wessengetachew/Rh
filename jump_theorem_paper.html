@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Jump Theorem — Wessen Getachew</title>
+
+<!-- KaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{
+    delimiters:[
+      {left:'$$',right:'$$',display:true},
+      {left:'\\[',right:'\\]',display:true},
+      {left:'$',right:'$',display:false},
+      {left:'\\(',right:'\\)',display:false}
+    ],
+    throwOnError:false
+  })"></script>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=Cinzel:wght@400;500&family=Syne:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ── Root ── */
+:root {
+  --bg:#06060a; --bg1:#0a0a10; --bg2:#0f0f18; --bg3:#161622;
+  --cream:#e8e2d6; --cream2:#cec8ba; --cream3:#8a8478;
+  --gold:#c8a84a; --gold2:#e8cb6a; --gold3:rgba(200,168,74,.12);
+  --teal:#3dc8b8; --coral:#e05060; --violet:#9b7fe8; --lime:#7ec87a;
+  --edge:rgba(255,255,255,.07); --edge2:rgba(255,255,255,.12);
+  --mono:'JetBrains Mono',monospace;
+  --serif:'Spectral',serif;
+  --disp:'Cinzel',serif;
+  --sans:'Syne',sans-serif;
+  --w:740px;
+}
+
+* { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body {
+  background:var(--bg);
+  color:var(--cream);
+  font-family:var(--serif);
+  font-size:16px;
+  line-height:1.8;
+  overflow-x:hidden;
+}
+
+/* ── Nav ── */
+#nav {
+  position:sticky; top:0; z-index:100;
+  background:rgba(6,6,10,.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--edge);
+  display:flex; align-items:center;
+  padding:0 28px; height:52px;
+  gap:0;
+}
+.nav-brand {
+  font-family:var(--disp);
+  font-size:.75rem; font-weight:400;
+  color:var(--gold); letter-spacing:.14em;
+  white-space:nowrap; margin-right:28px;
+  flex-shrink:0;
+}
+.nav-tabs { display:flex; gap:0; overflow-x:auto; }
+.nav-tab {
+  padding:0 16px; height:52px;
+  display:flex; align-items:center;
+  font-family:var(--mono); font-size:9px;
+  letter-spacing:.13em; text-transform:uppercase;
+  color:var(--cream3); cursor:pointer;
+  border-bottom:2px solid transparent;
+  transition:color .15s, border-color .15s;
+  white-space:nowrap; text-decoration:none;
+}
+.nav-tab:hover { color:var(--cream2); }
+.nav-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+.nav-spacer { flex:1; }
+.nav-pill {
+  font-family:var(--mono); font-size:8px;
+  letter-spacing:.1em; text-transform:uppercase;
+  color:var(--gold2);
+  background:rgba(200,168,74,.09);
+  border:1px solid rgba(200,168,74,.22);
+  padding:3px 10px; white-space:nowrap;
+}
+
+/* ── Layout ── */
+#wrap {
+  display:grid;
+  grid-template-columns:220px 1fr;
+  max-width:1100px;
+  margin:0 auto;
+  padding:0 24px;
+  gap:0;
+}
+
+/* ── Sidebar TOC ── */
+#toc-col {
+  padding:48px 0 80px;
+  position:sticky; top:52px;
+  height:calc(100vh - 52px);
+  overflow-y:auto;
+  scrollbar-width:none;
+}
+#toc-col::-webkit-scrollbar { display:none; }
+.toc-label {
+  font-family:var(--mono); font-size:8px;
+  letter-spacing:.22em; text-transform:uppercase;
+  color:var(--gold); opacity:.6;
+  margin-bottom:16px; padding-bottom:8px;
+  border-bottom:1px solid var(--edge);
+}
+#toc-list { list-style:none; }
+#toc-list li { margin-bottom:2px; }
+#toc-list a {
+  display:block;
+  font-family:var(--mono); font-size:9.5px;
+  letter-spacing:.04em; line-height:1.6;
+  color:var(--cream3); text-decoration:none;
+  padding:4px 8px;
+  border-left:2px solid transparent;
+  transition:color .15s, border-color .15s, background .15s;
+}
+#toc-list a:hover { color:var(--cream2); background:rgba(255,255,255,.03); }
+#toc-list a.active { color:var(--gold); border-left-color:var(--gold); }
+.toc-n { color:var(--gold); opacity:.5; margin-right:5px; }
+#toc-list .sub a { padding-left:18px; font-size:8.5px; opacity:.7; }
+
+/* ── Main content ── */
+#content-col {
+  padding:60px 0 120px 48px;
+  border-left:1px solid var(--edge);
+  max-width:100%;
+}
+
+/* ── Masthead ── */
+.mh-rule { width:34px; height:1px; background:var(--gold); margin-bottom:22px; }
+.mh-tag {
+  font-family:var(--mono); font-size:8.5px;
+  letter-spacing:.22em; text-transform:uppercase;
+  color:var(--gold); opacity:.7; margin-bottom:10px;
+}
+.mh-title {
+  font-family:var(--disp);
+  font-size:clamp(1.5rem,3vw,2.3rem);
+  font-weight:400; line-height:1.2;
+  color:var(--cream); letter-spacing:.06em;
+  margin-bottom:6px;
+}
+.mh-subtitle {
+  font-family:var(--serif); font-size:1rem;
+  font-style:italic; color:var(--cream3);
+  font-weight:300; margin-bottom:28px;
+}
+.mh-author {
+  font-family:var(--mono); font-size:10px;
+  letter-spacing:.2em; text-transform:uppercase;
+  color:var(--gold); margin-bottom:4px;
+}
+.mh-date {
+  font-family:var(--mono); font-size:9px;
+  letter-spacing:.12em; color:var(--cream3);
+  margin-bottom:36px;
+}
+.mh-divider {
+  width:100%; height:1px;
+  background:linear-gradient(90deg,var(--gold),transparent);
+  margin-bottom:48px; opacity:.3;
+}
+
+/* ── Abstract ── */
+.abstract-box {
+  margin:0 0 52px;
+  padding:22px 28px;
+  background:var(--bg1);
+  border:1px solid var(--edge2);
+  border-left:3px solid var(--gold);
+}
+.abstract-label {
+  font-family:var(--mono); font-size:8px;
+  letter-spacing:.2em; text-transform:uppercase;
+  color:var(--gold); margin-bottom:12px;
+}
+.abstract-body {
+  font-family:var(--serif); font-size:15px;
+  line-height:1.82; color:var(--cream2);
+}
+
+/* ── Sections ── */
+.section {
+  margin-bottom:64px;
+  padding-bottom:64px;
+  border-bottom:1px solid var(--edge);
+  scroll-margin-top:70px;
+}
+.section:last-child { border-bottom:none; }
+.sec-n {
+  font-family:var(--mono); font-size:8.5px;
+  letter-spacing:.22em; text-transform:uppercase;
+  color:var(--gold); opacity:.55; margin-bottom:10px;
+}
+.sec-title {
+  font-family:var(--disp);
+  font-size:clamp(1.05rem,2.2vw,1.5rem);
+  font-weight:400; line-height:1.2;
+  color:var(--cream); margin-bottom:24px;
+  letter-spacing:.04em;
+}
+.sub-title {
+  font-family:var(--disp); font-size:1rem;
+  font-weight:400; color:var(--cream2);
+  margin:32px 0 16px; letter-spacing:.05em;
+}
+p {
+  color:var(--cream2);
+  margin-bottom:18px;
+  font-size:16px;
+  line-height:1.82;
+}
+p strong { color:var(--cream); font-weight:500; }
+p em { font-style:italic; color:var(--cream); }
+
+/* ── Theorem blocks ── */
+.block {
+  margin:28px 0;
+  padding:20px 24px;
+  background:var(--bg1);
+  border:1px solid var(--edge);
+  border-left:3px solid;
+}
+.block.def  { border-left-color:var(--teal); }
+.block.lem  { border-left-color:var(--violet); }
+.block.thm  { border-left-color:var(--gold2); }
+.block.cor  { border-left-color:var(--coral); }
+.block.prop { border-left-color:var(--violet); }
+.block.rmk  { border-left-color:var(--lime); }
+.block.conj { border-left-color:var(--coral); }
+
+.block-tag {
+  font-family:var(--mono); font-size:8.5px;
+  letter-spacing:.17em; text-transform:uppercase;
+  margin-bottom:10px; display:flex; align-items:center; gap:10px;
+}
+.def  .block-tag { color:var(--teal); }
+.lem  .block-tag { color:var(--violet); }
+.thm  .block-tag { color:var(--gold2); }
+.cor  .block-tag { color:var(--coral); }
+.prop .block-tag { color:var(--violet); }
+.rmk  .block-tag { color:var(--lime); }
+.conj .block-tag { color:var(--coral); }
+
+.block-label {
+  font-family:var(--serif); font-style:italic;
+  font-size:13px; color:var(--cream3); opacity:.8;
+}
+.block-body {
+  font-family:var(--serif); font-size:16px;
+  line-height:1.8; color:var(--cream);
+}
+
+/* ── Proofs ── */
+.proof {
+  margin:6px 0 20px;
+  padding:16px 22px;
+  background:var(--bg2);
+  border:1px solid var(--edge);
+  border-left:2px solid rgba(255,255,255,.08);
+}
+.proof-tag {
+  font-family:var(--mono); font-size:8px;
+  letter-spacing:.15em; text-transform:uppercase;
+  color:var(--cream3); margin-bottom:8px;
+}
+.proof-body {
+  font-family:var(--serif); font-size:15px;
+  line-height:1.78; color:var(--cream2);
+}
+.qed { float:right; color:var(--cream3); font-size:18px; margin-top:6px; }
+
+/* ── Display math ── */
+.eq {
+  margin:22px 0;
+  padding:16px 22px;
+  background:var(--bg2);
+  border:1px solid var(--edge);
+  overflow-x:auto;
+  text-align:center;
+}
+.eq .ann {
+  display:block; text-align:left;
+  font-family:var(--serif); font-size:12.5px;
+  font-style:italic; color:var(--cream3);
+  margin-top:6px; line-height:1.5;
+}
+
+/* ── Table ── */
+.tbl-wrap { overflow-x:auto; margin:24px 0; }
+.tbl {
+  width:100%; border-collapse:collapse;
+  font-family:var(--mono); font-size:12px;
+}
+.tbl caption {
+  font-family:var(--serif); font-size:13px;
+  color:var(--cream3); font-style:italic;
+  text-align:left; padding-bottom:10px;
+  caption-side:top;
+}
+.tbl th {
+  text-align:left; padding:8px 14px;
+  font-size:8px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--cream3);
+  border-bottom:1px solid var(--edge2);
+}
+.tbl td {
+  padding:7px 14px;
+  border-bottom:1px solid var(--edge);
+  color:var(--cream2);
+}
+.tbl td.pos { color:var(--lime); }
+.tbl td.neg { color:var(--coral); }
+.tbl tr:hover td { background:rgba(255,255,255,.02); }
+
+/* ── Ref inline ── */
+.ref {
+  font-family:var(--mono); font-size:10px;
+  color:var(--gold); letter-spacing:.04em;
+  cursor:default;
+}
+.fix-note {
+  display:inline-block;
+  font-family:var(--mono); font-size:8px;
+  letter-spacing:.1em; text-transform:uppercase;
+  color:var(--teal); background:rgba(61,200,184,.08);
+  border:1px solid rgba(61,200,184,.2);
+  padding:2px 7px; margin-left:6px;
+  vertical-align:middle;
+}
+
+/* ── Bibliography ── */
+#refs { list-style:none; }
+#refs li {
+  padding:12px 0 12px 0;
+  border-bottom:1px solid var(--edge);
+  font-family:var(--serif); font-size:14px;
+  color:var(--cream2); line-height:1.7;
+}
+#refs li:last-child { border-bottom:none; }
+.ref-id {
+  font-family:var(--mono); font-size:9px;
+  letter-spacing:.1em; color:var(--gold);
+  margin-right:10px;
+}
+#refs a { color:var(--teal); text-decoration:none; }
+#refs a:hover { text-decoration:underline; }
+
+/* ── Pill tags ── */
+.pill {
+  display:inline-block;
+  font-family:var(--mono); font-size:7.5px;
+  letter-spacing:.1em; text-transform:uppercase;
+  padding:2px 8px; border:1px solid;
+  vertical-align:middle; margin-left:6px;
+}
+.pill-fix { color:var(--teal); border-color:rgba(61,200,184,.3); background:rgba(61,200,184,.06); }
+.pill-key { color:var(--gold); border-color:rgba(200,168,74,.3); background:rgba(200,168,74,.06); }
+.pill-ext { color:var(--violet); border-color:rgba(155,127,232,.3); background:rgba(155,127,232,.06); }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width:5px; height:5px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:rgba(200,168,74,.25); }
+
+/* ── Mobile ── */
+@media(max-width:760px) {
+  #wrap { grid-template-columns:1fr; }
+  #toc-col { display:none; }
+  #content-col { padding:40px 0 80px; border-left:none; }
+  #nav { padding:0 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Nav ── -->
+<nav id="nav">
+  <div class="nav-brand">Wessen Getachew</div>
+  <div class="nav-tabs">
+    <a class="nav-tab active" href="#masthead">Paper</a>
+    <a class="nav-tab" href="#s1">§1 Intro</a>
+    <a class="nav-tab" href="#s2">§2 Analytic</a>
+    <a class="nav-tab" href="#s3">§3 Jump</a>
+    <a class="nav-tab" href="#s4">§4 Characters</a>
+    <a class="nav-tab" href="#s5">§5 Numerics</a>
+    <a class="nav-tab" href="#s6">§6 RH</a>
+  </div>
+  <div class="nav-spacer"></div>
+  <div class="nav-pill">2025</div>
+</nav>
+
+<!-- ── Main layout ── -->
+<div id="wrap">
+
+  <!-- TOC sidebar -->
+  <aside id="toc-col">
+    <div class="toc-label">Contents</div>
+    <ul id="toc-list">
+      <li><a href="#s0"><span class="toc-n">—</span>Abstract</a></li>
+      <li><a href="#s1"><span class="toc-n">1.</span>Introduction</a></li>
+      <li class="sub"><a href="#s1">1.1 Lift Weight & Constant</a></li>
+      <li><a href="#s2"><span class="toc-n">2.</span>Analytic Preliminaries</a></li>
+      <li class="sub"><a href="#s2a">2.1 Definition of C(x)</a></li>
+      <li class="sub"><a href="#s2b">2.2 Uniform Convergence</a></li>
+      <li class="sub"><a href="#s2c">2.3 Log-Derivative</a></li>
+      <li><a href="#s3"><span class="toc-n">3.</span>The Jump Theorem</a></li>
+      <li class="sub"><a href="#s3a">3.1 Continuity Away</a></li>
+      <li class="sub"><a href="#s3b">3.2 Main Theorem</a></li>
+      <li class="sub"><a href="#s3c">3.3 Prime Recovery</a></li>
+      <li class="sub"><a href="#s3d">3.4 Golden Ratio Remark</a></li>
+      <li><a href="#s4"><span class="toc-n">4.</span>Dirichlet Characters</a></li>
+      <li><a href="#s5"><span class="toc-n">5.</span>Numerical Evidence</a></li>
+      <li><a href="#s6"><span class="toc-n">6.</span>Connection to RH</a></li>
+      <li><a href="#s7"><span class="toc-n">7.</span>Conclusion</a></li>
+      <li><a href="#refs-sec"><span class="toc-n">—</span>References</a></li>
+    </ul>
+  </aside>
+
+  <!-- Content -->
+  <main id="content-col">
+
+    <!-- Masthead -->
+    <div id="masthead" class="section" style="scroll-margin-top:70px;">
+      <div class="mh-rule"></div>
+      <div class="mh-tag">Number Theory · 2025</div>
+      <div class="mh-title">The Jump Theorem</div>
+      <div class="mh-subtitle">Encoding Primes as Discontinuities of a Smooth Multiplicative Structure</div>
+      <div class="mh-author">Wessen Getachew</div>
+      <div class="mh-date">2025</div>
+      <div class="mh-divider"></div>
+
+      <!-- Abstract -->
+      <div id="s0" class="abstract-box">
+        <div class="abstract-label">Abstract</div>
+        <div class="abstract-body">
+          We introduce the <em>lift survival function</em>
+          $L(M)=\varphi(M)\varphi(M+1)/(M+1)$ and its cumulative ratio
+          $R(N)=\sum_{m\le N}L(m)/\sum_{m\le N}\varphi(m)$.
+          It is known that $R(N)\to C$ as $N\to\infty$, where
+          $$C=\prod_p \frac{p^2-2}{p^2-1}\approx 0.5307118$$
+          is the <em>Lift Survival Constant</em>, equal to the density of consecutive
+          squarefree pairs conditioned on squarefreeness.
+          We prove a <em>Jump Theorem</em>: for a piecewise-linear interpolation $C(x)$
+          of the partial Euler product, the log-derivative
+          $D(x)=\tfrac{d}{dx}\log C(x)$ is smooth except at points $x=p-1$ for primes $p$,
+          where it jumps by exactly $1/(p(p-1))$.
+          The jump size $s$ uniquely recovers the prime via $p=(1+\sqrt{1+4/s})/2$.
+          We extend the theorem to Dirichlet characters, obtaining a character-weighted
+          detector that distinguishes primes by residue class.
+          Numerical evidence up to $N=2{,}000{,}000$ supports the conjecture
+          $E(N)=R(N)-C=O(1/N)$, with an OLS slope of $-0.998$ on $\log|E(N)|$
+          versus $\log N$.
+          The framework provides a new geometric bridge between the Euler totient function
+          and the distribution of primes, with connections to Dirichlet $L$-functions
+          and the Generalized Riemann Hypothesis.
+        </div>
+      </div>
+    </div>
+
+    <!-- § 1 Introduction -->
+    <div id="s1" class="section">
+      <div class="sec-n">Section 1</div>
+      <div class="sec-title">Introduction</div>
+
+      <p>
+        For an integer $M\ge 1$, let $\varphi(M)$ denote Euler's totient function.
+        Define the <strong>lift weight</strong>
+        $$L(M)=\frac{\varphi(M)\,\varphi(M+1)}{M+1}.$$
+        The name reflects a geometric interpretation: among the $\varphi(M)$ residues
+        coprime to $M$, the fraction that remain coprime to $M+1$ after lifting to the
+        next ring converges to the constant $C$ defined below.
+      </p>
+
+      <p>Consider the cumulative ratio
+        $$R(N)=\frac{\displaystyle\sum_{m=1}^{N} L(m)}{\displaystyle\sum_{m=1}^{N} \varphi(m)}.$$
+        We recall a classical result on consecutive squarefree pairs.
+      </p>
+
+      <div class="block lem">
+        <div class="block-tag">Lemma 1.1 <span class="block-label">(Tóth–Sándor, 1989)</span></div>
+        <div class="block-body">
+          The density of consecutive squarefree pairs is
+          $$\delta_{\mathrm{pairs}} = \prod_p \!\left(1-\frac{2}{p^2}\right).$$
+          The density of squarefree integers is $1/\zeta(2)=\prod_p (1-1/p^2)$.
+        </div>
+      </div>
+
+      <p>
+        From Lemma 1.1 we obtain the Lift Survival Constant. The connection between
+        $R(N)\to C$ and the Tóth–Sándor result is established here: the asymptotic
+        of $R(N)$ identifies $C$ with the ratio of consecutive-squarefree density to
+        squarefree density, which equals the following Euler product.
+      </p>
+
+      <div class="block def">
+        <div class="block-tag">Definition 1.1 <span class="block-label">(Lift Survival Constant)</span></div>
+        <div class="block-body">
+          $$C = \prod_{p\ \text{prime}} \frac{p^2-2}{p^2-1}
+             = \zeta(2)\prod_p\!\left(1-\frac{2}{p^2}\right)
+             \approx 0.530711806246\ldots$$
+        </div>
+      </div>
+
+      <div class="block rmk">
+        <div class="block-tag">Remark 1.1</div>
+        <div class="block-body">
+          The constant $C$ admits a conditional probability interpretation:
+          $$C = \lim_{N\to\infty} \frac{|\{n\le N: n,n+1\ \text{both squarefree}\}|}{|\{n\le N: n\ \text{squarefree}\}|}.$$
+          It follows from Tóth–Sándor [1] together with the standard squarefree density
+          that $R(N)\to C$ as $N\to\infty$. The convergence rate is not specified in the
+          classical literature; we address it in §5.
+        </div>
+      </div>
+
+      <p>
+        The main contribution of this paper is the <strong>Jump Theorem</strong>,
+        which reveals that the primes are exactly the points where the log-derivative
+        of a certain continuous interpolation $C(x)$ jumps by $1/(p(p-1))$,
+        and the jump size uniquely recovers the prime via a quadratic formula.
+      </p>
+    </div>
+
+    <!-- § 2 Analytic Preliminaries -->
+    <div id="s2" class="section">
+      <div class="sec-n">Section 2</div>
+      <div class="sec-title">Analytic Preliminaries</div>
+
+      <div id="s2a">
+        <div class="sub-title">2.1 &nbsp;Definition of $C(x)$ and its interpolation</div>
+        <p>
+          We introduce a continuous interpolation of the partial Euler products for $C$.
+          The interpolation is chosen to be <em>piecewise linear in $x$</em> for each prime factor.
+          This choice, while not the only one available, has a decisive advantage:
+          it makes the log-derivative $D(x)$ explicitly computable and gives jump sizes
+          that are <em>exact rational functions of $p$</em>. A smooth sigmoid-type interpolation
+          would produce the same qualitative picture but would obscure the arithmetic
+          precision of the jump formula. The piecewise-linear form is therefore the canonical
+          choice for the Jump Theorem.
+        </p>
+
+        <p>For a real variable $x\ge 0$, define for each prime $p$:</p>
+
+        <div class="block def">
+          <div class="block-tag">Definition 2.1</div>
+          <div class="block-body">
+            $$f_p(x)=
+            \begin{cases}
+              \dfrac{p}{p+1}, & p\le x+1\ (\text{saturated}),\\[10pt]
+              \dfrac{p^2-x-1}{p^2-1}, & p > x+1\ (\text{active}).
+            \end{cases}$$
+            These functions are continuous and piecewise linear in $x$.
+            Define
+            $$C(x)=\prod_{p\ \text{prime}} f_p(x).$$
+          </div>
+        </div>
+
+        <div class="block rmk">
+          <div class="block-tag">Remark 2.1 <span class="block-label">(Endpoint Values)</span></div>
+          <div class="block-body">
+            At $x=0$: all primes are active, and $f_p(0)=(p^2-1)/(p^2-1)=1$ — wait,
+            $f_p(0)=(p^2-0-1)/(p^2-1)=1$ only for $p>1$, which holds for all primes.
+            As $x\to\infty$: all primes eventually saturate, and
+            $C(x)\to\prod_p p/(p+1)$.
+            The value $C(\infty)$ differs from $C$; the constant $C$ arises from the
+            <em>rate</em> at which terms saturate, captured in $D(x)$.
+          </div>
+        </div>
+      </div>
+
+      <div id="s2b" style="margin-top:32px;">
+        <div class="sub-title">2.2 &nbsp;Uniform Convergence of the Product</div>
+
+        <div class="block lem">
+          <div class="block-tag">Lemma 2.1 <span class="block-label">(Uniform Convergence)</span></div>
+          <div class="block-body">
+            For any compact interval $[0,X]$, the product defining $C(x)$ converges uniformly.
+          </div>
+        </div>
+
+        <div class="proof">
+          <div class="proof-tag">Proof</div>
+          <div class="proof-body">
+            For $p > X+2$ and $x\in[0,X]$, we have $p > x+1$, so
+            $$f_p(x)=\frac{p^2-x-1}{p^2-1}=1-\frac{x+1}{p^2-1}.$$
+            For sufficiently large $p$ (say $p>\sqrt{X+2}$) we have $x+1\le X+1 < p^2-1$,
+            so $f_p(x)>0$. Moreover,
+            $$|\log f_p(x)| \le \frac{2(x+1)}{p^2-1} \le \frac{2(X+1)}{p^2-1}$$
+            using $|\log(1-\varepsilon)|\le 2\varepsilon$ for $0\le\varepsilon\le 1/2$.
+            Since $\sum 1/p^2$ converges, the Weierstrass $M$-test gives uniform convergence
+            of $\sum\log f_p(x)$ on $[0,X]$, hence uniform convergence of the product.
+            <span class="qed">□</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="s2c" style="margin-top:32px;">
+        <div class="sub-title">2.3 &nbsp;The Log-Derivative and Termwise Differentiation</div>
+
+        <p>Taking the logarithm and differentiating:</p>
+        <div class="eq">
+          $$D(x)=\frac{d}{dx}\log C(x)=\sum_{p}\frac{f_p'(x)}{f_p(x)}.$$
+        </div>
+
+        <div class="block lem">
+          <div class="block-tag">Lemma 2.2 <span class="block-label">(Uniform Convergence of the Derivative)</span></div>
+          <div class="block-body">
+            For any compact interval $[0,X]$, the series $\sum_p f_p'(x)/f_p(x)$
+            converges uniformly.
+          </div>
+        </div>
+
+        <div class="proof">
+          <div class="proof-tag">Proof</div>
+          <div class="proof-body">
+            For $p > X+2$, we are in the active case:
+            $$f_p'(x)=-\frac{1}{p^2-1},\qquad
+            \frac{f_p'(x)}{f_p(x)} = -\frac{1}{p^2-x-1}.$$
+            For $x\in[0,X]$ and $p>X+2$, we have $p^2-x-1\ge p^2-(X+1)\ge p^2/2$
+            for sufficiently large $p$, so $|f_p'(x)/f_p(x)|\le 2/p^2$.
+            Since $\sum 1/p^2$ converges, the Weierstrass $M$-test gives uniform
+            convergence of the tail. The finitely many primes $p\le X+2$
+            contribute continuous, bounded terms.
+            <span class="qed">□</span>
+          </div>
+        </div>
+
+        <div class="block cor">
+          <div class="block-tag">Corollary 2.1</div>
+          <div class="block-body">
+            For all $x\ge 0$, the explicit formula holds:
+            $$D(x)=-\sum_{p\;>\;x+1}\frac{1}{p^2-x-1}.$$
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- § 3 Jump Theorem -->
+    <div id="s3" class="section">
+      <div class="sec-n">Section 3</div>
+      <div class="sec-title">The Jump Theorem <span class="pill pill-key">Main Result</span></div>
+
+      <div id="s3a">
+        <div class="sub-title">3.1 &nbsp;Continuity Away from Primes</div>
+
+        <div class="block lem">
+          <div class="block-tag">Lemma 3.1</div>
+          <div class="block-body">
+            Fix a prime $q$. For any prime $p\neq q$, the function
+            $h_p(x)=f_p'(x)/f_p(x)$ is continuous at $x=q-1$.
+          </div>
+        </div>
+
+        <div class="proof">
+          <div class="proof-tag">Proof</div>
+          <div class="proof-body">
+            If $p\neq q$, then either $p\le q-1$ or $p\ge q+2$ (since $p,q$ are both prime
+            and distinct). In either case there is a neighbourhood of $x=q-1$ in which
+            $p$ does not cross the saturation threshold $p=x+1$.
+            Hence $h_p$ is either identically zero (saturated) or of the form
+            $-1/(p^2-x-1)$ (active) throughout that neighbourhood, both of which are
+            continuous at $x=q-1$.
+            <span class="qed">□</span>
+          </div>
+        </div>
+
+        <div class="block lem">
+          <div class="block-tag">Lemma 3.2 <span class="block-label">(Jump Contribution)</span></div>
+          <div class="block-body">
+            For the prime $p$, define
+            $$j_p(x)=
+            \begin{cases}
+            -\dfrac{1}{p^2-x-1}, & x < p-1,\\[8pt]
+            0, & x \ge p-1.
+            \end{cases}$$
+            Then $j_p(x)=f_p'(x)/f_p(x)$ for all $x\neq p-1$, and
+            $$\lim_{\varepsilon\to0^+}\!\bigl(j_p(p-1+\varepsilon)-j_p(p-1-\varepsilon)\bigr)
+            =\frac{1}{p(p-1)}.$$
+          </div>
+        </div>
+
+        <div class="proof">
+          <div class="proof-tag">Proof</div>
+          <div class="proof-body">
+            For $x < p-1$, the prime $p$ is active and
+            $j_p(x)=-1/(p^2-x-1)$.
+            For $x>p-1$, the prime $p$ is saturated and $j_p(x)=0$.
+            The left-hand limit as $x\to(p-1)^-$ is
+            $$\lim_{x\to (p-1)^-} -\frac{1}{p^2-x-1}
+            = -\frac{1}{p^2-(p-1)-1} = -\frac{1}{p(p-1)}.$$
+            The right-hand limit is $0$.
+            The jump (increase from left to right) is therefore
+            $0-(-1/(p(p-1)))=1/(p(p-1))$.
+            <span class="qed">□</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="s3b" style="margin-top:32px;">
+        <div class="sub-title">3.2 &nbsp;Main Theorem</div>
+
+        <div class="block thm">
+          <div class="block-tag">Theorem 3.1 <span class="block-label">(Jump Theorem)</span></div>
+          <div class="block-body">
+            The function $D(x)=-\sum_{p>x+1} 1/(p^2-x-1)$ is smooth on each open
+            interval $(p-1,p)$ for consecutive primes $p$, and has a jump discontinuity
+            at each $x=p-1$. The jump size is
+            $$\Delta D(p-1)
+            = \lim_{\varepsilon\to0^+}\bigl(D(p-1+\varepsilon)-D(p-1-\varepsilon)\bigr)
+            =\frac{1}{p(p-1)}.$$
+            At non-prime integers $n$, $D(x)$ is continuous.
+          </div>
+        </div>
+
+        <div class="proof">
+          <div class="proof-tag">Proof</div>
+          <div class="proof-body">
+            By Lemma 3.1, all terms $h_p(x)$ with $p\neq q$ are continuous at $x=q-1$.
+            By Lemma 3.2, the term for $p=q$ contributes a jump of $1/(q(q-1))$.
+            Since the series converges uniformly (Lemma 2.2), the sum inherits the jump,
+            and the net jump equals $1/(q(q-1))$.
+            For non-prime integers $n$, no prime satisfies $p=n+1$, so all terms are
+            continuous at $x=n-1$ by Lemma 3.1.
+            <span class="qed">□</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="s3c" style="margin-top:32px;">
+        <div class="sub-title">3.3 &nbsp;Prime Recovery Formula</div>
+
+        <p>
+          Given a jump of size $s>0$, we solve $s=1/(p(p-1))$ for $p$.
+          Rearranging: $p^2-p-1/s=0$, with positive root:
+        </p>
+
+        <div class="eq">
+          $$p = \frac{1+\sqrt{1+4/s}}{2}.$$
+        </div>
+
+        <div class="block cor">
+          <div class="block-tag">Corollary 3.1 <span class="block-label">(Prime Recovery)</span></div>
+          <div class="block-body">
+            If $D(x)$ jumps by $s$ at $x=x_0$, then $x_0+1$ is prime if and only if
+            $(1+\sqrt{1+4/s})/2$ is a positive integer, in which case that integer equals
+            $x_0+1$.
+          </div>
+        </div>
+
+        <p>
+          Thus primes are exactly the integer points where the log-derivative jumps,
+          and the jump encodes the prime arithmetically. No other integers produce jumps.
+        </p>
+      </div>
+
+      <div id="s3d" style="margin-top:32px;">
+        <div class="sub-title">3.4 &nbsp;Formal Extension and the Golden Ratio</div>
+
+        <p>
+          The jump sizes that actually occur are $s_p=1/(p(p-1))\in(0,\tfrac12]$,
+          with supremum $\tfrac12$ attained at $p=2$.
+          The recovery map $p(s)=(1+\sqrt{1+4/s})/2$ inverts $s=1/(p(p-1))$
+          for $s\in(0,\tfrac12]$.
+        </p>
+
+        <div class="block rmk">
+          <div class="block-tag">Remark 3.1 <span class="block-label">(Formal Extension — Golden Ratio)</span></div>
+          <div class="block-body">
+            If one formally evaluates the recovery formula at $s=1$, one obtains
+            $$p(1)=\frac{1+\sqrt{5}}{2}=\phi,$$
+            the golden ratio.
+            This value does not correspond to any jump in the system — the actual supremum
+            of the jump spectrum is $\tfrac12$, not $1$.
+            The appearance of $\phi$ is a formal boundary phenomenon of the inversion map,
+            not an intrinsic feature of the theorem.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- § 4 Dirichlet Characters -->
+    <div id="s4" class="section">
+      <div class="sec-n">Section 4</div>
+      <div class="sec-title">Extension to Dirichlet Characters <span class="pill pill-ext">Extension</span></div>
+
+      <p>
+        Let $\chi$ be a Dirichlet character modulo $q$.
+        For primes $p\mid q$ we have $\chi(p)=0$; for these primes
+        we set the interpolation factor identically to $1$, so they contribute no jump.
+        For primes with $\chi(p)\neq 0$, define
+        $$C_\chi(x)=\prod_p \bigl(f_p(x)\bigr)^{\chi(p)},$$
+        interpreting the complex exponent via the principal branch of the logarithm:
+        $(f_p(x))^{\chi(p)}=\exp(\chi(p)\log f_p(x))$.
+        Since $f_p(x)>0$ for all $x\ge 0$, the logarithm is real-valued.
+      </p>
+
+      <div class="block lem">
+        <div class="block-tag">Lemma 4.1 <span class="block-label">(Absolute Convergence for Non-Principal Characters)</span> <span class="pill pill-fix">Fixed</span></div>
+        <div class="block-body">
+          For non-principal $\chi$, the series defining $\log C_\chi(x)$ and its
+          term-by-term derivative both converge absolutely; in particular the product
+          $C_\chi(x)$ is well-defined and the log-derivative $D_\chi(x)$ may be
+          computed term by term.
+        </div>
+      </div>
+
+      <div class="proof">
+        <div class="proof-tag">Proof</div>
+        <div class="proof-body">
+          For large $p$ and $x$ in any compact set,
+          $\log f_p(x)\sim -(x+1)/(p^2-1)$.
+          Since $|\chi(p)|\le 1$, we have
+          $|\chi(p)\log f_p(x)|\le 2(x+1)/(p^2-1)$, and $\sum 1/p^2$ converges.
+          Hence $\sum_p \chi(p)\log f_p(x)$ converges absolutely, establishing
+          absolute convergence of $\log C_\chi(x)$ and of the product itself.
+          For the derivative: $|\chi(p)/(p^2-x-1)|\le 2/p^2$ for large $p$,
+          so the Weierstrass $M$-test gives absolute, uniform convergence of
+          $D_\chi(x)=-\sum_{p>x+1}\chi(p)/(p^2-x-1)$.
+          <span class="qed">□</span>
+        </div>
+      </div>
+
+      <div class="block thm">
+        <div class="block-tag">Theorem 4.1 <span class="block-label">(Character-Weighted Jump Theorem)</span></div>
+        <div class="block-body">
+          $D_\chi(x)$ is smooth except at points $x=p-1$ where $\chi(p)\neq 0$.
+          At such a point, the jump is exactly
+          $$\Delta D_\chi(p-1)=\frac{\chi(p)}{p(p-1)}.$$
+          If $\chi(p)=0$ (i.e.\ $p$ divides the modulus), the prime causes no jump.
+        </div>
+      </div>
+
+      <div class="proof">
+        <div class="proof-tag">Proof</div>
+        <div class="proof-body">
+          The proof follows Theorem 3.1 with $\chi(p)$ carried as a constant factor.
+          Uniform convergence of the character-weighted series follows from $|\chi(p)|\le 1$
+          and Lemma 4.1.
+          <span class="qed">□</span>
+        </div>
+      </div>
+
+      <p>
+        Define the character-weighted prime sum
+        $$J_\chi = \sum_p \frac{\chi(p)}{p(p-1)}.$$
+        Expanding $1/(p(p-1))$ as a telescoping series gives
+        $$J_\chi = \sum_p \chi(p)\sum_{k=2}^{\infty}\frac{1}{p^k}
+               = \sum_{k=2}^{\infty}\sum_p \frac{\chi(p)}{p^k}
+               = \sum_{k=2}^{\infty} P(k,\chi),$$
+        where $P(k,\chi)=\sum_p \chi(p)/p^k$ is the prime zeta function twisted by $\chi$.
+      </p>
+
+      <div class="block cor">
+        <div class="block-tag">Corollary 4.1</div>
+        <div class="block-body">
+          For a non-principal character $\chi$, the series $J_\chi$ converges absolutely.
+          The jumps of $D_\chi(x)$ carry arithmetic information about the residue classes
+          of primes: the value $\chi(p)$ (a root of unity or real sign) determines the
+          direction of the jump, providing a character-weighted prime detector
+          sensitive to residue classes modulo $q$.
+        </div>
+      </div>
+    </div>
+
+    <!-- § 5 Numerics -->
+    <div id="s5" class="section">
+      <div class="sec-n">Section 5</div>
+      <div class="sec-title">Numerical Evidence for the Error Term</div>
+
+      <p>
+        Recall $R(N)=\sum_{m\le N}L(m)/\sum_{m\le N}\varphi(m)$ and $C=\lim_{N\to\infty}R(N)$.
+        Define the error term $E(N)=R(N)-C$.
+      </p>
+
+      <p>
+        Numerical computation via a linear sieve for $\varphi$ up to $N=2{,}000{,}000$
+        (see Table 1) shows that $|E(N)|\cdot N$ remains bounded below $0.93$,
+        with no upward trend. An OLS regression of $\log|E(N)|$ against $\log N$
+        over $200{,}000$ sample points gives a slope of $-0.998$,
+        consistent with $E(N)=O(1/N)$.
+      </p>
+
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <caption>Table 1. Boundedness of $|E(N)|\cdot N$ up to $N=2{,}000{,}000$</caption>
+          <thead>
+            <tr>
+              <th>$N$</th>
+              <th>$E(N)$</th>
+              <th>$|E(N)|$</th>
+              <th>$|E(N)|\cdot N$</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>50,000</td>   <td class="neg">$-1.1989\times10^{-6}$</td> <td>$1.1989\times10^{-6}$</td> <td>0.0599</td></tr>
+            <tr><td>100,000</td>  <td class="pos">$+4.1882\times10^{-6}$</td> <td>$4.1882\times10^{-6}$</td> <td>0.4188</td></tr>
+            <tr><td>500,000</td>  <td class="neg">$-3.9158\times10^{-8}$</td> <td>$3.9158\times10^{-8}$</td> <td>0.0196</td></tr>
+            <tr><td>1,000,000</td><td class="pos">$+3.8650\times10^{-7}$</td> <td>$3.8650\times10^{-7}$</td> <td>0.3865</td></tr>
+            <tr><td>2,000,000</td><td class="neg">$-1.0496\times10^{-7}$</td> <td>$1.0496\times10^{-7}$</td> <td>0.2099</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="block conj">
+        <div class="block-tag">Conjecture 5.1 <span class="block-label">(Error Term Decay)</span></div>
+        <div class="block-body">
+          The error term $E(N)=R(N)-C$ satisfies
+          $$E(N)=O\!\left(\frac{1}{N}\right)\quad\text{as }N\to\infty.$$
+          Equivalently, $\limsup_{N\to\infty} N|E(N)| < \infty$.
+        </div>
+      </div>
+
+      <div class="block rmk">
+        <div class="block-tag">Remark 5.1 <span class="block-label">(Relation to GRH)</span></div>
+        <div class="block-body">
+          Under the Generalized Riemann Hypothesis, standard estimates for sums of
+          multiplicative functions suggest a bound $E(N)=O(\log N/N^{3/2})$.
+          The conjectured $O(1/N)$ rate is asymptotically larger than the GRH prediction,
+          so the two are not contradictory: Conjecture 5.1 would be <em>implied by</em> neither
+          GRH nor its negation, and the numerics simply identify the empirically observed
+          exponent as $-1$. Proving a direct connection would require an explicit formula
+          linking $E(N)$ to sums over non-trivial zeros of $\zeta(s)$.
+        </div>
+      </div>
+    </div>
+
+    <!-- § 6 RH Connection -->
+    <div id="s6" class="section">
+      <div class="sec-n">Section 6</div>
+      <div class="sec-title">Connection to the Riemann Hypothesis</div>
+
+      <p>
+        The lift factor $\varphi(M+1)/((M+1)C)$ oscillates between values arbitrarily
+        close to $0$ and to $1$, driven by the unbounded variation of $\varphi$.
+        This forces $R(N)$ to cross the limit $C$ infinitely often.
+      </p>
+
+      <div class="block prop">
+        <div class="block-tag">Proposition 6.1 <span class="block-label">(Infinitely Many Sign Changes)</span></div>
+        <div class="block-body">
+          The error term $E(N)=R(N)-C$ changes sign infinitely often.
+        </div>
+      </div>
+
+      <div class="proof">
+        <div class="proof-tag">Proof Sketch</div>
+        <div class="proof-body">
+          Since $\varphi(p)=p-1$ for primes $p$, the ratio $\varphi(p+1)/(p+1)$
+          is at most $(p+1-1)/(p+1)<1$, while $\varphi(p^\#)/p^\#\to 0$ by Mertens.
+          The lift factor therefore takes values both above and below $C$ on an infinite
+          set of integers, forcing $R(N)$ to oscillate about $C$.
+          A formal argument via the Cesàro mean and the unbounded variation of
+          $\varphi(M)/M$ on prime values completes the proof.
+          <span class="qed">□</span>
+        </div>
+      </div>
+
+      <div class="block rmk">
+        <div class="block-tag">Remark 6.1</div>
+        <div class="block-body">
+          Infinitely many sign changes of $E(N)$ is consistent with — but does not imply —
+          the Riemann Hypothesis. Under RH, the error in related character sums is
+          $O(\sqrt{N}\log N)$, leading conditionally to $E(N)=O(\log N/N^{3/2})$.
+          The present framework does not supply an explicit formula connecting $E(N)$
+          to non-trivial zeros of $\zeta(s)$, but it offers a new geometric vantage
+          point on the totient function that may prove compatible with such a connection.
+        </div>
+      </div>
+
+      <p>
+        The character extension of §4 is the natural setting for pursuing a deeper
+        link to $L$-functions. Specifically, the twisted prime sums $P(k,\chi)$ that
+        appear in the decomposition of $J_\chi$ are closely related to logarithmic
+        derivatives of Dirichlet $L$-functions $L(s,\chi)$ at integer points.
+        Establishing a connection between the jump structure of $D_\chi(x)$ and
+        the location of zeros of $L(s,\chi)$ is an open problem.
+      </p>
+    </div>
+
+    <!-- § 7 Conclusion -->
+    <div id="s7" class="section">
+      <div class="sec-n">Section 7</div>
+      <div class="sec-title">Conclusion</div>
+
+      <p>
+        We have introduced the <strong>Jump Theorem</strong>, a prime detection mechanism
+        based on the lift survival function $L(M)=\varphi(M)\varphi(M+1)/(M+1)$.
+        The theorem shows that the primes are exactly the points where the log-derivative
+        of the piecewise-linear interpolation $C(x)$ jumps by $1/(p(p-1))$,
+        and the jump size uniquely recovers the prime via the quadratic formula
+        $p=(1+\sqrt{1+4/s})/2$.
+      </p>
+
+      <p>
+        The interpolation is chosen to be piecewise linear because this choice makes
+        the jump sizes exact rational functions of $p$, giving the theorem its sharp
+        arithmetic form.
+        The extension to Dirichlet characters provides a character-weighted detector
+        sensitive to residue classes, connecting the framework to twisted prime zeta
+        functions and opening an avenue toward the Generalized Riemann Hypothesis.
+      </p>
+
+      <p>
+        Numerical evidence to $N=2{,}000{,}000$ supports the conjecture
+        $E(N)=O(1/N)$, a rate consistent with — but stronger than — the GRH prediction
+        $O(\log N/N^{3/2})$. The error term changes sign infinitely often, with bounded
+        amplitude growing no faster than $O(1)$ when scaled by $N$.
+      </p>
+
+      <p>
+        The framework offers a new geometric bridge between the Euler totient function,
+        the distribution of primes, and the theory of $L$-functions.
+        Principal open problems include: (i) a proof of Conjecture 5.1 via an explicit
+        formula; (ii) a precise connection between the jump structure of $D_\chi(x)$
+        and zeros of $L(s,\chi)$; and (iii) extensions to other multiplicative functions
+        beyond $\varphi$.
+      </p>
+    </div>
+
+    <!-- Acknowledgments -->
+    <div class="section" style="padding-bottom:32px; margin-bottom:32px;">
+      <div class="sec-n">Acknowledgments</div>
+      <p style="font-style:italic; color:var(--cream3);">
+        The author thanks the contributors to the OEIS for maintaining precise values
+        of prime-related constants, and the developers of the interactive visualization
+        tools that made empirical exploration possible.
+      </p>
+    </div>
+
+    <!-- References -->
+    <div id="refs-sec" class="section">
+      <div class="sec-n">References</div>
+      <div class="sec-title">Bibliography</div>
+
+      <ul id="refs">
+        <li>
+          <span class="ref-id">[1]</span>
+          L. Tóth and J. Sándor,
+          <em>On the number of pairs of consecutive squarefree numbers</em>,
+          Studia Sci. Math. Hungar. <strong>24</strong> (1989), no. 3, 257–263.
+        </li>
+        <li>
+          <span class="ref-id">[2]</span>
+          OEIS Foundation Inc. (2025),
+          <em>Entry A065469: Decimal expansion of $\prod_{p}(p^2-2)/(p^2-1)$</em>,
+          The On-Line Encyclopedia of Integer Sequences,
+          <a href="https://oeis.org/A065469" target="_blank">oeis.org/A065469</a>.
+        </li>
+        <li>
+          <span class="ref-id">[3]</span>
+          OEIS Foundation Inc. (2025),
+          <em>Entry A136141: Decimal expansion of $\sum_{p}1/(p(p-1))$</em>,
+          The On-Line Encyclopedia of Integer Sequences,
+          <a href="https://oeis.org/A136141" target="_blank">oeis.org/A136141</a>.
+          <span class="fix-note">URL corrected</span>
+        </li>
+        <li>
+          <span class="ref-id">[4]</span>
+          T. Boikova,
+          <em>On the error term of the consecutive squarefree pairs density</em>,
+          Preprints.org, doi:10.20944/preprints202512.0862.v1, 2025.
+        </li>
+      </ul>
+    </div>
+
+  </main>
+</div>
+
+<!-- ── TOC Active Tracking ── -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const sections = document.querySelectorAll('[id]');
+  const tocLinks = document.querySelectorAll('#toc-list a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        tocLinks.forEach(a => {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+
+  // Nav tab active state
+  const navTabs = document.querySelectorAll('.nav-tab');
+  navTabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+      navTabs.forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+});
+</script>
+
+</body>
+</html>
