@@ -272,19 +272,110 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
 @media(max-width:600px){
   #lpanel{display:none;}
   #topbar{height:44px;}
-  #body{top:44px;}
+  #body{top:92px;}
   .tb-brand{display:none;}
   .tb-tab{padding:0 10px;font-size:8px;}
   #statbar{height:28px;gap:12px;}
   .stat{font-size:8px;}
 }
+@media(min-width:601px){
+  #mobile-bar{display:none;}
+  #body{top:50px;}
+}
 @media(max-width:420px){
   .tb-right{display:none;}
   #math-inner{padding:24px 14px 60px;}
 }
+
+/* ── Mobile control bar ── */
+#mobile-bar{
+  display:flex;
+  position:fixed;top:44px;left:0;right:0;height:48px;z-index:99;
+  background:rgba(5,5,18,.97);border-bottom:1px solid var(--edge);
+  align-items:center;padding:0 10px;gap:10px;overflow-x:auto;
+  scrollbar-width:none;
+}
+#mobile-bar::-webkit-scrollbar{display:none;}
+.mb-group{display:flex;align-items:center;gap:4px;flex-shrink:0;}
+.mb-label{font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--cream3);margin-right:2px;}
+.mb-btn{width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--edge2);background:rgba(255,255,255,.04);color:var(--cream2);
+  font-family:var(--mono);font-size:13px;cursor:pointer;border-radius:2px;flex-shrink:0;
+  transition:background .1s;}
+.mb-btn:active{background:rgba(255,255,255,.13);}
+.mb-btn.teal{border-color:rgba(61,200,184,.4);color:var(--teal);}
+.mb-btn.gold{border-color:rgba(200,168,74,.4);color:var(--gold);}
+.mb-val{font-family:var(--mono);font-size:12px;color:var(--cream);min-width:28px;text-align:center;padding:0 2px;}
+.mb-sep{width:1px;height:28px;background:var(--edge);flex-shrink:0;}
+.mb-toggle{height:28px;padding:0 9px;font-family:var(--mono);font-size:8px;letter-spacing:.08em;
+  text-transform:uppercase;border:1px solid var(--edge2);background:transparent;color:var(--cream3);
+  cursor:pointer;border-radius:2px;white-space:nowrap;transition:all .12s;}
+.mb-toggle.on{color:var(--teal);border-color:rgba(61,200,184,.4);background:rgba(61,200,184,.07);}
+.mb-toggle.on.lift-s{color:var(--teal);}
+.mb-toggle.on.lift-b{color:var(--coral);border-color:rgba(224,80,96,.4);background:rgba(224,80,96,.07);}
+
+/* ── Point inspection popup ── */
+#pt-popup{
+  display:none;position:absolute;z-index:200;
+  background:rgba(5,5,20,.97);border:1px solid rgba(200,168,74,.4);
+  padding:10px 14px;min-width:200px;max-width:280px;
+  font-family:var(--mono);font-size:9.5px;line-height:1.9;
+  color:var(--cream2);pointer-events:none;
+  box-shadow:0 4px 24px rgba(0,0,0,.6);
+}
+#pt-popup .pt-close{pointer-events:all;float:right;cursor:pointer;color:var(--cream3);font-size:11px;margin:-2px -4px 0 8px;}
+#pt-popup .pt-row{display:flex;justify-content:space-between;gap:12px;}
+#pt-popup .pt-key{color:var(--cream3);}
+#pt-popup .pt-val{color:var(--cream);}
+#pt-popup .pt-val.teal{color:var(--teal);}
+#pt-popup .pt-val.coral{color:var(--coral);}
+#pt-popup .pt-val.gold{color:var(--gold);}
+#pt-popup .pt-val.lime{color:var(--lime);}
+#pt-popup .pt-val.violet{color:var(--violet);}
+#pt-popup .pt-head{color:var(--gold);font-size:10px;margin-bottom:5px;border-bottom:1px solid rgba(200,168,74,.2);padding-bottom:4px;}
 </style>
 </head>
 <body>
+
+<!-- MOBILE CONTROL BAR -->
+<div id="mobile-bar">
+  <!-- ±n controls -->
+  <div class="mb-group" id="mb-n-group">
+    <span class="mb-label">n</span>
+    <button class="mb-btn teal" onclick="mbStepN(-10)">−10</button>
+    <button class="mb-btn teal" onclick="mbStepN(-2)">−</button>
+    <span class="mb-val teal" id="mb-n-val">1</span>
+    <button class="mb-btn teal" onclick="mbStepN(2)">+</button>
+    <button class="mb-btn teal" onclick="mbStepN(10)">+10</button>
+  </div>
+  <div class="mb-sep" id="mb-sep1"></div>
+  <!-- Prime controls -->
+  <div class="mb-group" id="mb-p-group">
+    <span class="mb-label">p</span>
+    <button class="mb-btn gold" onclick="mbStepPrime(-1)">◂</button>
+    <span class="mb-val gold" id="mb-p-val">2</span>
+    <button class="mb-btn gold" onclick="mbStepPrime(1)">▸</button>
+  </div>
+  <div class="mb-sep" id="mb-sep2"></div>
+  <!-- Lift toggles -->
+  <div class="mb-group" id="mb-lift-group">
+    <button class="mb-toggle on lift-s" id="mb-lifts-btn" onclick="mbToggle('lifts',this)">Surviving</button>
+    <button class="mb-toggle lift-b" id="mb-broken-btn" onclick="mbToggle('broken',this)">Broken</button>
+  </div>
+  <div class="mb-sep" id="mb-sep3"></div>
+  <!-- M max -->
+  <div class="mb-group">
+    <span class="mb-label">M</span>
+    <button class="mb-btn" onclick="mbStepM(-10)">−</button>
+    <span class="mb-val" id="mb-m-val">40</span>
+    <button class="mb-btn" onclick="mbStepM(10)">+</button>
+  </div>
+  <div class="mb-sep"></div>
+  <!-- View -->
+  <div class="mb-group">
+    <button class="mb-toggle" id="mb-view-btn" onclick="mbCycleView()">Rings</button>
+  </div>
+</div>
 
 <!-- TOP BAR -->
 <div id="topbar">
@@ -326,13 +417,15 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
       <div class="sec">Ring Range</div>
       <div class="row">
         <span class="lbl">M max</span>
-        <input type="range" id="sl-mmax" min="4" max="200" value="40" oninput="S.mmax=+this.value;document.getElementById('val-mmax').textContent=this.value;dirty=true;">
+        <input type="range" id="sl-mmax" min="4" max="2000" value="40" oninput="S.mmax=+this.value;document.getElementById('num-mmax').value=this.value;document.getElementById('val-mmax').textContent=this.value;dirty=true;">
+        <input type="number" id="num-mmax" value="40" min="4" max="99999" style="width:54px" oninput="var v=Math.max(4,+this.value||4);S.mmax=v;document.getElementById('sl-mmax').value=Math.min(2000,v);document.getElementById('val-mmax').textContent=v;dirty=true;">
         <span class="val" id="val-mmax">40</span>
       </div>
       <div class="row">
         <span class="lbl">Rotate δ</span>
         <input type="range" id="sl-delta" min="-50" max="50" value="0" oninput="S.delta=(+this.value)/1000;document.getElementById('val-delta').textContent=(S.delta).toFixed(3);dirty=true;">
         <span class="val" id="val-delta">0.000</span>
+        <button style="font-family:var(--mono);font-size:8px;padding:2px 6px;border:1px solid var(--edge2);background:transparent;color:var(--cream3);cursor:pointer;flex-shrink:0;" onclick="S.delta=0;document.getElementById('sl-delta').value=0;document.getElementById('val-delta').textContent='0.000';dirty=true;">↺</button>
       </div>
       <div class="row">
         <span class="lbl">Zoom</span>
@@ -358,8 +451,12 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
       <div class="row">
         <span class="lbl">n offset</span>
         <input type="range" id="sl-n" min="1" max="499" value="1" step="2" oninput="S.n=+this.value;document.getElementById('num-n').value=this.value;document.getElementById('val-n').textContent=this.value;updateNFormula();dirty=true;">
-        <input type="number" id="num-n" value="1" min="1" max="9999" style="width:54px" oninput="S.n=+this.value;document.getElementById('sl-n').value=Math.min(499,S.n);updateNFormula();dirty=true;">
+        <input type="number" id="num-n" value="1" min="1" max="499" style="width:54px" oninput="S.n=+this.value;document.getElementById('sl-n').value=Math.min(+document.getElementById('nmax-n').value||499,S.n);updateNFormula();dirty=true;">
         <span class="val" id="val-n">1</span>
+      </div>
+      <div class="row">
+        <span class="lbl">n max</span>
+        <input type="number" id="nmax-n" value="499" min="1" max="99999" step="2" style="width:64px" oninput="var mx=Math.max(1,+this.value||499);document.getElementById('sl-n').max=mx;document.getElementById('num-n').max=mx;if(S.n>mx){S.n=mx;document.getElementById('sl-n').value=mx;document.getElementById('num-n').value=mx;document.getElementById('val-n').textContent=mx;updateNFormula();dirty=true;}">
       </div>
       <div class="ibox" id="npath-info">
         <span class="formula">r = (M+1)/2 &amp; (M−1)/2</span><br>
@@ -777,6 +874,7 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
     <div id="canvas-wrap">
       <canvas id="main-canvas"></canvas>
       <div id="labels-overlay"></div>
+  <div id="pt-popup"><span class="pt-close" onclick="document.getElementById('pt-popup').style.display='none'">✕</span><div id="pt-popup-inner"></div></div>
     </div>
 
     <!-- THE MATH PANE -->
@@ -988,7 +1086,7 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
             <div class="math-block-body">
               The n=1 equatorial path and the prime-p spiral intersect at ring M — meaning the equatorial residue (M+1)/2 equals the spiral residue p mod M — if and only if:
               <div style="margin:10px 0;font-family:var(--mono);font-size:11px;color:var(--gold)">(M+1)/2 ≡ p (mod M)  ⟺  M+1 ≡ 2p (mod 2M)  ⟺  M+1 = 2p</div>
-              That is, M = 2p−1 must hold exactly — and M+1 = 2p must be twice a prime. These are the <em>safe prime rings</em>.
+              That is, M = 2p−1 must hold exactly — and (M+1)/2 = p must be prime. These are the <em>intersection rings</em>; the subset where M is also prime are the safe prime rings.
             </div>
           </div>
 
@@ -997,8 +1095,8 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
           </div>
 
           <div class="math-eq">
-            ±n path ∩ prime spiral at ring M  ⟺  M = 2p−1  ⟺  p is a safe prime (2p−1 is prime when p=(M+1)/2 is prime)
-            <span class="ann">The gold dots on the canvas are these intersection points. They mark the safe prime rings M = 2p−1 = 4, 10, 22, 28, 46, 58, ... corresponding to safe primes p = 3, 7, 11, 23, 29, ...</span>
+            ±n path ∩ prime spiral at ring M  ⟺  M = 2p−1  (p any prime, M+1 = 2p)
+            <span class="ann">The gold dots on the canvas mark these intersection rings. For all primes p: M = 2p−1 = 3, 5, 9, 13, 21, 25, 33, 37, 45, 57, … (i.e. p = 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, …). Note: the intersection condition requires only that p is prime; it does not require M itself to be prime. "Safe prime rings" (where both M and (M+1)/2 are prime) are a subset.</span>
           </div>
 
           <div class="math-block key">
@@ -1052,7 +1150,7 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
               <tr><td>Parity condition</td><td>M ≡ n (mod 2)</td><td>None</td></tr>
               <tr><td>Angular limit</td><td>θ → π (equator)</td><td>θ → 0 (origin)</td></tr>
               <tr><td>Algebraic meaning</td><td>Modular half of ±n</td><td>Reduction of p mod M</td></tr>
-              <tr><td>Lift survival (n=1)</td><td class="lime">Iff M+1 = 2p (safe prime)</td><td>Fails at M=p (dropout)</td></tr>
+              <tr><td>Lift survival (n=1)</td><td class="coral">Never (gcd((M+1)/2, M+1) = (M+1)/2 &gt; 1)</td><td>Fails at M=p (dropout)</td></tr>
               <tr><td>Connection to D(x)</td><td>Peak of |E(N)| at M=p−1</td><td class="coral">Dropout = jump Δ_p = 1/p(p−1)</td></tr>
               <tr><td>Gaussian structure</td><td>Real-axis symmetry</td><td>Split/inert by p mod 4</td></tr>
               <tr><td>Intersection</td><td colspan="2" class="violet">M = 2p−1 (safe prime rings) → gold dots on canvas</td></tr>
@@ -1088,7 +1186,7 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
           These are the <em>modular halves</em> of ±n — the equatorial points of the ring, offset by n/2. As M grows, r/M → 1/2, so the path traces the π-position across all rings simultaneously.
         </div>
         <div class="rp-note">
-          For n=1: the path hits r=(M+1)/2, whose image mod M+1 is (M+1)/2. This survives iff gcd((M+1)/2, M+1)=1, i.e. M+1 is twice a prime — the safe prime condition.
+          For n=1: the path hits r=(M+1)/2. Since (M+1)/2 divides M+1, we have gcd((M+1)/2, M+1) = (M+1)/2 &gt; 1 for all M &gt; 1, so the ±1 path <em>never</em> survives the lift. Its significance is geometric: the path meets the prime-p spiral at ring M exactly when M+1 = 2p — the intersection condition, not a survival condition.
         </div>
       </div>
 
@@ -1529,6 +1627,7 @@ function setMainTab(tab, el){
   mp.classList.toggle('active', isMath);
 
   if(!isMath) dirty=true;
+  updateMobileBar();
 }
 
 function jumpToCanvas(tab){
@@ -1557,7 +1656,7 @@ function applyPreset(name, el){
   if(name==='safe_prime'){
     S.mmax=60;S.n=1;S.lifts=true;S.broken=false;S.npathLabels=true;S.spiralLabels=true;
     S.view='concentric';MAIN_TAB='both';
-    document.getElementById('sl-mmax').value=60;document.getElementById('val-mmax').textContent=60;
+    document.getElementById('sl-mmax').value=60;document.getElementById('num-mmax').value=60;document.getElementById('val-mmax').textContent=60;
     document.getElementById('sl-n').value=1;document.getElementById('num-n').value=1;document.getElementById('val-n').textContent=1;
     document.querySelector('.tb-tab').classList.add('active');
     // Pick prime near mmax/2
@@ -1567,10 +1666,10 @@ function applyPreset(name, el){
   } else if(name==='twin'){
     S.mmax=50;S.n=3;S.lifts=true;S.view='concentric';
     document.getElementById('sl-n').value=3;document.getElementById('num-n').value=3;document.getElementById('val-n').textContent=3;
-    document.getElementById('sl-mmax').value=50;document.getElementById('val-mmax').textContent=50;
+    document.getElementById('sl-mmax').value=50;document.getElementById('num-mmax').value=50;document.getElementById('val-mmax').textContent=50;
   } else if(name==='fermat_spiral'){
     S.view='fermat';S.mmax=80;S.lifts=false;MAIN_TAB='spiral';
-    document.getElementById('sl-mmax').value=80;document.getElementById('val-mmax').textContent=80;
+    document.getElementById('sl-mmax').value=80;document.getElementById('num-mmax').value=80;document.getElementById('val-mmax').textContent=80;
   } else if(name==='equator'){
     S.n=1;S.mmax=40;MAIN_TAB='npath';S.lifts=false;S.allCoprime=true;
   } else if(name==='chains'){
@@ -1584,7 +1683,7 @@ function applyPreset(name, el){
     S.lifts=true;S.broken=false;S.liftAlpha=.25;S.ptSize=3;
     S.allCoprime=true;S.phiColor=false;S.mirror=true;S.dropout=true;S.allP=false;
     MAIN_TAB='both';S.view='concentric';
-    document.getElementById('sl-mmax').value=40;document.getElementById('val-mmax').textContent=40;
+    document.getElementById('sl-mmax').value=40;document.getElementById('num-mmax').value=40;document.getElementById('val-mmax').textContent=40;
     document.getElementById('sl-n').value=1;document.getElementById('num-n').value=1;document.getElementById('val-n').textContent=1;
     document.getElementById('sl-prime').value=0;document.getElementById('val-prime').textContent=2;
     document.getElementById('sl-alpha').value=25;
@@ -1640,7 +1739,51 @@ function doExport(){
       octx.font=`400 ${Math.round(ew/120)}px 'JetBrains Mono',monospace`;
       octx.fillStyle='rgba(200,168,74,.35)';
       octx.textAlign='right';octx.textBaseline='bottom';
-      octx.fillText('Lift Dynamics · Wessen Getachew · wessengetachew.github.io',ew-30,eh-30);
+      octx.fillText('Lift Dynamics · Wessen Getachew · wessengetachew.github.io',ew-30,eh-Math.round(eh/36)-30);
+    }
+
+    // Stat bar at bottom
+    if(labelMode!=='none'){
+      const barH=Math.round(eh/36);
+      const fontSize=Math.round(barH*0.48);
+      const pad=Math.round(ew/80);
+
+      // Bar background
+      octx.fillStyle='rgba(4,4,13,0.82)';
+      octx.fillRect(0,eh-barH,ew,barH);
+      // Top border line
+      octx.strokeStyle='rgba(255,255,255,0.07)';
+      octx.lineWidth=1;
+      octx.beginPath();octx.moveTo(0,eh-barH);octx.lineTo(ew,eh-barH);octx.stroke();
+
+      octx.font=`400 ${fontSize}px 'JetBrains Mono',monospace`;
+      octx.textBaseline='middle';
+      const cy=eh-barH/2;
+
+      const stats=[
+        {label:'M max',  id:'stat-mmax',  col:'#ddd8cc'},
+        {label:'±n path',id:'stat-npath', col:'#3dc8b8'},
+        {label:'Spiral p',id:'stat-spiral',col:'#c8a84a'},
+        {label:'Surviving',id:'stat-lifts',col:'#7ec87a'},
+        {label:'Broken',  id:'stat-broken',col:'#e05060'},
+        {label:'φ(M)/M avg',id:'stat-phi',col:'#ddd8cc'},
+        {label:'View',   id:'stat-view',  col:'#9b7fe8'},
+      ];
+
+      const colW=ew/stats.length;
+      stats.forEach((s,i)=>{
+        const val=document.getElementById(s.id)?.textContent||'—';
+        const cx=colW*i+colW/2;
+        // Label
+        octx.fillStyle='rgba(106,101,96,0.9)';
+        octx.textAlign='center';
+        octx.font=`400 ${Math.round(fontSize*0.75)}px 'JetBrains Mono',monospace`;
+        octx.fillText(s.label.toUpperCase(),cx,cy-Math.round(fontSize*0.55));
+        // Value
+        octx.fillStyle=s.col;
+        octx.font=`500 ${fontSize}px 'JetBrains Mono',monospace`;
+        octx.fillText(val,cx,cy+Math.round(fontSize*0.55));
+      });
     }
 
     oc.toBlob(blob=>{
@@ -1831,7 +1974,7 @@ function loop(){
       } else if(ANIM.type==='m'){
         S.mmax=Math.max(4,S.mmax+(sp>10?3:1));
         if(S.mmax>200) S.mmax=4;
-        document.getElementById('sl-mmax').value=S.mmax;
+        document.getElementById('sl-mmax').value=S.mmax;document.getElementById('num-mmax').value=S.mmax;
         document.getElementById('val-mmax').textContent=S.mmax;
       }
       dirty=true;
@@ -1847,6 +1990,206 @@ loop();
 window.setMainTab=setMainTab;window.setView=setView;window.toggleTheory=toggleTheory;
 window.applyPreset=applyPreset;window.openExport=openExport;window.closeExport=closeExport;
 window.doExport=doExport;window.exportSVGLabels=exportSVGLabels;
+
+// ── Mobile bar ─────────────────────────────────────────────────────────────
+const MB_VIEWS=['concentric','fermat','strip','farey'];
+
+function updateMobileBar(){
+  const tab=MAIN_TAB;
+  const showN  = tab==='npath'||tab==='both';
+  const showP  = tab==='spiral'||tab==='both';
+  const showL  = tab==='lift'||tab==='both';
+  document.getElementById('mb-n-group').style.display = showN?'flex':'none';
+  document.getElementById('mb-sep1').style.display    = (showN&&(showP||showL))?'block':'none';
+  document.getElementById('mb-p-group').style.display = showP?'flex':'none';
+  document.getElementById('mb-sep2').style.display    = (showP&&showL)?'block':'none';
+  document.getElementById('mb-lift-group').style.display = showL?'flex':'none';
+  document.getElementById('mb-sep3').style.display    = showL?'block':'none';
+  // sync values
+  document.getElementById('mb-n-val').textContent = S.n;
+  document.getElementById('mb-p-val').textContent = S.prime;
+  document.getElementById('mb-m-val').textContent = S.mmax;
+  document.getElementById('mb-view-btn').textContent = S.view.charAt(0).toUpperCase()+S.view.slice(1);
+  const lb=document.getElementById('mb-lifts-btn');
+  const bb=document.getElementById('mb-broken-btn');
+  lb.classList.toggle('on', S.lifts);
+  bb.classList.toggle('on', S.broken);
+}
+
+function mbStepN(d){
+  let v=Math.max(1, S.n+d);
+  // keep parity consistent: n should be odd if we want coprime to most M
+  if(v%2===0) v+=d>0?1:-1;
+  if(v<1) v=1;
+  S.n=v;
+  document.getElementById('sl-n').value=Math.min(+document.getElementById('nmax-n').value||499,v);
+  document.getElementById('num-n').value=v;
+  document.getElementById('val-n').textContent=v;
+  document.getElementById('mb-n-val').textContent=v;
+  updateNFormula(); dirty=true;
+}
+
+function mbStepPrime(d){
+  let idx=Math.max(0,Math.min(PRIMES.length-1, S.pidx+d));
+  S.pidx=idx; S.prime=PRIMES[idx];
+  document.getElementById('val-prime').textContent=S.prime;
+  document.getElementById('sl-prime').value=idx;
+  document.getElementById('mb-p-val').textContent=S.prime;
+  document.querySelectorAll('#prime-chips .chip').forEach((c,i)=>c.classList.toggle('active',i===idx));
+  dirty=true;
+}
+
+function mbStepM(d){
+  const v=Math.max(4, S.mmax+d);
+  S.mmax=v;
+  document.getElementById('sl-mmax').value=Math.min(2000,v);
+  document.getElementById('num-mmax').value=v;
+  document.getElementById('val-mmax').textContent=v;
+  document.getElementById('mb-m-val').textContent=v;
+  dirty=true;
+}
+
+function mbToggle(key, btn){
+  S[key]=!S[key];
+  btn.classList.toggle('on', S[key]);
+  dirty=true;
+}
+
+function mbCycleView(){
+  const i=(MB_VIEWS.indexOf(S.view)+1)%MB_VIEWS.length;
+  S.view=MB_VIEWS[i];
+  document.getElementById('mb-view-btn').textContent=S.view.charAt(0).toUpperCase()+S.view.slice(1);
+  document.querySelectorAll('.mode-btn').forEach((b,j)=>b.classList.toggle('active',j===i));
+  dirty=true;
+}
+
+// expose mobile functions
+window.mbStepN=mbStepN;window.mbStepPrime=mbStepPrime;window.mbStepM=mbStepM;
+window.mbToggle=mbToggle;window.mbCycleView=mbCycleView;
+updateMobileBar();
+
+// Position mobile bar flush below topbar regardless of topbar height
+(function(){
+  function posMobileBar(){
+    const tb=document.getElementById('topbar');
+    const mb=document.getElementById('mobile-bar');
+    const h=tb.offsetHeight;
+    mb.style.top=h+'px';
+    // also nudge body if mobile bar is visible
+    const body=document.getElementById('body');
+    if(getComputedStyle(mb).display!=='none'){
+      body.style.top=(h+mb.offsetHeight)+'px';
+    } else {
+      body.style.top=h+'px';
+    }
+  }
+  posMobileBar();
+  window.addEventListener('resize', posMobileBar);
+})();
+
+// ── Point inspection ────────────────────────────────────────────────────────
+function findNearestPoint(cx, cy, maxDist){
+  let best=null, bestD=maxDist*maxDist;
+  for(let M=2;M<=S.mmax;M++){
+    for(const r of coprimes(M)){
+      const [x,y]=toXY(r,M);
+      const d=(x-cx)**2+(y-cy)**2;
+      if(d<bestD){bestD=d;best={M,r};}
+    }
+  }
+  return best;
+}
+
+function showPointPopup(M, r, px, py){
+  const r2=r%(M+1);
+  const cop2=new Set(coprimes(M+1));
+  const survives=cop2.has(r2);
+  const g2=gcd(r2,M+1);
+  const phi_M=phi(M), phi_M1=phi(M+1);
+  const L=phi_M*phi_M1/(M+1);
+
+  // ±n path membership
+  const onPaths=[];
+  for(const nn of [1,3,5,7,9,11,13,15,17,19]){
+    if((M%2)===(nn%2)&&(r===(M+nn)/2||r===(M-nn)/2)) onPaths.push(nn);
+  }
+
+  // Which primes have spiral at this r?
+  const spiralPrimes=[];
+  for(const p of PRIMES){
+    if(p>S.mmax*2) break;
+    if(p%M===r) spiralPrimes.push(p);
+  }
+
+  // Gold dot check: is this the intersection point on an intersection ring?
+  const isIntersection = (M+1)%2===0 && isPrime((M+1)/2) && r===(M+1)/2;
+
+  // Chain check (user's observation): for n=1 path, is r=p for a prime p?
+  const isNpathPrime = onPaths.includes(1) && isPrime(r);
+
+  let html=`<div class="pt-head">Ring M = ${M} · Residue r = ${r}</div>`;
+
+  const row=(k,v,c='')=>`<div class="pt-row"><span class="pt-key">${k}</span><span class="pt-val ${c}">${v}</span></div>`;
+
+  html+=row('gcd(r, M)','1 ✓','lime');
+  html+=row('r mod(M+1)', r2);
+  html+=row('gcd(r′, M+1)', g2, survives?'lime':'coral');
+  html+=row('lift', survives?'survives ✓':'broken ✗', survives?'teal':'coral');
+  html+=row('φ(M)', phi_M);
+  html+=row('φ(M+1)', phi_M1);
+  html+=row('L(M) = φ(M)φ(M+1)/(M+1)', L.toFixed(4));
+
+  if(onPaths.length>0)
+    html+=row('±n path', 'n = '+onPaths.join(', '), 'teal');
+  else
+    html+=row('±n path', '—');
+
+  if(spiralPrimes.length>0)
+    html+=row('prime spiral', 'p = '+spiralPrimes.slice(0,5).join(', ')+(spiralPrimes.length>5?'…':''), 'gold');
+  else
+    html+=row('prime spiral', '—');
+
+  if(isIntersection)
+    html+=`<div class="pt-row"><span class="pt-val gold">★ intersection ring · M+1 = 2·${(M+1)/2}</span></div>`;
+
+  if(isNpathPrime)
+    html+=`<div class="pt-row"><span class="pt-val violet">r = ${r} is prime → chain node (your obs.)</span></div>`;
+
+  const popup=document.getElementById('pt-popup');
+  document.getElementById('pt-popup-inner').innerHTML=html;
+  popup.style.display='block';
+  popup.style.pointerEvents='all';
+
+  // Position popup near click but keep in bounds
+  const wrap=document.getElementById('canvas-wrap');
+  const ww=wrap.offsetWidth, wh=wrap.offsetHeight;
+  const pw=popup.offsetWidth||220, ph=popup.offsetHeight||180;
+  let lx=px+14, ly=py-10;
+  if(lx+pw>ww-10) lx=px-pw-14;
+  if(ly+ph>wh-10) ly=wh-ph-10;
+  if(ly<4) ly=4;
+  popup.style.left=lx+'px'; popup.style.top=ly+'px';
+}
+
+// Canvas tap / click
+canvas.addEventListener('click', e=>{
+  const rect=canvas.getBoundingClientRect();
+  const sx=canvas.width/rect.width, sy=canvas.height/rect.height;
+  const cx=(e.clientX-rect.left)*sx, cy=(e.clientY-rect.top)*sy;
+  const hit=findNearestPoint(cx, cy, 24*sx);
+  if(hit) showPointPopup(hit.M, hit.r, (e.clientX-rect.left), (e.clientY-rect.top));
+  else document.getElementById('pt-popup').style.display='none';
+});
+canvas.addEventListener('touchend', e=>{
+  e.preventDefault();
+  const t=e.changedTouches[0];
+  const rect=canvas.getBoundingClientRect();
+  const sx=canvas.width/rect.width, sy=canvas.height/rect.height;
+  const cx=(t.clientX-rect.left)*sx, cy=(t.clientY-rect.top)*sy;
+  const hit=findNearestPoint(cx, cy, 32*sx);
+  if(hit) showPointPopup(hit.M, hit.r, (t.clientX-rect.left), (t.clientY-rect.top));
+  else document.getElementById('pt-popup').style.display='none';
+},{passive:false});
 </script>
 </body>
 </html>
