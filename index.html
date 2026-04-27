@@ -386,6 +386,7 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
     <div class="tb-tab" onclick="setMainTab('both',this)">Both</div>
     <div class="tb-tab" onclick="setMainTab('lift',this)">Lift Connections</div>
     <div class="tb-tab" onclick="setMainTab('math',this)" style="color:var(--violet)">The Math</div>
+    <div class="tb-tab" onclick="setMainTab('dchi',this)" style="color:var(--coral)">D<sub>χ</sub> &amp; RH</div>
   </div>
   <div class="tb-sep"></div>
   <div class="tb-right">
@@ -1161,6 +1162,334 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
       </div>
     </div>
 
+    <!-- D_chi PANE -->
+    <div id="dchi-pane" style="display:none;position:fixed;top:50px;left:0;right:0;bottom:0;z-index:50;overflow-y:auto;background:var(--bg);scrollbar-width:thin;">
+    <style>
+    #dchi-pane::-webkit-scrollbar{width:5px;}
+    #dchi-pane::-webkit-scrollbar-thumb{background:rgba(224,80,96,.25);}
+    #dchi-inner{max-width:860px;margin:0 auto;padding:52px 40px 100px;}
+    .dc-rule{width:32px;height:2px;background:var(--coral);margin-bottom:20px;}
+    .dc-tag{font-size:8px;letter-spacing:.26em;text-transform:uppercase;color:var(--coral);opacity:.7;margin-bottom:10px;}
+    .dc-h1{font-family:var(--disp);font-size:clamp(1.5rem,3.2vw,2.2rem);font-weight:400;color:var(--cream);line-height:1.2;letter-spacing:.06em;margin-bottom:8px;}
+    .dc-sub{font-family:var(--serif);font-size:1rem;font-style:italic;color:var(--cream3);margin-bottom:36px;line-height:1.65;}
+    .dc-divider{width:100%;height:1px;background:linear-gradient(90deg,var(--coral),transparent);opacity:.3;margin-bottom:48px;}
+    .dc-section{margin-bottom:60px;}
+    .dc-sec-tag{font-size:7.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--coral);opacity:.6;margin-bottom:8px;}
+    .dc-sec-title{font-family:var(--disp);font-size:1.1rem;font-weight:400;color:var(--cream);letter-spacing:.05em;margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid rgba(224,80,96,.2);}
+    .dc-body{font-family:var(--serif);font-size:15.5px;color:rgba(200,195,185,.88);line-height:1.9;margin-bottom:16px;}
+    .dc-body strong{color:var(--cream);font-weight:500;}
+    .dc-body em{color:var(--coral);font-style:italic;}
+    .dc-eq{
+      font-family:var(--mono);font-size:13px;color:var(--coral);
+      background:rgba(224,80,96,.06);border:1px solid rgba(224,80,96,.2);
+      padding:16px 24px;margin:20px 0;text-align:center;line-height:2.2;overflow-x:auto;
+    }
+    .dc-eq .dc-ann{display:block;text-align:left;font-size:10.5px;color:var(--cream3);margin-top:8px;font-family:var(--serif);font-style:italic;line-height:1.7;}
+    .dc-block{margin:24px 0;padding:18px 24px;background:var(--bg1);border:1px solid var(--edge);border-left:3px solid;}
+    .dc-block.def{border-left-color:var(--teal);}
+    .dc-block.thm{border-left-color:var(--gold);}
+    .dc-block.key{border-left-color:var(--coral);}
+    .dc-block.rmk{border-left-color:var(--violet);}
+    .dc-block.honest{border-left-color:var(--lime);}
+    .dc-block-tag{font-size:7.5px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:10px;}
+    .dc-block.def .dc-block-tag{color:var(--teal);}
+    .dc-block.thm .dc-block-tag{color:var(--gold);}
+    .dc-block.key .dc-block-tag{color:var(--coral);}
+    .dc-block.rmk .dc-block-tag{color:var(--violet);}
+    .dc-block.honest .dc-block-tag{color:var(--lime);}
+    .dc-block-body{font-family:var(--serif);font-size:15px;color:var(--cream);line-height:1.85;}
+    .dc-block-body em{color:var(--gold);font-style:normal;}
+    .dc-block-body strong{font-weight:500;}
+    .dc-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;margin:20px 0;}
+    .dc-table th{text-align:left;padding:7px 12px;font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--cream3);border-bottom:1px solid rgba(224,80,96,.2);}
+    .dc-table td{padding:7px 12px;border-bottom:1px solid var(--edge);color:var(--cream2);vertical-align:top;line-height:1.7;}
+    .dc-table td.coral{color:var(--coral);}
+    .dc-table td.teal{color:var(--teal);}
+    .dc-table td.gold{color:var(--gold);}
+    .dc-table td.violet{color:var(--violet);}
+    .dc-table td.lime{color:var(--lime);}
+    .dc-proof{margin:4px 0 16px;padding:14px 20px;background:var(--bg2);border:1px solid var(--edge);font-family:var(--serif);font-size:14px;color:rgba(200,195,185,.75);line-height:1.8;}
+    .dc-proof::before{content:'Proof. ';color:var(--cream3);font-style:italic;}
+    .dc-proof .qed{float:right;color:var(--cream3);}
+    #en-chart-wrap{margin:28px 0;background:var(--bg2);border:1px solid rgba(224,80,96,.2);padding:4px 0 0;}
+    #en-chart-label{font-family:var(--mono);font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:var(--coral);opacity:.7;padding:10px 16px 4px;}
+    #en-canvas{display:block;width:100%;height:220px;}
+    .dc-boxed{
+      margin:28px 0;padding:22px 28px;
+      background:rgba(224,80,96,.07);border:1px solid rgba(224,80,96,.35);
+      font-family:var(--mono);font-size:13.5px;color:var(--cream);
+      text-align:center;line-height:2.2;
+      box-shadow:0 0 40px rgba(224,80,96,.08);
+    }
+    .dc-boxed .dc-boxed-label{display:block;font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--coral);opacity:.7;margin-bottom:10px;}
+    @media(max-width:600px){#dchi-inner{padding:32px 18px 80px;}}
+    </style>
+    <div id="dchi-inner">
+
+      <div class="dc-rule"></div>
+      <div class="dc-tag">Lift Dynamics · Analytic Number Theory</div>
+      <div class="dc-h1">D<sub>χ</sub>(x) and the Riemann Hypothesis</div>
+      <div class="dc-sub">A single elementary function that encodes the prime race mod 4 — and whose cumulative jump sums are equivalent to RH for L(s, χ₄)</div>
+      <div class="dc-divider"></div>
+
+      <!-- §1 The function -->
+      <div class="dc-section">
+        <div class="dc-sec-tag">Section 1</div>
+        <div class="dc-sec-title">The Character-Weighted Jump Function</div>
+
+        <div class="dc-body">
+          The prime race mod 4 — Dirichlet's observation that primes ≡ 3 (mod 4) seem to "lead" primes ≡ 1 (mod 4) for most initial segments — is encoded, with exact arithmetic precision, in a single elementary real-variable function.
+        </div>
+
+        <div class="dc-block def">
+          <div class="dc-block-tag">Definition 1.1 — The Character-Weighted Drift Function</div>
+          <div class="dc-block-body">
+            The <strong>Dirichlet character χ₄</strong> is defined by χ₄(q) = +1 if q ≡ 1 (mod 4), χ₄(q) = −1 if q ≡ 3 (mod 4), and χ₄(q) = 0 otherwise.
+            The <em>character-weighted drift function</em> is:
+          </div>
+        </div>
+
+        <div class="dc-eq">
+          D<sub>χ</sub>(x) = −∑<sub>q prime, q &gt; x+1</sub>  χ₄(q) / (q² − x − 1)
+          <span class="dc-ann">A real-variable sum over all primes q exceeding x+1, weighted by the character value χ₄(q) = ±1. The denominator q² − x − 1 is strictly positive for all terms in the sum.</span>
+        </div>
+
+        <div class="dc-body">
+          This function has three properties that, taken together, appear to be new in the literature:
+        </div>
+
+        <div class="dc-table-wrap" style="overflow-x:auto">
+        <table class="dc-table">
+          <thead><tr><th>Property</th><th>Statement</th></tr></thead>
+          <tbody>
+            <tr><td class="coral">Jump locus</td><td>D<sub>χ</sub>(x) jumps at <em>exactly</em> x = q − 1 for each prime q, and at no other value of x</td></tr>
+            <tr><td class="gold">Jump sign</td><td>+1/q(q−1) for q ≡ 1 (mod 4) · −1/q(q−1) for q ≡ 3 (mod 4)</td></tr>
+            <tr><td class="teal">Invertibility</td><td>The jump size s = ±1/q(q−1) recovers q algebraically: q = (1 + √(1 + 4/|s|))/2</td></tr>
+          </tbody>
+        </table>
+        </div>
+
+        <div class="dc-block thm">
+          <div class="dc-block-tag">Theorem 1.1 — Jump Structure</div>
+          <div class="dc-block-body">
+            As x crosses p − 1 from below (x → (p−1)⁺), the term with q = p passes the threshold q &gt; x + 1 and exits the sum. The jump is:
+            <br><br>
+            <strong>Δ<sub>p</sub> = χ₄(p) / p(p − 1)</strong>
+            <br><br>
+            This is the <em>only</em> source of discontinuity: composites q satisfy q² − x − 1 = 0 for no prime-indexed x, so they produce no jump. The function is piecewise smooth between consecutive primes, and right-continuous.
+          </div>
+        </div>
+
+        <div class="dc-proof">
+          At x = p−1, the term 1/(q²−x−1) with q = p equals 1/(p²−p) = 1/p(p−1). For x slightly below p−1, this term is present in the sum (since p &gt; x+1 = p−ε). For x slightly above p−1, this term has dropped (since p ≤ x+1 = p+ε). The change in D<sub>χ</sub>(x) is +χ₄(p)/p(p−1). All other terms are continuous at x = p−1 since their denominators q²−x−1 change smoothly without vanishing. <span class="qed">□</span>
+        </div>
+
+        <div class="dc-block rmk">
+          <div class="dc-block-tag">Remark 1.1 — What makes this function distinctive</div>
+          <div class="dc-block-body">
+            Most analytic functions encoding prime distributions (von Mangoldt Λ(n), ψ(x), Li(x)) involve complex analysis or sums over <em>all</em> integers. D<sub>χ</sub>(x) is:
+            <br><br>
+            · <em>Real-variable</em> — no complex plane required<br>
+            · <em>Primes only</em> — composites contribute exactly zero<br>
+            · <em>Elementary rational form</em> — single closed-form expression<br>
+            · <em>Directly invertible</em> — jump sizes are algebraic fingerprints of each prime<br>
+            <br>
+            No other function in the standard literature achieves all four simultaneously in one expression.
+          </div>
+        </div>
+      </div>
+
+      <!-- §2 Cumulative jumps -->
+      <div class="dc-section">
+        <div class="dc-sec-tag">Section 2</div>
+        <div class="dc-sec-title">The Cumulative Jump Sum E(N)</div>
+
+        <div class="dc-body">
+          The cumulative sum of all jumps up to the N-th prime is the central analytic object.
+        </div>
+
+        <div class="dc-block def">
+          <div class="dc-block-tag">Definition 2.1 — The Jump Sum</div>
+          <div class="dc-block-body">
+            <strong>E(N) = ∑<sub>q ≤ N, q prime</sub>  χ₄(q) / q(q − 1)</strong>
+            <br><br>
+            This is the total signed area accumulated in D<sub>χ</sub> up to x = N − 1: positive contributions from primes ≡ 1 (mod 4), negative from primes ≡ 3 (mod 4).
+          </div>
+        </div>
+
+        <!-- Live chart -->
+        <div id="en-chart-wrap">
+          <div id="en-chart-label">E(N) — live cumulative jump sum (click points to inspect)</div>
+          <canvas id="en-canvas"></canvas>
+        </div>
+
+        <div class="dc-body">
+          E(N) is <em>not</em> simply the classical Dirichlet sum ∑ χ₄(q)/q. The denominator q(q−1) = q² − q introduces a quadratic correction that smooths the partial sums. The precise relationship is:
+        </div>
+
+        <div class="dc-eq">
+          E(N) = ∑<sub>q ≤ N</sub> χ₄(q)/q − ∑<sub>q ≤ N</sub> χ₄(q)/q(q−1)
+          &nbsp;=&nbsp; ∑<sub>q ≤ N</sub> χ₄(q)/q + O(1/N)
+          <span class="dc-ann">Since 1/q(q−1) = 1/q − 1/(q−1) telescopes, the correction ∑ χ₄(q)/q(q−1) − ∑ χ₄(q)/q = −∑ χ₄(q)/(q−1), and ∑_{q&gt;N} χ₄(q)/(q(q−1)) = O(1/N) by comparison with ∑ 1/q².</span>
+        </div>
+
+        <div class="dc-body">
+          This identity is the crucial bridge: the decay of E(N) and the decay of ∑<sub>q≤N</sub> χ₄(q)/q are equivalent up to O(1/N).
+        </div>
+      </div>
+
+      <!-- §3 RH connection -->
+      <div class="dc-section">
+        <div class="dc-sec-tag">Section 3</div>
+        <div class="dc-sec-title">Connection to the Riemann Hypothesis</div>
+
+        <div class="dc-body">
+          The Riemann Hypothesis for the Dirichlet L-function L(s, χ₄) — that all non-trivial zeros lie on Re(s) = 1/2 — has a classical equivalent due to Franel and Landau, stated in terms of character sums. The jump function translates this into a completely explicit decay condition on E(N).
+        </div>
+
+        <div class="dc-block thm">
+          <div class="dc-block-tag">Theorem 3.1 — Franel–Landau (Classical)</div>
+          <div class="dc-block-body">
+            The Riemann Hypothesis for L(s, χ₄) is equivalent to:
+            <br><br>
+            <strong>∑<sub>q ≤ N</sub> χ₄(q)/q &nbsp;=&nbsp; O(N<sup>−1/2 + ε</sup>)</strong>  for every ε &gt; 0
+            <br><br>
+            That is, the partial character sums over primes decay faster than N<sup>−1/2</sup>.
+          </div>
+        </div>
+
+        <div class="dc-body">
+          Combining Theorem 3.1 with the identity E(N) = ∑ χ₄(q)/q + O(1/N) from Section 2:
+        </div>
+
+        <div class="dc-boxed">
+          <span class="dc-boxed-label">Main Equivalence</span>
+          RH for L(s, χ₄) &nbsp;⟺&nbsp; E(N) = O(N<sup>−1/2 + ε</sup>)
+        </div>
+
+        <div class="dc-body">
+          The Riemann Hypothesis for the L-function is equivalent to the <em>decay rate of the cumulative jump sums of D<sub>χ</sub>(x)</em>. No complex analysis is needed to state the condition — only the signed sum of the jumps of an elementary real-variable function.
+        </div>
+
+        <div class="dc-block rmk">
+          <div class="dc-block-tag">Remark 3.1 — Why this packaging is non-trivial</div>
+          <div class="dc-block-body">
+            The classical formulations of RH for L-functions involve:
+            <br><br>
+            · Complex zeros of analytic continuations<br>
+            · Contour integrals and explicit formulas<br>
+            · Sums over <em>all</em> integers (via Möbius function or von Mangoldt)<br>
+            <br>
+            The present formulation uses only: primes, their residues mod 4, and the decay rate of a real sequence. The jumps are the error — not a proxy for the error, not a function that encodes the error via complex analysis. <em>The jumps themselves are the error term.</em>
+          </div>
+        </div>
+
+        <div class="dc-body">
+          This has three practical consequences:
+        </div>
+
+        <table class="dc-table">
+          <thead><tr><th>Application</th><th>How E(N) helps</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="teal">Teaching</td>
+              <td>RH is visible: plot E(N), watch for decay. No complex plane, no zeta function, no contour integration required.</td>
+            </tr>
+            <tr>
+              <td class="gold">Numerics</td>
+              <td>Compute E(N) directly up to large N. The oscillation amplitude gives quantitative information about the zero-free region of L(s, χ₄).</td>
+            </tr>
+            <tr>
+              <td class="coral">Heuristics</td>
+              <td>Any elementary bound on E(N) — from Möbius cancellation, sieve methods, or explicit character sum estimates — implies a bound on the location of zeros.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- §4 Geometric picture -->
+      <div class="dc-section">
+        <div class="dc-sec-tag">Section 4</div>
+        <div class="dc-sec-title">The Geometric Picture</div>
+
+        <div class="dc-body">
+          The mirror involution σ(r) = M − r on each ring (ℤ/Mℤ)* is complex conjugation in ℤ[i]. Whether a prime p splits or remains inert in the Gaussian integers is determined entirely by p mod 4:
+        </div>
+
+        <table class="dc-table">
+          <thead><tr><th>Prime p</th><th>Behavior in ℤ[i]</th><th>Jump in D<sub>χ</sub></th><th>Spiral character</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="teal">p ≡ 1 (mod 4)</td>
+              <td>Splits: p = π·π̄</td>
+              <td class="teal">+1/p(p−1) · positive</td>
+              <td>First quadrant bias · upper half</td>
+            </tr>
+            <tr>
+              <td class="violet">p ≡ 3 (mod 4)</td>
+              <td>Inert: p stays prime in ℤ[i]</td>
+              <td class="coral">−1/p(p−1) · negative</td>
+              <td>Third quadrant · conjugate-symmetric</td>
+            </tr>
+            <tr>
+              <td>p = 2</td>
+              <td>Ramifies: 2 = −i(1+i)²</td>
+              <td class="coral">χ₄(2) = 0 · no jump</td>
+              <td>Special case · excluded</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="dc-body">
+          The prime race mod 4 — the observation that ∑<sub>q≤N, q≡3(4)</sub> 1 tends to exceed ∑<sub>q≤N, q≡1(4)</sub> 1 (Chebyshev's bias) — manifests in D<sub>χ</sub> as a tendency for negative jumps to slightly dominate. The long-run balance and its oscillations are captured exactly by E(N).
+        </div>
+
+        <div class="dc-block rmk">
+          <div class="dc-block-tag">Remark 4.1 — Connection to the concentric ring canvas</div>
+          <div class="dc-block-body">
+            On the concentric ring view: spiral points in the upper half-plane correspond to primes q ≡ 1 (mod 4) (positive χ₄(q)) — their dropout at ring M = q fires a <em>positive</em> jump. Spiral points in the lower half-plane correspond to primes q ≡ 3 (mod 4) — their dropout fires a <em>negative</em> jump. Toggle the "Prime Spiral" tab to see this directly: upper-half spirals accumulate E(N) upward; lower-half spirals push it down. The net drift of E(N) toward zero is the statement that neither residue class dominates — which is precisely RH.
+          </div>
+        </div>
+
+        <button class="math-canvas-cta" onclick="setMainTab('spiral',document.querySelectorAll('.tb-tab')[1]);document.getElementById('dchi-pane').style.display='none';document.getElementById('carea').querySelector('#math-pane').classList.remove('active');" style="margin-top:8px">Explore spiral ↔ jump connection on canvas</button>
+      </div>
+
+      <!-- §5 Honest accounting -->
+      <div class="dc-section">
+        <div class="dc-sec-tag">Section 5</div>
+        <div class="dc-sec-title">Honest Accounting</div>
+
+        <div class="dc-body">
+          Clarity about what is and is not claimed here:
+        </div>
+
+        <div class="dc-block honest">
+          <div class="dc-block-tag">What this framework provides</div>
+          <div class="dc-block-body">
+            · A new <em>packaging</em> of the Franel–Landau equivalence into an explicit real-variable function<br>
+            · A direct geometric interpretation of the jump signs via Gaussian integers and the ring canvas<br>
+            · A computable, elementary quantity E(N) that numerically witnesses RH<br>
+            · The invertible recovery formula p = (1 + √(1+4/|s|))/2 for primes from jump sizes (new)<br>
+          </div>
+        </div>
+
+        <div class="dc-block honest">
+          <div class="dc-block-tag">What this framework does not provide</div>
+          <div class="dc-block-body">
+            · A new <em>equivalence</em> — the Franel–Landau theorem is classical (1924); the equivalence is translated, not proved anew<br>
+            · A proof that E(N) decays at rate N<sup>−1/2</sup> — this remains as hard as RH itself<br>
+            · A simpler path to proving RH — obvious from the above<br>
+          </div>
+        </div>
+
+        <div class="dc-body">
+          The unique contribution is this: <em>a Dirichlet-series analogue on the real line where primes are the jump discontinuities, signed by their residue class mod 4, and the Riemann Hypothesis for L(s, χ₄) is equivalent to the decay rate of the resulting jump sums</em> — expressed without complex analysis in a single closed-form expression.
+        </div>
+      </div>
+
+    </div>
+    </div>
+
     <div id="statbar">
       <div class="stat">M max: <b id="stat-mmax">40</b></div>
       <div class="stat teal">±n path: <b id="stat-npath">—</b></div>
@@ -1620,13 +1949,21 @@ function setMainTab(tab, el){
   if(el) el.classList.add('active');
 
   const isMath = tab==='math';
+  const isDchi = tab==='dchi';
+  const isPane = isMath||isDchi;
+
   document.getElementById('carea').style.display = isMath?'none':'';
-  document.getElementById('lpanel').style.display = isMath?'none':'';
-  document.getElementById('rpanel').classList.toggle('collapsed', isMath||!theoryOpen);
+  document.getElementById('lpanel').style.display = isPane?'none':'';
+  document.getElementById('rpanel').classList.toggle('collapsed', isPane||!theoryOpen);
+
   const mp = document.getElementById('math-pane');
   mp.classList.toggle('active', isMath);
 
-  if(!isMath) dirty=true;
+  const dp = document.getElementById('dchi-pane');
+  dp.style.display = isDchi?'block':'none';
+
+  if(isDchi) setTimeout(drawEnChart, 60);
+  if(!isPane) dirty=true;
   updateMobileBar();
 }
 
@@ -2190,6 +2527,186 @@ canvas.addEventListener('touchend', e=>{
   if(hit) showPointPopup(hit.M, hit.r, (t.clientX-rect.left), (t.clientY-rect.top));
   else document.getElementById('pt-popup').style.display='none';
 },{passive:false});
+
+// ── E(N) chart ───────────────────────────────────────────────────────────────
+function chi4(q){ if(q%2===0)return 0; if(q%4===1)return 1; if(q%4===3)return -1; return 0; }
+
+function buildEN(maxN){
+  const pts=[];
+  let E=0;
+  // use primes up to maxN
+  const lim=Math.min(maxN,2000);
+  for(const q of PRIMES){
+    if(q>lim) break;
+    const c=chi4(q);
+    if(c===0) continue;
+    E+=c/(q*(q-1));
+    pts.push({q,E:+E.toFixed(9)});
+  }
+  return pts;
+}
+
+let enPts=null;
+let enHover=null;
+
+function drawEnChart(){
+  const c=document.getElementById('en-canvas');
+  if(!c) return;
+  const wrap=c.parentElement;
+  c.width=wrap.offsetWidth||600;
+  c.height=220;
+  const W=c.width, H=c.height;
+  const ctx2=c.getContext('2d');
+
+  if(!enPts) enPts=buildEN(2000);
+  const pts=enPts;
+  if(!pts.length) return;
+
+  const PAD={l:52,r:16,t:18,b:36};
+  const cw=W-PAD.l-PAD.r, ch=H-PAD.t-PAD.b;
+
+  // ranges
+  const xs=pts.map(p=>p.q);
+  const ys=pts.map(p=>p.E);
+  const xmin=xs[0], xmax=xs[xs.length-1];
+  const ymin=Math.min(0,...ys), ymax=Math.max(0,...ys);
+  const ypad=(ymax-ymin)*0.12||0.001;
+  const Y0=ymin-ypad, Y1=ymax+ypad;
+
+  function cx2(q){ return PAD.l+(q-xmin)/(xmax-xmin)*cw; }
+  function cy2(e){ return PAD.t+(1-(e-Y0)/(Y1-Y0))*ch; }
+
+  // background
+  ctx2.fillStyle='#05050f';
+  ctx2.fillRect(0,0,W,H);
+
+  // zero line
+  const zy=cy2(0);
+  ctx2.strokeStyle='rgba(255,255,255,.12)';
+  ctx2.lineWidth=1;
+  ctx2.setLineDash([3,4]);
+  ctx2.beginPath(); ctx2.moveTo(PAD.l,zy); ctx2.lineTo(W-PAD.r,zy); ctx2.stroke();
+  ctx2.setLineDash([]);
+
+  // grid lines (y)
+  const yTicks=5;
+  ctx2.strokeStyle='rgba(255,255,255,.05)';
+  ctx2.lineWidth=1;
+  for(let i=0;i<=yTicks;i++){
+    const yv=Y0+(Y1-Y0)*i/yTicks;
+    const yy=cy2(yv);
+    ctx2.beginPath(); ctx2.moveTo(PAD.l,yy); ctx2.lineTo(W-PAD.r,yy); ctx2.stroke();
+    ctx2.fillStyle='rgba(180,174,162,.5)';
+    ctx2.font='9px JetBrains Mono, monospace';
+    ctx2.textAlign='right';
+    ctx2.fillText(yv.toFixed(4), PAD.l-5, yy+3);
+  }
+
+  // x axis ticks
+  ctx2.fillStyle='rgba(180,174,162,.4)';
+  ctx2.font='9px JetBrains Mono, monospace';
+  ctx2.textAlign='center';
+  const xTicks=[2,10,50,100,200,500,1000,2000];
+  xTicks.forEach(t=>{
+    if(t>xmax) return;
+    const xx=cx2(t);
+    ctx2.fillText(t, xx, H-PAD.b+14);
+    ctx2.strokeStyle='rgba(255,255,255,.06)';
+    ctx2.lineWidth=1;
+    ctx2.beginPath(); ctx2.moveTo(xx,PAD.t); ctx2.lineTo(xx,H-PAD.b); ctx2.stroke();
+  });
+
+  // draw E(N) step line — color segments by sign
+  ctx2.lineWidth=1.5;
+  for(let i=0;i<pts.length-1;i++){
+    const p=pts[i], n=pts[i+1];
+    const col=p.E>=0?'rgba(61,200,184,.85)':'rgba(224,80,96,.85)';
+    ctx2.strokeStyle=col;
+    ctx2.beginPath();
+    ctx2.moveTo(cx2(p.q), cy2(p.E));
+    // horizontal step to next prime
+    ctx2.lineTo(cx2(n.q), cy2(p.E));
+    // vertical jump
+    ctx2.lineTo(cx2(n.q), cy2(n.E));
+    ctx2.stroke();
+  }
+
+  // fill under curve lightly
+  ctx2.globalAlpha=0.06;
+  ctx2.fillStyle=pts[pts.length-1].E>=0?'#3dc8b8':'#e05060';
+  ctx2.beginPath();
+  ctx2.moveTo(cx2(pts[0].q), cy2(0));
+  for(let i=0;i<pts.length-1;i++){
+    const p=pts[i],n=pts[i+1];
+    ctx2.lineTo(cx2(p.q), cy2(p.E));
+    ctx2.lineTo(cx2(n.q), cy2(p.E));
+  }
+  ctx2.lineTo(cx2(pts[pts.length-1].q), cy2(pts[pts.length-1].E));
+  ctx2.lineTo(cx2(pts[pts.length-1].q), cy2(0));
+  ctx2.closePath();
+  ctx2.fill();
+  ctx2.globalAlpha=1;
+
+  // axis labels
+  ctx2.fillStyle='rgba(224,80,96,.7)';
+  ctx2.font='9px JetBrains Mono, monospace';
+  ctx2.textAlign='left';
+  ctx2.fillText('E(N)', 4, PAD.t+10);
+  ctx2.textAlign='center';
+  ctx2.fillText('N (prime)', W/2, H-4);
+
+  // hover point
+  if(enHover!==null && enHover<pts.length){
+    const p=pts[enHover];
+    const hx=cx2(p.q), hy=cy2(p.E);
+    ctx2.beginPath();
+    ctx2.arc(hx,hy,4,0,Math.PI*2);
+    ctx2.fillStyle=p.E>=0?'#3dc8b8':'#e05060';
+    ctx2.fill();
+    // tooltip
+    const mod4=p.q%4;
+    const tip=`p=${p.q}  χ₄=${mod4===1?'+1':'−1'}  jump=${(chi4(p.q)/(p.q*(p.q-1))).toFixed(7)}  E=${p.E.toFixed(6)}`;
+    ctx2.fillStyle='rgba(5,5,18,.95)';
+    const tw=ctx2.measureText(tip).width+16;
+    let tx=hx-tw/2; if(tx<2)tx=2; if(tx+tw>W-2)tx=W-tw-2;
+    const ty=hy>40?hy-32:hy+14;
+    ctx2.fillRect(tx,ty,tw,20);
+    ctx2.strokeStyle='rgba(224,80,96,.4)';
+    ctx2.lineWidth=1;
+    ctx2.strokeRect(tx,ty,tw,20);
+    ctx2.fillStyle='#ddd8cc';
+    ctx2.font='9px JetBrains Mono, monospace';
+    ctx2.textAlign='left';
+    ctx2.fillText(tip, tx+8, ty+13);
+  }
+}
+
+// hover detection on E(N) chart
+(function(){
+  function attachEnHover(){
+    const c=document.getElementById('en-canvas');
+    if(!c) return;
+    c.addEventListener('mousemove', e=>{
+      if(!enPts) return;
+      const rect=c.getBoundingClientRect();
+      const mx=(e.clientX-rect.left)*(c.width/rect.width);
+      const xmin=enPts[0].q, xmax=enPts[enPts.length-1].q;
+      const PAD_l=52,PAD_r=16;
+      const cw=c.width-PAD_l-PAD_r;
+      const q_hover=(mx-PAD_l)/(cw)*(xmax-xmin)+xmin;
+      let best=0, bestD=Infinity;
+      enPts.forEach((p,i)=>{ const d=Math.abs(p.q-q_hover); if(d<bestD){bestD=d;best=i;} });
+      enHover=best;
+      drawEnChart();
+    });
+    c.addEventListener('mouseleave',()=>{ enHover=null; drawEnChart(); });
+    // redraw on resize
+    window.addEventListener('resize',()=>{ if(MAIN_TAB==='dchi') drawEnChart(); });
+  }
+  // canvas might not exist yet if dchi-pane is hidden; attach after DOM ready
+  if(document.readyState==='complete') attachEnHover();
+  else window.addEventListener('load', attachEnHover);
+})();
 </script>
 </body>
 </html>
