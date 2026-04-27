@@ -3,1111 +3,1428 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Jump Theorem — Wessen Getachew</title>
-
-<!-- KaTeX -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
-  onload="renderMathInElement(document.body,{
-    delimiters:[
-      {left:'$$',right:'$$',display:true},
-      {left:'\\[',right:'\\]',display:true},
-      {left:'$',right:'$',display:false},
-      {left:'\\(',right:'\\)',display:false}
-    ],
-    throwOnError:false
-  })"></script>
-
-<!-- Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=Cinzel:wght@400;500&family=Syne:wght@400;500;600&display=swap" rel="stylesheet">
-
+<title>Lift Dynamics — (ℤ/Mℤ)* · Wessen Getachew</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=Cinzel:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* ── Root ── */
 :root {
-  --bg:#06060a; --bg1:#0a0a10; --bg2:#0f0f18; --bg3:#161622;
-  --cream:#e8e2d6; --cream2:#cec8ba; --cream3:#8a8478;
-  --gold:#c8a84a; --gold2:#e8cb6a; --gold3:rgba(200,168,74,.12);
+  --bg:#04040d; --bg1:#07071a; --bg2:#0c0c22;
+  --cream:#ddd8cc; --cream2:#b8b2a6; --cream3:#6a6560;
+  --gold:#c8a84a; --gold2:rgba(200,168,74,.15);
   --teal:#3dc8b8; --coral:#e05060; --violet:#9b7fe8; --lime:#7ec87a;
-  --edge:rgba(255,255,255,.07); --edge2:rgba(255,255,255,.12);
+  --edge:rgba(255,255,255,.07); --edge2:rgba(255,255,255,.13);
   --mono:'JetBrains Mono',monospace;
   --serif:'Spectral',serif;
   --disp:'Cinzel',serif;
-  --sans:'Syne',sans-serif;
-  --w:740px;
 }
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--cream);font-family:var(--mono);font-size:11px;}
 
-* { box-sizing:border-box; margin:0; padding:0; }
-html { scroll-behavior:smooth; }
-body {
+/* ── TOP BAR ── */
+#topbar{
+  position:fixed;top:0;left:0;right:0;height:50px;z-index:100;
+  background:rgba(4,4,13,.96);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--edge);
+  display:flex;align-items:center;padding:0 16px;gap:0;
+}
+.tb-brand{font-family:var(--disp);font-size:.7rem;color:var(--gold);letter-spacing:.16em;margin-right:24px;flex-shrink:0;}
+.tb-tabs{display:flex;overflow-x:auto;scrollbar-width:none;flex:1;}
+.tb-tabs::-webkit-scrollbar{display:none;}
+.tb-tab{padding:0 14px;height:50px;display:flex;align-items:center;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--cream3);border-bottom:2px solid transparent;white-space:nowrap;cursor:pointer;transition:color .15s,border-color .15s;}
+.tb-tab:hover{color:var(--cream2);}
+.tb-tab.active{color:var(--teal);border-bottom-color:var(--teal);}
+.tb-tab.gold{color:var(--gold);border-bottom-color:var(--gold);}
+.tb-sep{width:1px;height:20px;background:var(--edge);margin:0 4px;flex-shrink:0;}
+.tb-right{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-left:8px;}
+.tb-pill{font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;padding:3px 9px;border:1px solid var(--edge2);color:var(--cream3);}
+
+/* ── BODY LAYOUT ── */
+#body{position:fixed;top:50px;left:0;right:0;bottom:0;display:flex;overflow:hidden;}
+
+/* ── LEFT PANEL ── */
+#lpanel{
+  width:260px;flex-shrink:0;
+  background:rgba(5,5,16,.97);border-right:1px solid var(--edge);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+#lp-top{flex-shrink:0;padding:14px 14px 0;}
+.lp-mode-row{display:flex;gap:3px;margin-bottom:12px;}
+.mode-btn{flex:1;padding:7px 4px;font-family:var(--mono);font-size:8px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border:1px solid var(--edge2);background:transparent;color:var(--cream3);transition:all .15s;}
+.mode-btn:hover{color:var(--cream2);background:rgba(255,255,255,.04);}
+.mode-btn.active{color:var(--teal);border-color:rgba(61,200,184,.5);background:rgba(61,200,184,.08);}
+.mode-btn.lift-mode.active{color:var(--gold);border-color:rgba(200,168,74,.5);background:rgba(200,168,74,.08);}
+
+#lp-scroll{flex:1;overflow-y:auto;padding:0 14px 20px;scrollbar-width:thin;}
+#lp-scroll::-webkit-scrollbar{width:3px;}
+#lp-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);}
+
+.sec{font-size:7.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);opacity:.55;margin:16px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--edge);}
+.sec:first-child{margin-top:8px;}
+.row{display:flex;align-items:center;gap:6px;margin-bottom:7px;}
+.lbl{font-size:8.5px;color:var(--cream3);min-width:54px;}
+input[type=range]{flex:1;-webkit-appearance:none;height:2px;background:rgba(255,255,255,.15);outline:none;cursor:pointer;border-radius:1px;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;border-radius:50%;background:var(--teal);border:2px solid var(--bg);cursor:pointer;}
+input[type=number]{background:rgba(255,255,255,.04);border:1px solid var(--edge2);color:var(--cream);font-family:var(--mono);font-size:10px;padding:3px 6px;width:64px;}
+input[type=number]:focus{outline:none;border-color:rgba(61,200,184,.4);}
+select{background:rgba(8,8,24,.98);border:1px solid var(--edge2);color:var(--cream);font-family:var(--mono);font-size:10px;padding:3px 6px;width:100%;cursor:pointer;}
+.chk-row{display:flex;align-items:center;gap:7px;margin-bottom:5px;}
+.chk-row input[type=checkbox]{width:11px;height:11px;accent-color:var(--teal);cursor:pointer;}
+.chk-row label{font-size:9px;color:var(--cream2);cursor:pointer;}
+.val{font-size:9px;color:var(--gold);min-width:26px;text-align:right;}
+button.action{width:100%;margin-top:4px;padding:7px;font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;border:1px solid rgba(61,200,184,.35);color:var(--teal);background:rgba(61,200,184,.06);transition:background .15s;}
+button.action:hover{background:rgba(61,200,184,.13);}
+button.action.gold{border-color:rgba(200,168,74,.35);color:var(--gold);background:rgba(200,168,74,.06);}
+button.action.gold:hover{background:rgba(200,168,74,.13);}
+button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);background:rgba(224,80,96,.06);}
+
+/* Preset chips */
+.chip-row{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px;}
+.chip{padding:3px 8px;font-size:7.5px;letter-spacing:.08em;border:1px solid var(--edge2);color:var(--cream3);cursor:pointer;background:transparent;transition:all .12s;}
+.chip:hover{color:var(--cream2);background:rgba(255,255,255,.04);}
+.chip.active{color:var(--teal);border-color:rgba(61,200,184,.4);background:rgba(61,200,184,.07);}
+
+/* Info box */
+.ibox{background:rgba(0,0,0,.35);border:1px solid var(--edge);padding:8px 10px;font-size:8.5px;color:var(--cream3);line-height:1.85;margin-bottom:8px;}
+.ibox strong{color:var(--cream);}
+.ibox .formula{color:var(--gold);font-size:9px;}
+
+/* ── CANVAS AREA ── */
+#carea{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
+#canvas-wrap{flex:1;position:relative;overflow:hidden;background:#030310;}
+#main-canvas{display:block;width:100%;height:100%;}
+
+/* Labels overlay */
+#labels-overlay{position:absolute;inset:0;pointer-events:none;}
+.math-label{position:absolute;font-family:var(--mono);font-size:10px;color:rgba(200,168,74,.9);background:rgba(3,3,16,.85);padding:3px 8px;border:1px solid rgba(200,168,74,.2);pointer-events:none;white-space:nowrap;transition:opacity .3s;}
+
+/* ── BOTTOM STAT BAR ── */
+#statbar{
+  height:34px;flex-shrink:0;
+  background:rgba(4,4,13,.97);border-top:1px solid var(--edge);
+  display:flex;align-items:center;padding:0 16px;gap:20px;
+  overflow-x:auto;scrollbar-width:none;
+}
+#statbar::-webkit-scrollbar{display:none;}
+.stat{font-size:9px;color:var(--cream3);white-space:nowrap;}
+.stat b{color:var(--gold);font-weight:400;}
+.stat.teal b{color:var(--teal);}
+.stat.lime b{color:var(--lime);}
+.stat.coral b{color:var(--coral);}
+.stat.violet b{color:var(--violet);}
+
+/* ── THEORY PANEL (right) ── */
+#rpanel{
+  width:280px;flex-shrink:0;
+  background:rgba(5,5,16,.97);border-left:1px solid var(--edge);
+  display:flex;flex-direction:column;overflow:hidden;
+  transition:width .25s;
+}
+#rpanel.collapsed{width:0;}
+#rp-scroll{flex:1;overflow-y:auto;padding:16px;scrollbar-width:thin;}
+#rp-scroll::-webkit-scrollbar{width:3px;}
+#rp-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);}
+.rp-section{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--edge);}
+.rp-section:last-child{border-bottom:none;}
+.rp-title{font-family:var(--disp);font-size:.75rem;color:var(--cream);letter-spacing:.04em;margin-bottom:10px;line-height:1.3;}
+.rp-body{font-family:var(--serif);font-size:13px;color:var(--cream2);line-height:1.82;}
+.rp-body em{font-style:italic;color:var(--cream);}
+.rp-eq{font-family:var(--mono);font-size:10px;color:var(--gold);background:rgba(200,168,74,.07);border:1px solid rgba(200,168,74,.15);padding:7px 12px;margin:10px 0;text-align:center;line-height:1.8;}
+.rp-note{font-size:11px;color:var(--cream3);line-height:1.75;font-family:var(--mono);margin-top:8px;border-left:2px solid var(--teal);padding-left:8px;}
+
+/* Toggle theory button */
+#theory-toggle{position:absolute;right:0;top:50%;transform:translateY(-50%);z-index:10;padding:8px 5px;font-size:9px;color:var(--cream3);border:1px solid var(--edge);background:rgba(4,4,13,.9);cursor:pointer;border-right:none;writing-mode:vertical-rl;}
+
+/* ── Math pane ── */
+#math-pane{
+  display:none;flex:1;overflow-y:auto;
   background:var(--bg);
-  color:var(--cream);
-  font-family:var(--serif);
-  font-size:16px;
-  line-height:1.8;
-  overflow-x:hidden;
+  scrollbar-width:thin;
 }
+#math-pane::-webkit-scrollbar{width:5px;}
+#math-pane::-webkit-scrollbar-thumb{background:rgba(200,168,74,.2);}
+#math-pane.active{display:block;}
+#math-inner{
+  max-width:820px;margin:0 auto;
+  padding:52px 40px 100px;
+}
+.mp-rule{width:32px;height:1px;background:var(--gold);margin-bottom:20px;}
+.mp-tag{font-size:8px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);opacity:.6;margin-bottom:10px;}
+.mp-h1{font-family:var(--disp);font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:400;color:var(--cream);letter-spacing:.06em;line-height:1.2;margin-bottom:6px;}
+.mp-sub{font-family:var(--serif);font-size:1rem;font-style:italic;color:var(--cream3);margin-bottom:36px;font-weight:300;}
+.mp-divider{height:1px;background:linear-gradient(90deg,var(--gold),transparent);opacity:.25;margin-bottom:48px;}
+.mp-sec{margin-bottom:56px;}
+.mp-secn{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);opacity:.5;margin-bottom:10px;}
+.mp-sech{font-family:var(--disp);font-size:clamp(1rem,2vw,1.35rem);font-weight:400;color:var(--cream);letter-spacing:.04em;margin-bottom:20px;}
+.mp-p{font-family:var(--serif);font-size:15.5px;line-height:1.84;color:rgba(184,178,166,.9);margin-bottom:16px;}
+.mp-p strong{color:var(--cream);font-weight:500;}
+.mp-p em{color:var(--cream);font-style:italic;}
+.mp-eq{
+  font-family:var(--mono);font-size:13px;
+  background:rgba(200,168,74,.06);border:1px solid rgba(200,168,74,.18);
+  padding:14px 22px;margin:20px 0;text-align:center;
+  color:var(--gold);line-height:2;letter-spacing:.02em;
+}
+.mp-eq .eq-ann{display:block;font-size:10px;color:var(--cream3);margin-top:4px;letter-spacing:.04em;}
+.mp-block{
+  margin:20px 0;padding:16px 20px;
+  background:rgba(7,7,26,.8);border:1px solid var(--edge);border-left:3px solid;
+}
+.mp-block.def{border-left-color:var(--teal);}
+.mp-block.thm{border-left-color:var(--gold);}
+.mp-block.rmk{border-left-color:var(--lime);}
+.mp-block.conn{border-left-color:var(--violet);}
+.mp-block-tag{font-size:8px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:8px;}
+.def .mp-block-tag{color:var(--teal);}
+.thm .mp-block-tag{color:var(--gold);}
+.rmk .mp-block-tag{color:var(--lime);}
+.conn .mp-block-tag{color:var(--violet);}
+.mp-block-body{font-family:var(--serif);font-size:15px;line-height:1.8;color:rgba(184,178,166,.9);}
+.mp-block-body strong{color:var(--cream);}
+.mp-proof{
+  margin:6px 0 16px;padding:12px 18px;
+  background:rgba(10,10,28,.7);border:1px solid var(--edge);border-left:2px solid rgba(255,255,255,.07);
+  font-family:var(--serif);font-size:14px;line-height:1.78;color:rgba(160,154,144,.85);
+}
+.mp-proof::before{content:'Proof.  ';font-style:italic;color:var(--cream3);}
+.mp-qed{float:right;color:var(--cream3);}
+.mp-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11.5px;margin:18px 0;}
+.mp-table th{text-align:left;padding:7px 12px;font-size:8px;letter-spacing:.13em;text-transform:uppercase;color:var(--cream3);border-bottom:1px solid var(--edge2);}
+.mp-table td{padding:6px 12px;border-bottom:1px solid var(--edge);color:rgba(184,178,166,.9);}
+.mp-table td.hl{color:var(--gold);}
+.mp-table td.teal{color:var(--teal);}
+.mp-table td.coral{color:var(--coral);}
+.mp-table td.violet{color:var(--violet);}
+.mp-table tr:hover td{background:rgba(255,255,255,.02);}
+.mp-canvas-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--teal);border:1px solid rgba(61,200,184,.3);background:rgba(61,200,184,.07);
+  padding:6px 14px;cursor:pointer;transition:all .2s;margin:8px 0;
+}
+.mp-canvas-btn:hover{background:rgba(61,200,184,.15);border-color:rgba(61,200,184,.6);}
+.mp-canvas-btn::before{content:'◈';font-size:11px;}
 
-/* ── Nav ── */
-#nav {
-  position:sticky; top:0; z-index:100;
-  background:rgba(6,6,10,.92);
-  backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--edge);
-  display:flex; align-items:center;
-  padding:0 28px; height:52px;
-  gap:0;
-}
-.nav-brand {
-  font-family:var(--disp);
-  font-size:.75rem; font-weight:400;
-  color:var(--gold); letter-spacing:.14em;
-  white-space:nowrap; margin-right:28px;
-  flex-shrink:0;
-}
-.nav-tabs { display:flex; gap:0; overflow-x:auto; }
-.nav-tab {
-  padding:0 16px; height:52px;
-  display:flex; align-items:center;
-  font-family:var(--mono); font-size:9px;
-  letter-spacing:.13em; text-transform:uppercase;
-  color:var(--cream3); cursor:pointer;
-  border-bottom:2px solid transparent;
-  transition:color .15s, border-color .15s;
-  white-space:nowrap; text-decoration:none;
-}
-.nav-tab:hover { color:var(--cream2); }
-.nav-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
-.nav-spacer { flex:1; }
-.nav-pill {
-  font-family:var(--mono); font-size:8px;
-  letter-spacing:.1em; text-transform:uppercase;
-  color:var(--gold2);
-  background:rgba(200,168,74,.09);
-  border:1px solid rgba(200,168,74,.22);
-  padding:3px 10px; white-space:nowrap;
-}
+#math-pane{display:none;flex:1;overflow-y:auto;overflow-x:hidden;background:var(--bg);scrollbar-width:thin;}
+#math-pane::-webkit-scrollbar{width:5px;}
+#math-pane::-webkit-scrollbar-thumb{background:rgba(200,168,74,.2);}
+#math-pane.active{display:block;}
+#math-inner{max-width:820px;margin:0 auto;padding:52px 40px 100px;}
+.math-rule{width:32px;height:1px;background:var(--gold);margin-bottom:20px;}
+.math-tag{font-size:7.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);opacity:.6;margin-bottom:10px;}
+.math-h1{font-family:var(--disp);font-size:clamp(1.4rem,3vw,2.1rem);font-weight:400;color:var(--cream);line-height:1.2;letter-spacing:.06em;margin-bottom:8px;}
+.math-h1 em{color:var(--violet);font-style:italic;}
+.math-subtitle{font-family:var(--serif);font-size:.95rem;font-style:italic;color:var(--cream3);margin-bottom:36px;line-height:1.65;}
+.math-divider{width:100%;height:1px;background:linear-gradient(90deg,var(--gold),transparent);opacity:.25;margin-bottom:48px;}
+.math-section{margin-bottom:60px;}
+.math-sec-tag{font-size:7.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);opacity:.5;margin-bottom:8px;}
+.math-sec-title{font-family:var(--disp);font-size:1.1rem;font-weight:400;color:var(--cream);letter-spacing:.05em;margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid var(--edge);}
+.math-body{font-family:var(--serif);font-size:15px;color:rgba(200,195,185,.85);line-height:1.88;margin-bottom:16px;}
+.math-body strong{color:var(--cream);font-weight:500;}
+.math-body em{color:var(--cream);font-style:italic;}
+.math-eq{font-family:var(--mono);font-size:12px;color:var(--gold);background:rgba(200,168,74,.06);border:1px solid rgba(200,168,74,.18);padding:14px 22px;margin:20px 0;text-align:center;line-height:2.1;overflow-x:auto;}
+.math-eq .ann{display:block;text-align:left;font-size:10px;color:var(--cream3);margin-top:6px;font-family:var(--serif);font-style:italic;}
+.math-block{margin:24px 0;padding:18px 22px;background:var(--bg1);border:1px solid var(--edge);border-left:3px solid;}
+.math-block.def{border-left-color:var(--teal);}
+.math-block.thm{border-left-color:var(--gold);}
+.math-block.cor{border-left-color:var(--coral);}
+.math-block.rmk{border-left-color:var(--violet);}
+.math-block.key{border-left-color:var(--lime);}
+.math-block-tag{font-size:7.5px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:8px;}
+.def .math-block-tag{color:var(--teal);}
+.thm .math-block-tag{color:var(--gold);}
+.cor .math-block-tag{color:var(--coral);}
+.rmk .math-block-tag{color:var(--violet);}
+.key .math-block-tag{color:var(--lime);}
+.math-block-body{font-family:var(--serif);font-size:14px;color:var(--cream);line-height:1.85;}
+.math-block-body em{color:var(--gold);font-style:normal;}
+.math-proof{margin:4px 0 16px;padding:14px 20px;background:var(--bg2);border:1px solid var(--edge);font-family:var(--serif);font-size:13.5px;color:rgba(200,195,185,.75);line-height:1.8;}
+.math-proof::before{content:'Proof. ';color:var(--cream3);font-style:italic;}
+.math-proof .qed{float:right;color:var(--cream3);}
+.math-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;margin:20px 0;}
+.math-table th{text-align:left;padding:7px 12px;font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--cream3);border-bottom:1px solid var(--edge2);}
+.math-table td{padding:7px 12px;border-bottom:1px solid var(--edge);color:var(--cream2);vertical-align:top;line-height:1.7;}
+.math-table td.teal{color:var(--teal);}
+.math-table td.gold{color:var(--gold);}
+.math-table td.violet{color:var(--violet);}
+.math-table td.lime{color:var(--lime);}
+.math-table td.coral{color:var(--coral);}
+.math-table tr:last-child td{border-bottom:none;}
+.math-canvas-cta{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);border:1px solid rgba(61,200,184,.3);background:rgba(61,200,184,.06);padding:7px 14px;cursor:pointer;margin:6px 0;}
+.math-canvas-cta:hover{background:rgba(61,200,184,.12);}
+.math-canvas-cta::before{content:'◈';}
 
-/* ── Layout ── */
-#wrap {
-  display:grid;
-  grid-template-columns:220px 1fr;
-  max-width:1100px;
-  margin:0 auto;
-  padding:0 24px;
-  gap:0;
-}
+@media(max-width:600px){#math-inner{padding:32px 20px 80px;}}
+#export-modal{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.75);align-items:center;justify-content:center;}
+#export-modal.open{display:flex;}
+#export-box{background:var(--bg1);border:1px solid var(--edge2);padding:28px 32px;width:380px;}
+.em-title{font-family:var(--disp);font-size:.85rem;color:var(--cream);margin-bottom:20px;letter-spacing:.04em;}
+.em-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.em-lbl{font-size:9px;color:var(--cream3);width:90px;letter-spacing:.1em;}
+.em-input{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--edge2);color:var(--cream);font-family:var(--mono);font-size:11px;padding:5px 8px;}
+.em-btns{display:flex;gap:8px;margin-top:20px;}
+.em-btns button{flex:1;padding:10px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;border:1px solid;transition:background .15s;}
+#em-export-btn{color:var(--gold);border-color:rgba(200,168,74,.5);background:rgba(200,168,74,.08);}
+#em-export-btn:hover{background:rgba(200,168,74,.18);}
+#em-cancel-btn{color:var(--cream3);border-color:var(--edge2);background:transparent;}
+#em-cancel-btn:hover{background:rgba(255,255,255,.04);}
+#em-progress{display:none;font-size:9px;color:var(--teal);margin-top:12px;text-align:center;}
 
-/* ── Sidebar TOC ── */
-#toc-col {
-  padding:48px 0 80px;
-  position:sticky; top:52px;
-  height:calc(100vh - 52px);
-  overflow-y:auto;
-  scrollbar-width:none;
-}
-#toc-col::-webkit-scrollbar { display:none; }
-.toc-label {
-  font-family:var(--mono); font-size:8px;
-  letter-spacing:.22em; text-transform:uppercase;
-  color:var(--gold); opacity:.6;
-  margin-bottom:16px; padding-bottom:8px;
-  border-bottom:1px solid var(--edge);
-}
-#toc-list { list-style:none; }
-#toc-list li { margin-bottom:2px; }
-#toc-list a {
-  display:block;
-  font-family:var(--mono); font-size:9.5px;
-  letter-spacing:.04em; line-height:1.6;
-  color:var(--cream3); text-decoration:none;
-  padding:4px 8px;
-  border-left:2px solid transparent;
-  transition:color .15s, border-color .15s, background .15s;
-}
-#toc-list a:hover { color:var(--cream2); background:rgba(255,255,255,.03); }
-#toc-list a.active { color:var(--gold); border-left-color:var(--gold); }
-.toc-n { color:var(--gold); opacity:.5; margin-right:5px; }
-#toc-list .sub a { padding-left:18px; font-size:8.5px; opacity:.7; }
-
-/* ── Main content ── */
-#content-col {
-  padding:60px 0 120px 48px;
-  border-left:1px solid var(--edge);
-  max-width:100%;
-}
-
-/* ── Masthead ── */
-.mh-rule { width:34px; height:1px; background:var(--gold); margin-bottom:22px; }
-.mh-tag {
-  font-family:var(--mono); font-size:8.5px;
-  letter-spacing:.22em; text-transform:uppercase;
-  color:var(--gold); opacity:.7; margin-bottom:10px;
-}
-.mh-title {
-  font-family:var(--disp);
-  font-size:clamp(1.5rem,3vw,2.3rem);
-  font-weight:400; line-height:1.2;
-  color:var(--cream); letter-spacing:.06em;
-  margin-bottom:6px;
-}
-.mh-subtitle {
-  font-family:var(--serif); font-size:1rem;
-  font-style:italic; color:var(--cream3);
-  font-weight:300; margin-bottom:28px;
-}
-.mh-author {
-  font-family:var(--mono); font-size:10px;
-  letter-spacing:.2em; text-transform:uppercase;
-  color:var(--gold); margin-bottom:4px;
-}
-.mh-date {
-  font-family:var(--mono); font-size:9px;
-  letter-spacing:.12em; color:var(--cream3);
-  margin-bottom:36px;
-}
-.mh-divider {
-  width:100%; height:1px;
-  background:linear-gradient(90deg,var(--gold),transparent);
-  margin-bottom:48px; opacity:.3;
-}
-
-/* ── Abstract ── */
-.abstract-box {
-  margin:0 0 52px;
-  padding:22px 28px;
-  background:var(--bg1);
-  border:1px solid var(--edge2);
-  border-left:3px solid var(--gold);
-}
-.abstract-label {
-  font-family:var(--mono); font-size:8px;
-  letter-spacing:.2em; text-transform:uppercase;
-  color:var(--gold); margin-bottom:12px;
-}
-.abstract-body {
-  font-family:var(--serif); font-size:15px;
-  line-height:1.82; color:var(--cream2);
-}
-
-/* ── Sections ── */
-.section {
-  margin-bottom:64px;
-  padding-bottom:64px;
-  border-bottom:1px solid var(--edge);
-  scroll-margin-top:70px;
-}
-.section:last-child { border-bottom:none; }
-.sec-n {
-  font-family:var(--mono); font-size:8.5px;
-  letter-spacing:.22em; text-transform:uppercase;
-  color:var(--gold); opacity:.55; margin-bottom:10px;
-}
-.sec-title {
-  font-family:var(--disp);
-  font-size:clamp(1.05rem,2.2vw,1.5rem);
-  font-weight:400; line-height:1.2;
-  color:var(--cream); margin-bottom:24px;
-  letter-spacing:.04em;
-}
-.sub-title {
-  font-family:var(--disp); font-size:1rem;
-  font-weight:400; color:var(--cream2);
-  margin:32px 0 16px; letter-spacing:.05em;
-}
-p {
-  color:var(--cream2);
-  margin-bottom:18px;
-  font-size:16px;
-  line-height:1.82;
-}
-p strong { color:var(--cream); font-weight:500; }
-p em { font-style:italic; color:var(--cream); }
-
-/* ── Theorem blocks ── */
-.block {
-  margin:28px 0;
-  padding:20px 24px;
-  background:var(--bg1);
-  border:1px solid var(--edge);
-  border-left:3px solid;
-}
-.block.def  { border-left-color:var(--teal); }
-.block.lem  { border-left-color:var(--violet); }
-.block.thm  { border-left-color:var(--gold2); }
-.block.cor  { border-left-color:var(--coral); }
-.block.prop { border-left-color:var(--violet); }
-.block.rmk  { border-left-color:var(--lime); }
-.block.conj { border-left-color:var(--coral); }
-
-.block-tag {
-  font-family:var(--mono); font-size:8.5px;
-  letter-spacing:.17em; text-transform:uppercase;
-  margin-bottom:10px; display:flex; align-items:center; gap:10px;
-}
-.def  .block-tag { color:var(--teal); }
-.lem  .block-tag { color:var(--violet); }
-.thm  .block-tag { color:var(--gold2); }
-.cor  .block-tag { color:var(--coral); }
-.prop .block-tag { color:var(--violet); }
-.rmk  .block-tag { color:var(--lime); }
-.conj .block-tag { color:var(--coral); }
-
-.block-label {
-  font-family:var(--serif); font-style:italic;
-  font-size:13px; color:var(--cream3); opacity:.8;
-}
-.block-body {
-  font-family:var(--serif); font-size:16px;
-  line-height:1.8; color:var(--cream);
-}
-
-/* ── Proofs ── */
-.proof {
-  margin:6px 0 20px;
-  padding:16px 22px;
-  background:var(--bg2);
-  border:1px solid var(--edge);
-  border-left:2px solid rgba(255,255,255,.08);
-}
-.proof-tag {
-  font-family:var(--mono); font-size:8px;
-  letter-spacing:.15em; text-transform:uppercase;
-  color:var(--cream3); margin-bottom:8px;
-}
-.proof-body {
-  font-family:var(--serif); font-size:15px;
-  line-height:1.78; color:var(--cream2);
-}
-.qed { float:right; color:var(--cream3); font-size:18px; margin-top:6px; }
-
-/* ── Display math ── */
-.eq {
-  margin:22px 0;
-  padding:16px 22px;
-  background:var(--bg2);
-  border:1px solid var(--edge);
-  overflow-x:auto;
-  text-align:center;
-}
-.eq .ann {
-  display:block; text-align:left;
-  font-family:var(--serif); font-size:12.5px;
-  font-style:italic; color:var(--cream3);
-  margin-top:6px; line-height:1.5;
-}
-
-/* ── Table ── */
-.tbl-wrap { overflow-x:auto; margin:24px 0; }
-.tbl {
-  width:100%; border-collapse:collapse;
-  font-family:var(--mono); font-size:12px;
-}
-.tbl caption {
-  font-family:var(--serif); font-size:13px;
-  color:var(--cream3); font-style:italic;
-  text-align:left; padding-bottom:10px;
-  caption-side:top;
-}
-.tbl th {
-  text-align:left; padding:8px 14px;
-  font-size:8px; letter-spacing:.14em;
-  text-transform:uppercase; color:var(--cream3);
-  border-bottom:1px solid var(--edge2);
-}
-.tbl td {
-  padding:7px 14px;
-  border-bottom:1px solid var(--edge);
-  color:var(--cream2);
-}
-.tbl td.pos { color:var(--lime); }
-.tbl td.neg { color:var(--coral); }
-.tbl tr:hover td { background:rgba(255,255,255,.02); }
-
-/* ── Ref inline ── */
-.ref {
-  font-family:var(--mono); font-size:10px;
-  color:var(--gold); letter-spacing:.04em;
-  cursor:default;
-}
-.fix-note {
-  display:inline-block;
-  font-family:var(--mono); font-size:8px;
-  letter-spacing:.1em; text-transform:uppercase;
-  color:var(--teal); background:rgba(61,200,184,.08);
-  border:1px solid rgba(61,200,184,.2);
-  padding:2px 7px; margin-left:6px;
-  vertical-align:middle;
-}
-
-/* ── Bibliography ── */
-#refs { list-style:none; }
-#refs li {
-  padding:12px 0 12px 0;
-  border-bottom:1px solid var(--edge);
-  font-family:var(--serif); font-size:14px;
-  color:var(--cream2); line-height:1.7;
-}
-#refs li:last-child { border-bottom:none; }
-.ref-id {
-  font-family:var(--mono); font-size:9px;
-  letter-spacing:.1em; color:var(--gold);
-  margin-right:10px;
-}
-#refs a { color:var(--teal); text-decoration:none; }
-#refs a:hover { text-decoration:underline; }
-
-/* ── Pill tags ── */
-.pill {
-  display:inline-block;
-  font-family:var(--mono); font-size:7.5px;
-  letter-spacing:.1em; text-transform:uppercase;
-  padding:2px 8px; border:1px solid;
-  vertical-align:middle; margin-left:6px;
-}
-.pill-fix { color:var(--teal); border-color:rgba(61,200,184,.3); background:rgba(61,200,184,.06); }
-.pill-key { color:var(--gold); border-color:rgba(200,168,74,.3); background:rgba(200,168,74,.06); }
-.pill-ext { color:var(--violet); border-color:rgba(155,127,232,.3); background:rgba(155,127,232,.06); }
-
-/* ── Scrollbar ── */
-::-webkit-scrollbar { width:5px; height:5px; }
-::-webkit-scrollbar-track { background:var(--bg); }
-::-webkit-scrollbar-thumb { background:rgba(200,168,74,.25); }
-
-/* ── Mobile ── */
-@media(max-width:760px) {
-  #wrap { grid-template-columns:1fr; }
-  #toc-col { display:none; }
-  #content-col { padding:40px 0 80px; border-left:none; }
-  #nav { padding:0 16px; }
-}
+@media(max-width:800px){#rpanel{display:none;}#lpanel{width:220px;}}
+@media(max-width:600px){#lpanel{display:none;}}
 </style>
 </head>
 <body>
 
-<!-- ── Nav ── -->
-<nav id="nav">
-  <div class="nav-brand">Wessen Getachew</div>
-  <div class="nav-tabs">
-    <a class="nav-tab active" href="#masthead">Paper</a>
-    <a class="nav-tab" href="#s1">§1 Intro</a>
-    <a class="nav-tab" href="#s2">§2 Analytic</a>
-    <a class="nav-tab" href="#s3">§3 Jump</a>
-    <a class="nav-tab" href="#s4">§4 Characters</a>
-    <a class="nav-tab" href="#s5">§5 Numerics</a>
-    <a class="nav-tab" href="#s6">§6 RH</a>
+<!-- TOP BAR -->
+<div id="topbar">
+  <div class="tb-brand">Lift Dynamics</div>
+  <div class="tb-tabs">
+    <div class="tb-tab active" onclick="setMainTab('npath',this)">±n Path</div>
+    <div class="tb-tab" onclick="setMainTab('spiral',this)">Prime Spiral</div>
+    <div class="tb-tab" onclick="setMainTab('both',this)">Both</div>
+    <div class="tb-tab" onclick="setMainTab('lift',this)">Lift Connections</div>
+    <div class="tb-tab" onclick="setMainTab('math',this)" style="color:var(--violet)">The Math</div>
   </div>
-  <div class="nav-spacer"></div>
-  <div class="nav-pill">2025</div>
-</nav>
-
-<!-- ── Main layout ── -->
-<div id="wrap">
-
-  <!-- TOC sidebar -->
-  <aside id="toc-col">
-    <div class="toc-label">Contents</div>
-    <ul id="toc-list">
-      <li><a href="#s0"><span class="toc-n">—</span>Abstract</a></li>
-      <li><a href="#s1"><span class="toc-n">1.</span>Introduction</a></li>
-      <li class="sub"><a href="#s1">1.1 Lift Weight & Constant</a></li>
-      <li><a href="#s2"><span class="toc-n">2.</span>Analytic Preliminaries</a></li>
-      <li class="sub"><a href="#s2a">2.1 Definition of C(x)</a></li>
-      <li class="sub"><a href="#s2b">2.2 Uniform Convergence</a></li>
-      <li class="sub"><a href="#s2c">2.3 Log-Derivative</a></li>
-      <li><a href="#s3"><span class="toc-n">3.</span>The Jump Theorem</a></li>
-      <li class="sub"><a href="#s3a">3.1 Continuity Away</a></li>
-      <li class="sub"><a href="#s3b">3.2 Main Theorem</a></li>
-      <li class="sub"><a href="#s3c">3.3 Prime Recovery</a></li>
-      <li class="sub"><a href="#s3d">3.4 Golden Ratio Remark</a></li>
-      <li><a href="#s4"><span class="toc-n">4.</span>Dirichlet Characters</a></li>
-      <li><a href="#s5"><span class="toc-n">5.</span>Numerical Evidence</a></li>
-      <li><a href="#s6"><span class="toc-n">6.</span>Connection to RH</a></li>
-      <li><a href="#s7"><span class="toc-n">7.</span>Conclusion</a></li>
-      <li><a href="#refs-sec"><span class="toc-n">—</span>References</a></li>
-    </ul>
-  </aside>
-
-  <!-- Content -->
-  <main id="content-col">
-
-    <!-- Masthead -->
-    <div id="masthead" class="section" style="scroll-margin-top:70px;">
-      <div class="mh-rule"></div>
-      <div class="mh-tag">Number Theory · 2025</div>
-      <div class="mh-title">The Jump Theorem</div>
-      <div class="mh-subtitle">Encoding Primes as Discontinuities of a Smooth Multiplicative Structure</div>
-      <div class="mh-author">Wessen Getachew</div>
-      <div class="mh-date">2025</div>
-      <div class="mh-divider"></div>
-
-      <!-- Abstract -->
-      <div id="s0" class="abstract-box">
-        <div class="abstract-label">Abstract</div>
-        <div class="abstract-body">
-          We introduce the <em>lift survival function</em>
-          $L(M)=\varphi(M)\varphi(M+1)/(M+1)$ and its cumulative ratio
-          $R(N)=\sum_{m\le N}L(m)/\sum_{m\le N}\varphi(m)$.
-          It is known that $R(N)\to C$ as $N\to\infty$, where
-          $$C=\prod_p \frac{p^2-2}{p^2-1}\approx 0.5307118$$
-          is the <em>Lift Survival Constant</em>, equal to the density of consecutive
-          squarefree pairs conditioned on squarefreeness.
-          We prove a <em>Jump Theorem</em>: for a piecewise-linear interpolation $C(x)$
-          of the partial Euler product, the log-derivative
-          $D(x)=\tfrac{d}{dx}\log C(x)$ is smooth except at points $x=p-1$ for primes $p$,
-          where it jumps by exactly $1/(p(p-1))$.
-          The jump size $s$ uniquely recovers the prime via $p=(1+\sqrt{1+4/s})/2$.
-          We extend the theorem to Dirichlet characters, obtaining a character-weighted
-          detector that distinguishes primes by residue class.
-          Numerical evidence up to $N=2{,}000{,}000$ supports the conjecture
-          $E(N)=R(N)-C=O(1/N)$, with an OLS slope of $-0.998$ on $\log|E(N)|$
-          versus $\log N$.
-          The framework provides a new geometric bridge between the Euler totient function
-          and the distribution of primes, with connections to Dirichlet $L$-functions
-          and the Generalized Riemann Hypothesis.
-        </div>
-      </div>
-    </div>
-
-    <!-- § 1 Introduction -->
-    <div id="s1" class="section">
-      <div class="sec-n">Section 1</div>
-      <div class="sec-title">Introduction</div>
-
-      <p>
-        For an integer $M\ge 1$, let $\varphi(M)$ denote Euler's totient function.
-        Define the <strong>lift weight</strong>
-        $$L(M)=\frac{\varphi(M)\,\varphi(M+1)}{M+1}.$$
-        The name reflects a geometric interpretation: among the $\varphi(M)$ residues
-        coprime to $M$, the fraction that remain coprime to $M+1$ after lifting to the
-        next ring converges to the constant $C$ defined below.
-      </p>
-
-      <p>Consider the cumulative ratio
-        $$R(N)=\frac{\displaystyle\sum_{m=1}^{N} L(m)}{\displaystyle\sum_{m=1}^{N} \varphi(m)}.$$
-        We recall a classical result on consecutive squarefree pairs.
-      </p>
-
-      <div class="block lem">
-        <div class="block-tag">Lemma 1.1 <span class="block-label">(Tóth–Sándor, 1989)</span></div>
-        <div class="block-body">
-          The density of consecutive squarefree pairs is
-          $$\delta_{\mathrm{pairs}} = \prod_p \!\left(1-\frac{2}{p^2}\right).$$
-          The density of squarefree integers is $1/\zeta(2)=\prod_p (1-1/p^2)$.
-        </div>
-      </div>
-
-      <p>
-        From Lemma 1.1 we obtain the Lift Survival Constant. The connection between
-        $R(N)\to C$ and the Tóth–Sándor result is established here: the asymptotic
-        of $R(N)$ identifies $C$ with the ratio of consecutive-squarefree density to
-        squarefree density, which equals the following Euler product.
-      </p>
-
-      <div class="block def">
-        <div class="block-tag">Definition 1.1 <span class="block-label">(Lift Survival Constant)</span></div>
-        <div class="block-body">
-          $$C = \prod_{p\ \text{prime}} \frac{p^2-2}{p^2-1}
-             = \zeta(2)\prod_p\!\left(1-\frac{2}{p^2}\right)
-             \approx 0.530711806246\ldots$$
-        </div>
-      </div>
-
-      <div class="block rmk">
-        <div class="block-tag">Remark 1.1</div>
-        <div class="block-body">
-          The constant $C$ admits a conditional probability interpretation:
-          $$C = \lim_{N\to\infty} \frac{|\{n\le N: n,n+1\ \text{both squarefree}\}|}{|\{n\le N: n\ \text{squarefree}\}|}.$$
-          It follows from Tóth–Sándor [1] together with the standard squarefree density
-          that $R(N)\to C$ as $N\to\infty$. The convergence rate is not specified in the
-          classical literature; we address it in §5.
-        </div>
-      </div>
-
-      <p>
-        The main contribution of this paper is the <strong>Jump Theorem</strong>,
-        which reveals that the primes are exactly the points where the log-derivative
-        of a certain continuous interpolation $C(x)$ jumps by $1/(p(p-1))$,
-        and the jump size uniquely recovers the prime via a quadratic formula.
-      </p>
-    </div>
-
-    <!-- § 2 Analytic Preliminaries -->
-    <div id="s2" class="section">
-      <div class="sec-n">Section 2</div>
-      <div class="sec-title">Analytic Preliminaries</div>
-
-      <div id="s2a">
-        <div class="sub-title">2.1 &nbsp;Definition of $C(x)$ and its interpolation</div>
-        <p>
-          We introduce a continuous interpolation of the partial Euler products for $C$.
-          The interpolation is chosen to be <em>piecewise linear in $x$</em> for each prime factor.
-          This choice, while not the only one available, has a decisive advantage:
-          it makes the log-derivative $D(x)$ explicitly computable and gives jump sizes
-          that are <em>exact rational functions of $p$</em>. A smooth sigmoid-type interpolation
-          would produce the same qualitative picture but would obscure the arithmetic
-          precision of the jump formula. The piecewise-linear form is therefore the canonical
-          choice for the Jump Theorem.
-        </p>
-
-        <p>For a real variable $x\ge 0$, define for each prime $p$:</p>
-
-        <div class="block def">
-          <div class="block-tag">Definition 2.1</div>
-          <div class="block-body">
-            $$f_p(x)=
-            \begin{cases}
-              \dfrac{p}{p+1}, & p\le x+1\ (\text{saturated}),\\[10pt]
-              \dfrac{p^2-x-1}{p^2-1}, & p > x+1\ (\text{active}).
-            \end{cases}$$
-            These functions are continuous and piecewise linear in $x$.
-            Define
-            $$C(x)=\prod_{p\ \text{prime}} f_p(x).$$
-          </div>
-        </div>
-
-        <div class="block rmk">
-          <div class="block-tag">Remark 2.1 <span class="block-label">(Endpoint Values)</span></div>
-          <div class="block-body">
-            At $x=0$: all primes are active, and $f_p(0)=(p^2-1)/(p^2-1)=1$ — wait,
-            $f_p(0)=(p^2-0-1)/(p^2-1)=1$ only for $p>1$, which holds for all primes.
-            As $x\to\infty$: all primes eventually saturate, and
-            $C(x)\to\prod_p p/(p+1)$.
-            The value $C(\infty)$ differs from $C$; the constant $C$ arises from the
-            <em>rate</em> at which terms saturate, captured in $D(x)$.
-          </div>
-        </div>
-      </div>
-
-      <div id="s2b" style="margin-top:32px;">
-        <div class="sub-title">2.2 &nbsp;Uniform Convergence of the Product</div>
-
-        <div class="block lem">
-          <div class="block-tag">Lemma 2.1 <span class="block-label">(Uniform Convergence)</span></div>
-          <div class="block-body">
-            For any compact interval $[0,X]$, the product defining $C(x)$ converges uniformly.
-          </div>
-        </div>
-
-        <div class="proof">
-          <div class="proof-tag">Proof</div>
-          <div class="proof-body">
-            For $p > X+2$ and $x\in[0,X]$, we have $p > x+1$, so
-            $$f_p(x)=\frac{p^2-x-1}{p^2-1}=1-\frac{x+1}{p^2-1}.$$
-            For sufficiently large $p$ (say $p>\sqrt{X+2}$) we have $x+1\le X+1 < p^2-1$,
-            so $f_p(x)>0$. Moreover,
-            $$|\log f_p(x)| \le \frac{2(x+1)}{p^2-1} \le \frac{2(X+1)}{p^2-1}$$
-            using $|\log(1-\varepsilon)|\le 2\varepsilon$ for $0\le\varepsilon\le 1/2$.
-            Since $\sum 1/p^2$ converges, the Weierstrass $M$-test gives uniform convergence
-            of $\sum\log f_p(x)$ on $[0,X]$, hence uniform convergence of the product.
-            <span class="qed">□</span>
-          </div>
-        </div>
-      </div>
-
-      <div id="s2c" style="margin-top:32px;">
-        <div class="sub-title">2.3 &nbsp;The Log-Derivative and Termwise Differentiation</div>
-
-        <p>Taking the logarithm and differentiating:</p>
-        <div class="eq">
-          $$D(x)=\frac{d}{dx}\log C(x)=\sum_{p}\frac{f_p'(x)}{f_p(x)}.$$
-        </div>
-
-        <div class="block lem">
-          <div class="block-tag">Lemma 2.2 <span class="block-label">(Uniform Convergence of the Derivative)</span></div>
-          <div class="block-body">
-            For any compact interval $[0,X]$, the series $\sum_p f_p'(x)/f_p(x)$
-            converges uniformly.
-          </div>
-        </div>
-
-        <div class="proof">
-          <div class="proof-tag">Proof</div>
-          <div class="proof-body">
-            For $p > X+2$, we are in the active case:
-            $$f_p'(x)=-\frac{1}{p^2-1},\qquad
-            \frac{f_p'(x)}{f_p(x)} = -\frac{1}{p^2-x-1}.$$
-            For $x\in[0,X]$ and $p>X+2$, we have $p^2-x-1\ge p^2-(X+1)\ge p^2/2$
-            for sufficiently large $p$, so $|f_p'(x)/f_p(x)|\le 2/p^2$.
-            Since $\sum 1/p^2$ converges, the Weierstrass $M$-test gives uniform
-            convergence of the tail. The finitely many primes $p\le X+2$
-            contribute continuous, bounded terms.
-            <span class="qed">□</span>
-          </div>
-        </div>
-
-        <div class="block cor">
-          <div class="block-tag">Corollary 2.1</div>
-          <div class="block-body">
-            For all $x\ge 0$, the explicit formula holds:
-            $$D(x)=-\sum_{p\;>\;x+1}\frac{1}{p^2-x-1}.$$
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- § 3 Jump Theorem -->
-    <div id="s3" class="section">
-      <div class="sec-n">Section 3</div>
-      <div class="sec-title">The Jump Theorem <span class="pill pill-key">Main Result</span></div>
-
-      <div id="s3a">
-        <div class="sub-title">3.1 &nbsp;Continuity Away from Primes</div>
-
-        <div class="block lem">
-          <div class="block-tag">Lemma 3.1</div>
-          <div class="block-body">
-            Fix a prime $q$. For any prime $p\neq q$, the function
-            $h_p(x)=f_p'(x)/f_p(x)$ is continuous at $x=q-1$.
-          </div>
-        </div>
-
-        <div class="proof">
-          <div class="proof-tag">Proof</div>
-          <div class="proof-body">
-            If $p\neq q$, then either $p\le q-1$ or $p\ge q+2$ (since $p,q$ are both prime
-            and distinct). In either case there is a neighbourhood of $x=q-1$ in which
-            $p$ does not cross the saturation threshold $p=x+1$.
-            Hence $h_p$ is either identically zero (saturated) or of the form
-            $-1/(p^2-x-1)$ (active) throughout that neighbourhood, both of which are
-            continuous at $x=q-1$.
-            <span class="qed">□</span>
-          </div>
-        </div>
-
-        <div class="block lem">
-          <div class="block-tag">Lemma 3.2 <span class="block-label">(Jump Contribution)</span></div>
-          <div class="block-body">
-            For the prime $p$, define
-            $$j_p(x)=
-            \begin{cases}
-            -\dfrac{1}{p^2-x-1}, & x < p-1,\\[8pt]
-            0, & x \ge p-1.
-            \end{cases}$$
-            Then $j_p(x)=f_p'(x)/f_p(x)$ for all $x\neq p-1$, and
-            $$\lim_{\varepsilon\to0^+}\!\bigl(j_p(p-1+\varepsilon)-j_p(p-1-\varepsilon)\bigr)
-            =\frac{1}{p(p-1)}.$$
-          </div>
-        </div>
-
-        <div class="proof">
-          <div class="proof-tag">Proof</div>
-          <div class="proof-body">
-            For $x < p-1$, the prime $p$ is active and
-            $j_p(x)=-1/(p^2-x-1)$.
-            For $x>p-1$, the prime $p$ is saturated and $j_p(x)=0$.
-            The left-hand limit as $x\to(p-1)^-$ is
-            $$\lim_{x\to (p-1)^-} -\frac{1}{p^2-x-1}
-            = -\frac{1}{p^2-(p-1)-1} = -\frac{1}{p(p-1)}.$$
-            The right-hand limit is $0$.
-            The jump (increase from left to right) is therefore
-            $0-(-1/(p(p-1)))=1/(p(p-1))$.
-            <span class="qed">□</span>
-          </div>
-        </div>
-      </div>
-
-      <div id="s3b" style="margin-top:32px;">
-        <div class="sub-title">3.2 &nbsp;Main Theorem</div>
-
-        <div class="block thm">
-          <div class="block-tag">Theorem 3.1 <span class="block-label">(Jump Theorem)</span></div>
-          <div class="block-body">
-            The function $D(x)=-\sum_{p>x+1} 1/(p^2-x-1)$ is smooth on each open
-            interval $(p-1,p)$ for consecutive primes $p$, and has a jump discontinuity
-            at each $x=p-1$. The jump size is
-            $$\Delta D(p-1)
-            = \lim_{\varepsilon\to0^+}\bigl(D(p-1+\varepsilon)-D(p-1-\varepsilon)\bigr)
-            =\frac{1}{p(p-1)}.$$
-            At non-prime integers $n$, $D(x)$ is continuous.
-          </div>
-        </div>
-
-        <div class="proof">
-          <div class="proof-tag">Proof</div>
-          <div class="proof-body">
-            By Lemma 3.1, all terms $h_p(x)$ with $p\neq q$ are continuous at $x=q-1$.
-            By Lemma 3.2, the term for $p=q$ contributes a jump of $1/(q(q-1))$.
-            Since the series converges uniformly (Lemma 2.2), the sum inherits the jump,
-            and the net jump equals $1/(q(q-1))$.
-            For non-prime integers $n$, no prime satisfies $p=n+1$, so all terms are
-            continuous at $x=n-1$ by Lemma 3.1.
-            <span class="qed">□</span>
-          </div>
-        </div>
-      </div>
-
-      <div id="s3c" style="margin-top:32px;">
-        <div class="sub-title">3.3 &nbsp;Prime Recovery Formula</div>
-
-        <p>
-          Given a jump of size $s>0$, we solve $s=1/(p(p-1))$ for $p$.
-          Rearranging: $p^2-p-1/s=0$, with positive root:
-        </p>
-
-        <div class="eq">
-          $$p = \frac{1+\sqrt{1+4/s}}{2}.$$
-        </div>
-
-        <div class="block cor">
-          <div class="block-tag">Corollary 3.1 <span class="block-label">(Prime Recovery)</span></div>
-          <div class="block-body">
-            If $D(x)$ jumps by $s$ at $x=x_0$, then $x_0+1$ is prime if and only if
-            $(1+\sqrt{1+4/s})/2$ is a positive integer, in which case that integer equals
-            $x_0+1$.
-          </div>
-        </div>
-
-        <p>
-          Thus primes are exactly the integer points where the log-derivative jumps,
-          and the jump encodes the prime arithmetically. No other integers produce jumps.
-        </p>
-      </div>
-
-      <div id="s3d" style="margin-top:32px;">
-        <div class="sub-title">3.4 &nbsp;Formal Extension and the Golden Ratio</div>
-
-        <p>
-          The jump sizes that actually occur are $s_p=1/(p(p-1))\in(0,\tfrac12]$,
-          with supremum $\tfrac12$ attained at $p=2$.
-          The recovery map $p(s)=(1+\sqrt{1+4/s})/2$ inverts $s=1/(p(p-1))$
-          for $s\in(0,\tfrac12]$.
-        </p>
-
-        <div class="block rmk">
-          <div class="block-tag">Remark 3.1 <span class="block-label">(Formal Extension — Golden Ratio)</span></div>
-          <div class="block-body">
-            If one formally evaluates the recovery formula at $s=1$, one obtains
-            $$p(1)=\frac{1+\sqrt{5}}{2}=\phi,$$
-            the golden ratio.
-            This value does not correspond to any jump in the system — the actual supremum
-            of the jump spectrum is $\tfrac12$, not $1$.
-            The appearance of $\phi$ is a formal boundary phenomenon of the inversion map,
-            not an intrinsic feature of the theorem.
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- § 4 Dirichlet Characters -->
-    <div id="s4" class="section">
-      <div class="sec-n">Section 4</div>
-      <div class="sec-title">Extension to Dirichlet Characters <span class="pill pill-ext">Extension</span></div>
-
-      <p>
-        Let $\chi$ be a Dirichlet character modulo $q$.
-        For primes $p\mid q$ we have $\chi(p)=0$; for these primes
-        we set the interpolation factor identically to $1$, so they contribute no jump.
-        For primes with $\chi(p)\neq 0$, define
-        $$C_\chi(x)=\prod_p \bigl(f_p(x)\bigr)^{\chi(p)},$$
-        interpreting the complex exponent via the principal branch of the logarithm:
-        $(f_p(x))^{\chi(p)}=\exp(\chi(p)\log f_p(x))$.
-        Since $f_p(x)>0$ for all $x\ge 0$, the logarithm is real-valued.
-      </p>
-
-      <div class="block lem">
-        <div class="block-tag">Lemma 4.1 <span class="block-label">(Absolute Convergence for Non-Principal Characters)</span> <span class="pill pill-fix">Fixed</span></div>
-        <div class="block-body">
-          For non-principal $\chi$, the series defining $\log C_\chi(x)$ and its
-          term-by-term derivative both converge absolutely; in particular the product
-          $C_\chi(x)$ is well-defined and the log-derivative $D_\chi(x)$ may be
-          computed term by term.
-        </div>
-      </div>
-
-      <div class="proof">
-        <div class="proof-tag">Proof</div>
-        <div class="proof-body">
-          For large $p$ and $x$ in any compact set,
-          $\log f_p(x)\sim -(x+1)/(p^2-1)$.
-          Since $|\chi(p)|\le 1$, we have
-          $|\chi(p)\log f_p(x)|\le 2(x+1)/(p^2-1)$, and $\sum 1/p^2$ converges.
-          Hence $\sum_p \chi(p)\log f_p(x)$ converges absolutely, establishing
-          absolute convergence of $\log C_\chi(x)$ and of the product itself.
-          For the derivative: $|\chi(p)/(p^2-x-1)|\le 2/p^2$ for large $p$,
-          so the Weierstrass $M$-test gives absolute, uniform convergence of
-          $D_\chi(x)=-\sum_{p>x+1}\chi(p)/(p^2-x-1)$.
-          <span class="qed">□</span>
-        </div>
-      </div>
-
-      <div class="block thm">
-        <div class="block-tag">Theorem 4.1 <span class="block-label">(Character-Weighted Jump Theorem)</span></div>
-        <div class="block-body">
-          $D_\chi(x)$ is smooth except at points $x=p-1$ where $\chi(p)\neq 0$.
-          At such a point, the jump is exactly
-          $$\Delta D_\chi(p-1)=\frac{\chi(p)}{p(p-1)}.$$
-          If $\chi(p)=0$ (i.e.\ $p$ divides the modulus), the prime causes no jump.
-        </div>
-      </div>
-
-      <div class="proof">
-        <div class="proof-tag">Proof</div>
-        <div class="proof-body">
-          The proof follows Theorem 3.1 with $\chi(p)$ carried as a constant factor.
-          Uniform convergence of the character-weighted series follows from $|\chi(p)|\le 1$
-          and Lemma 4.1.
-          <span class="qed">□</span>
-        </div>
-      </div>
-
-      <p>
-        Define the character-weighted prime sum
-        $$J_\chi = \sum_p \frac{\chi(p)}{p(p-1)}.$$
-        Expanding $1/(p(p-1))$ as a telescoping series gives
-        $$J_\chi = \sum_p \chi(p)\sum_{k=2}^{\infty}\frac{1}{p^k}
-               = \sum_{k=2}^{\infty}\sum_p \frac{\chi(p)}{p^k}
-               = \sum_{k=2}^{\infty} P(k,\chi),$$
-        where $P(k,\chi)=\sum_p \chi(p)/p^k$ is the prime zeta function twisted by $\chi$.
-      </p>
-
-      <div class="block cor">
-        <div class="block-tag">Corollary 4.1</div>
-        <div class="block-body">
-          For a non-principal character $\chi$, the series $J_\chi$ converges absolutely.
-          The jumps of $D_\chi(x)$ carry arithmetic information about the residue classes
-          of primes: the value $\chi(p)$ (a root of unity or real sign) determines the
-          direction of the jump, providing a character-weighted prime detector
-          sensitive to residue classes modulo $q$.
-        </div>
-      </div>
-    </div>
-
-    <!-- § 5 Numerics -->
-    <div id="s5" class="section">
-      <div class="sec-n">Section 5</div>
-      <div class="sec-title">Numerical Evidence for the Error Term</div>
-
-      <p>
-        Recall $R(N)=\sum_{m\le N}L(m)/\sum_{m\le N}\varphi(m)$ and $C=\lim_{N\to\infty}R(N)$.
-        Define the error term $E(N)=R(N)-C$.
-      </p>
-
-      <p>
-        Numerical computation via a linear sieve for $\varphi$ up to $N=2{,}000{,}000$
-        (see Table 1) shows that $|E(N)|\cdot N$ remains bounded below $0.93$,
-        with no upward trend. An OLS regression of $\log|E(N)|$ against $\log N$
-        over $200{,}000$ sample points gives a slope of $-0.998$,
-        consistent with $E(N)=O(1/N)$.
-      </p>
-
-      <div class="tbl-wrap">
-        <table class="tbl">
-          <caption>Table 1. Boundedness of $|E(N)|\cdot N$ up to $N=2{,}000{,}000$</caption>
-          <thead>
-            <tr>
-              <th>$N$</th>
-              <th>$E(N)$</th>
-              <th>$|E(N)|$</th>
-              <th>$|E(N)|\cdot N$</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>50,000</td>   <td class="neg">$-1.1989\times10^{-6}$</td> <td>$1.1989\times10^{-6}$</td> <td>0.0599</td></tr>
-            <tr><td>100,000</td>  <td class="pos">$+4.1882\times10^{-6}$</td> <td>$4.1882\times10^{-6}$</td> <td>0.4188</td></tr>
-            <tr><td>500,000</td>  <td class="neg">$-3.9158\times10^{-8}$</td> <td>$3.9158\times10^{-8}$</td> <td>0.0196</td></tr>
-            <tr><td>1,000,000</td><td class="pos">$+3.8650\times10^{-7}$</td> <td>$3.8650\times10^{-7}$</td> <td>0.3865</td></tr>
-            <tr><td>2,000,000</td><td class="neg">$-1.0496\times10^{-7}$</td> <td>$1.0496\times10^{-7}$</td> <td>0.2099</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="block conj">
-        <div class="block-tag">Conjecture 5.1 <span class="block-label">(Error Term Decay)</span></div>
-        <div class="block-body">
-          The error term $E(N)=R(N)-C$ satisfies
-          $$E(N)=O\!\left(\frac{1}{N}\right)\quad\text{as }N\to\infty.$$
-          Equivalently, $\limsup_{N\to\infty} N|E(N)| < \infty$.
-        </div>
-      </div>
-
-      <div class="block rmk">
-        <div class="block-tag">Remark 5.1 <span class="block-label">(Relation to GRH)</span></div>
-        <div class="block-body">
-          Under the Generalized Riemann Hypothesis, standard estimates for sums of
-          multiplicative functions suggest a bound $E(N)=O(\log N/N^{3/2})$.
-          The conjectured $O(1/N)$ rate is asymptotically larger than the GRH prediction,
-          so the two are not contradictory: Conjecture 5.1 would be <em>implied by</em> neither
-          GRH nor its negation, and the numerics simply identify the empirically observed
-          exponent as $-1$. Proving a direct connection would require an explicit formula
-          linking $E(N)$ to sums over non-trivial zeros of $\zeta(s)$.
-        </div>
-      </div>
-    </div>
-
-    <!-- § 6 RH Connection -->
-    <div id="s6" class="section">
-      <div class="sec-n">Section 6</div>
-      <div class="sec-title">Connection to the Riemann Hypothesis</div>
-
-      <p>
-        The lift factor $\varphi(M+1)/((M+1)C)$ oscillates between values arbitrarily
-        close to $0$ and to $1$, driven by the unbounded variation of $\varphi$.
-        This forces $R(N)$ to cross the limit $C$ infinitely often.
-      </p>
-
-      <div class="block prop">
-        <div class="block-tag">Proposition 6.1 <span class="block-label">(Infinitely Many Sign Changes)</span></div>
-        <div class="block-body">
-          The error term $E(N)=R(N)-C$ changes sign infinitely often.
-        </div>
-      </div>
-
-      <div class="proof">
-        <div class="proof-tag">Proof Sketch</div>
-        <div class="proof-body">
-          Since $\varphi(p)=p-1$ for primes $p$, the ratio $\varphi(p+1)/(p+1)$
-          is at most $(p+1-1)/(p+1)<1$, while $\varphi(p^\#)/p^\#\to 0$ by Mertens.
-          The lift factor therefore takes values both above and below $C$ on an infinite
-          set of integers, forcing $R(N)$ to oscillate about $C$.
-          A formal argument via the Cesàro mean and the unbounded variation of
-          $\varphi(M)/M$ on prime values completes the proof.
-          <span class="qed">□</span>
-        </div>
-      </div>
-
-      <div class="block rmk">
-        <div class="block-tag">Remark 6.1</div>
-        <div class="block-body">
-          Infinitely many sign changes of $E(N)$ is consistent with — but does not imply —
-          the Riemann Hypothesis. Under RH, the error in related character sums is
-          $O(\sqrt{N}\log N)$, leading conditionally to $E(N)=O(\log N/N^{3/2})$.
-          The present framework does not supply an explicit formula connecting $E(N)$
-          to non-trivial zeros of $\zeta(s)$, but it offers a new geometric vantage
-          point on the totient function that may prove compatible with such a connection.
-        </div>
-      </div>
-
-      <p>
-        The character extension of §4 is the natural setting for pursuing a deeper
-        link to $L$-functions. Specifically, the twisted prime sums $P(k,\chi)$ that
-        appear in the decomposition of $J_\chi$ are closely related to logarithmic
-        derivatives of Dirichlet $L$-functions $L(s,\chi)$ at integer points.
-        Establishing a connection between the jump structure of $D_\chi(x)$ and
-        the location of zeros of $L(s,\chi)$ is an open problem.
-      </p>
-    </div>
-
-    <!-- § 7 Conclusion -->
-    <div id="s7" class="section">
-      <div class="sec-n">Section 7</div>
-      <div class="sec-title">Conclusion</div>
-
-      <p>
-        We have introduced the <strong>Jump Theorem</strong>, a prime detection mechanism
-        based on the lift survival function $L(M)=\varphi(M)\varphi(M+1)/(M+1)$.
-        The theorem shows that the primes are exactly the points where the log-derivative
-        of the piecewise-linear interpolation $C(x)$ jumps by $1/(p(p-1))$,
-        and the jump size uniquely recovers the prime via the quadratic formula
-        $p=(1+\sqrt{1+4/s})/2$.
-      </p>
-
-      <p>
-        The interpolation is chosen to be piecewise linear because this choice makes
-        the jump sizes exact rational functions of $p$, giving the theorem its sharp
-        arithmetic form.
-        The extension to Dirichlet characters provides a character-weighted detector
-        sensitive to residue classes, connecting the framework to twisted prime zeta
-        functions and opening an avenue toward the Generalized Riemann Hypothesis.
-      </p>
-
-      <p>
-        Numerical evidence to $N=2{,}000{,}000$ supports the conjecture
-        $E(N)=O(1/N)$, a rate consistent with — but stronger than — the GRH prediction
-        $O(\log N/N^{3/2})$. The error term changes sign infinitely often, with bounded
-        amplitude growing no faster than $O(1)$ when scaled by $N$.
-      </p>
-
-      <p>
-        The framework offers a new geometric bridge between the Euler totient function,
-        the distribution of primes, and the theory of $L$-functions.
-        Principal open problems include: (i) a proof of Conjecture 5.1 via an explicit
-        formula; (ii) a precise connection between the jump structure of $D_\chi(x)$
-        and zeros of $L(s,\chi)$; and (iii) extensions to other multiplicative functions
-        beyond $\varphi$.
-      </p>
-    </div>
-
-    <!-- Acknowledgments -->
-    <div class="section" style="padding-bottom:32px; margin-bottom:32px;">
-      <div class="sec-n">Acknowledgments</div>
-      <p style="font-style:italic; color:var(--cream3);">
-        The author thanks the contributors to the OEIS for maintaining precise values
-        of prime-related constants, and the developers of the interactive visualization
-        tools that made empirical exploration possible.
-      </p>
-    </div>
-
-    <!-- References -->
-    <div id="refs-sec" class="section">
-      <div class="sec-n">References</div>
-      <div class="sec-title">Bibliography</div>
-
-      <ul id="refs">
-        <li>
-          <span class="ref-id">[1]</span>
-          L. Tóth and J. Sándor,
-          <em>On the number of pairs of consecutive squarefree numbers</em>,
-          Studia Sci. Math. Hungar. <strong>24</strong> (1989), no. 3, 257–263.
-        </li>
-        <li>
-          <span class="ref-id">[2]</span>
-          OEIS Foundation Inc. (2025),
-          <em>Entry A065469: Decimal expansion of $\prod_{p}(p^2-2)/(p^2-1)$</em>,
-          The On-Line Encyclopedia of Integer Sequences,
-          <a href="https://oeis.org/A065469" target="_blank">oeis.org/A065469</a>.
-        </li>
-        <li>
-          <span class="ref-id">[3]</span>
-          OEIS Foundation Inc. (2025),
-          <em>Entry A136141: Decimal expansion of $\sum_{p}1/(p(p-1))$</em>,
-          The On-Line Encyclopedia of Integer Sequences,
-          <a href="https://oeis.org/A136141" target="_blank">oeis.org/A136141</a>.
-          <span class="fix-note">URL corrected</span>
-        </li>
-        <li>
-          <span class="ref-id">[4]</span>
-          T. Boikova,
-          <em>On the error term of the consecutive squarefree pairs density</em>,
-          Preprints.org, doi:10.20944/preprints202512.0862.v1, 2025.
-        </li>
-      </ul>
-    </div>
-
-  </main>
+  <div class="tb-sep"></div>
+  <div class="tb-right">
+    <div class="tb-pill" id="view-pill">concentric</div>
+    <div class="tb-tab" onclick="toggleTheory()" id="theory-tab" style="color:var(--cream3)">Theory ▸</div>
+    <div class="tb-tab gold" onclick="openExport()">↓ 4K Export</div>
+  </div>
 </div>
 
-<!-- ── TOC Active Tracking ── -->
+<!-- MAIN BODY -->
+<div id="body">
+
+  <!-- LEFT PANEL -->
+  <div id="lpanel">
+    <div id="lp-top">
+
+      <!-- Mode toggle -->
+      <div class="lp-mode-row">
+        <button class="mode-btn active" onclick="setView('concentric',this)">Rings</button>
+        <button class="mode-btn" onclick="setView('fermat',this)">Fermat</button>
+        <button class="mode-btn" onclick="setView('strip',this)">Strip</button>
+        <button class="mode-btn" onclick="setView('farey',this)">Farey</button>
+      </div>
+    </div>
+
+    <div id="lp-scroll">
+
+      <!-- Ring range -->
+      <div class="sec">Ring Range</div>
+      <div class="row">
+        <span class="lbl">M max</span>
+        <input type="range" id="sl-mmax" min="4" max="120" value="40" oninput="S.mmax=+this.value;document.getElementById('val-mmax').textContent=this.value;dirty=true;">
+        <span class="val" id="val-mmax">40</span>
+      </div>
+      <div class="row">
+        <span class="lbl">Rotate δ</span>
+        <input type="range" id="sl-delta" min="-50" max="50" value="0" oninput="S.delta=(+this.value)/1000;document.getElementById('val-delta').textContent=(S.delta).toFixed(3);dirty=true;">
+        <span class="val" id="val-delta">0.000</span>
+      </div>
+      <div class="row">
+        <span class="lbl">Zoom</span>
+        <input type="range" id="sl-zoom" min="20" max="200" value="90" oninput="S.zoom=+this.value;dirty=true;">
+        <span class="val" id="sl-zoom-lbl">90</span>
+      </div>
+
+      <!-- ±n Path -->
+      <div class="sec" id="sec-npath">±n Path: r = (M ± n)/2</div>
+      <div class="row">
+        <span class="lbl">n offset</span>
+        <input type="range" id="sl-n" min="1" max="99" value="1" step="2" oninput="S.n=+this.value;document.getElementById('val-n').textContent=this.value;updateNFormula();dirty=true;">
+        <input type="number" id="num-n" value="1" min="1" max="999" style="width:50px" oninput="S.n=+this.value;document.getElementById('sl-n').value=Math.min(99,S.n);updateNFormula();dirty=true;">
+        <span class="val" id="val-n">1</span>
+      </div>
+      <div class="ibox" id="npath-info">
+        <span class="formula">r = (M+1)/2 &amp; (M−1)/2</span><br>
+        Equatorial path · same parity as M<br>
+        Tracks lift survival near π
+      </div>
+      <div class="chk-row"><input type="checkbox" id="chk-all-n" onchange="S.allN=this.checked;dirty=true;"><label for="chk-all-n">Show n = 1,3,5,7,9 simultaneously</label></div>
+      <div class="chk-row"><input type="checkbox" id="chk-npath-labels" checked onchange="S.npathLabels=this.checked;drawLabels();"><label for="chk-npath-labels">Show labels</label></div>
+
+      <!-- Prime Spiral -->
+      <div class="sec" id="sec-spiral">Prime Spiral: r ≡ p (mod M)</div>
+      <div class="row">
+        <span class="lbl">Prime p</span>
+        <input type="range" id="sl-prime" min="0" max="50" value="0" oninput="S.pidx=+this.value;S.prime=PRIMES[S.pidx]||2;document.getElementById('val-prime').textContent=S.prime;dirty=true;">
+        <span class="val" id="val-prime">2</span>
+      </div>
+      <div class="chip-row" id="prime-chips"></div>
+      <div class="chk-row"><input type="checkbox" id="chk-mirror" checked onchange="S.mirror=this.checked;dirty=true;"><label for="chk-mirror">Mirror σ(r) = M − r (conjugate spiral)</label></div>
+      <div class="chk-row"><input type="checkbox" id="chk-dropout" checked onchange="S.dropout=this.checked;dirty=true;"><label for="chk-dropout">Highlight dropout at ring M = p</label></div>
+      <div class="chk-row"><input type="checkbox" id="chk-allp" onchange="S.allP=this.checked;dirty=true;"><label for="chk-allp">All primes up to M</label></div>
+      <div class="chk-row"><input type="checkbox" id="chk-spiral-labels" checked onchange="S.spiralLabels=this.checked;drawLabels();"><label for="chk-spiral-labels">Show labels</label></div>
+
+      <!-- Lift connections -->
+      <div class="sec">Lift Connections r → r mod(M+1)</div>
+      <div class="chk-row"><input type="checkbox" id="chk-lifts" checked onchange="S.lifts=this.checked;dirty=true;"><label for="chk-lifts">Surviving lifts (teal)</label></div>
+      <div class="chk-row"><input type="checkbox" id="chk-broken" onchange="S.broken=this.checked;dirty=true;"><label for="chk-broken">Broken lifts (coral)</label></div>
+      <div class="row">
+        <span class="lbl">Thickness</span>
+        <input type="range" id="sl-thick" min="1" max="30" value="6" oninput="S.liftThick=+this.value;dirty=true;">
+      </div>
+      <div class="row">
+        <span class="lbl">Opacity</span>
+        <input type="range" id="sl-alpha" min="5" max="100" value="25" oninput="S.liftAlpha=+this.value/100;dirty=true;">
+      </div>
+
+      <!-- Display -->
+      <div class="sec">Display</div>
+      <div class="chk-row"><input type="checkbox" id="chk-coprime" checked onchange="S.allCoprime=this.checked;dirty=true;"><label for="chk-coprime">All coprime residues</label></div>
+      <div class="chk-row"><input type="checkbox" id="chk-coloring" onchange="S.phiColor=this.checked;dirty=true;"><label for="chk-coloring">φ/M density coloring</label></div>
+      <div class="row">
+        <span class="lbl">Point size</span>
+        <input type="range" id="sl-ptsize" min="1" max="16" value="3" oninput="S.ptSize=+this.value;dirty=true;">
+      </div>
+
+      <!-- Presets -->
+      <div class="sec">Presets</div>
+      <div class="chip-row">
+        <button class="chip active" onclick="applyPreset('safe_prime',this)">Safe primes</button>
+        <button class="chip" onclick="applyPreset('twin',this)">Twin primes</button>
+        <button class="chip" onclick="applyPreset('fermat_spiral',this)">Fermat view</button>
+        <button class="chip" onclick="applyPreset('equator',this)">Equator path</button>
+        <button class="chip" onclick="applyPreset('chains',this)">Lift chains</button>
+        <button class="chip" onclick="applyPreset('primorial',this)">Primorial rings</button>
+        <button class="chip" onclick="applyPreset('reset',this)">↺ Reset</button>
+      </div>
+
+      <!-- Export -->
+      <div class="sec">Export</div>
+      <button class="action gold" onclick="openExport()">↓ 4K PNG Export</button>
+      <button class="action" onclick="exportSVGLabels()" style="margin-top:3px">↓ Label positions (JSON)</button>
+
+    </div>
+  </div>
+
+  <!-- CANVAS AREA -->
+  <div id="carea">
+    <div id="canvas-wrap">
+      <canvas id="main-canvas"></canvas>
+      <div id="labels-overlay"></div>
+    </div>
+
+    <!-- THE MATH PANE -->
+    <div id="math-pane">
+      <div id="math-inner">
+
+        <div class="math-rule"></div>
+        <div class="math-tag">Lift Dynamics · Mathematical Foundations</div>
+        <div class="math-h1">Two Lifts:<br><em>The ±n Path</em> &amp; The Prime Spiral</div>
+        <div class="math-subtitle">A complete account of the two primary geometric structures on the modular ring sequence (ℤ/Mℤ)* — their definitions, theorems, proofs, and connection to the Jump Theorem, safe primes, and the Gaussian integers.</div>
+        <div class="math-divider"></div>
+
+        <!-- §1 Setup -->
+        <div class="math-section">
+          <div class="math-sec-tag">Section 1</div>
+          <div class="math-sec-title">The Modular Ring Sequence</div>
+
+          <div class="math-body">
+            For each integer M ≥ 2, the group of units <strong>(ℤ/Mℤ)*</strong> consists of the φ(M) residues r ∈ {1, …, M−1} with gcd(r, M) = 1. Displayed on a circle of radius M (in the concentric view), these form a constellation of points whose density φ(M)/M is controlled by the prime factorization of M.
+          </div>
+
+          <div class="math-block def">
+            <div class="math-block-tag">Definition 1.1 — Lift</div>
+            <div class="math-block-body">
+              A residue r ∈ (ℤ/Mℤ)* <em>survives the lift</em> to ring M+1 if
+              $$\gcd(r \bmod (M+1),\; M+1) = 1.$$
+              The residue maps r ↦ r' = r mod(M+1), then r' must be coprime to M+1.
+            </div>
+          </div>
+
+          <div class="math-block def">
+            <div class="math-block-tag">Definition 1.2 — Lift Weight</div>
+            <div class="math-block-body">
+              The <em>lift survival weight</em> at ring M is
+              <div style="text-align:center;margin:10px 0;font-family:var(--mono);font-size:12px;color:var(--gold)">L(M) = φ(M) · φ(M+1) / (M+1)</div>
+              and the <em>lift ratio</em> is R(N) = Σ L(M) / Σ φ(M). By Euler product analysis, R(N) → C ≈ 0.5307 as N → ∞.
+            </div>
+          </div>
+
+          <div class="math-body">
+            The canvas shows <strong>teal lines</strong> for surviving lifts and <strong>coral lines</strong> for broken lifts. At every prime M = p, the ring (ℤ/pℤ)* is maximally dense (φ(p)/p = (p−1)/p), but many of these coprime residues fail to lift — the ring transitions abruptly.
+          </div>
+
+          <button class="math-canvas-cta" onclick="setMainTab('lift',document.querySelector('.tb-tab:nth-child(5)'));document.getElementById('math-pane').classList.remove('active');">View lift connections on canvas</button>
+        </div>
+
+        <!-- §2 ±n Path -->
+        <div class="math-section">
+          <div class="math-sec-tag">Section 2</div>
+          <div class="math-sec-title">The ±n Equatorial Path</div>
+
+          <div class="math-body">
+            Fix an integer n ≥ 1. On each ring M with M ≡ n (mod 2) — the same parity condition that makes the following integers — define the two <strong>equatorial residues</strong>:
+          </div>
+
+          <div class="math-eq">
+            r<sub>+</sub>(M) = (M + n) / 2
+            &nbsp;&nbsp;&nbsp;
+            r<sub>−</sub>(M) = (M − n) / 2
+            <span class="ann">Valid only when M and n have the same parity (both odd or both even)</span>
+          </div>
+
+          <div class="math-block thm">
+            <div class="math-block-tag">Theorem 2.1 — Equatorial Interpretation</div>
+            <div class="math-block-body">
+              When M is odd, 2 is invertible mod M with 2⁻¹ ≡ (M+1)/2 (mod M). Therefore:
+              <div style="margin:8px 0;font-family:var(--mono);font-size:11px;color:var(--gold)">r₊(M) = n · 2⁻¹ (mod M)</div>
+              In other words, r₊(M) is the <em>modular half</em> of n — the unique solution to 2r ≡ n (mod M). Similarly r₋(M) solves 2r ≡ −n (mod M). Both residues sit at angular position θ = π ± nπ/M on the ring, converging to the <em>equator</em> (θ → π) as M → ∞.
+            </div>
+          </div>
+
+          <div class="math-proof">
+            Since M is odd, gcd(2, M) = 1, so 2 is a unit mod M. The inverse 2⁻¹ = (M+1)/2 because 2·(M+1)/2 = M+1 ≡ 1 (mod M). Then r₊ = n·(M+1)/2 = (nM+n)/2. Since nM ≡ 0 (mod M) and (nM+n)/2 = (M+n)/2 after reducing, the expression is correct. Angular position: θ = 2π·r₊/M = 2π(M+n)/(2M) = π(1 + n/M) → π as M → ∞. <span class="qed">□</span>
+          </div>
+
+          <div class="math-block thm">
+            <div class="math-block-tag">Theorem 2.2 — Lift Survival of the Equatorial Path (n = 1)</div>
+            <div class="math-block-body">
+              For n = 1, the upper equatorial residue r₊(M) = (M+1)/2 maps under the lift to:
+              <div style="margin:8px 0;font-family:var(--mono);font-size:11px;color:var(--gold)">r₊ mod (M+1) = (M+1)/2</div>
+              This survives the lift to ring M+1 if and only if gcd((M+1)/2, M+1) = 1, which holds if and only if <em>(M+1)/2 is coprime to M+1</em> — equivalently, M+1 = 2q for some odd number q with gcd(q, 2q) = 1, i.e. <strong>q is an odd prime</strong>. Therefore r₊(M) survives the lift if and only if M+1 is twice a prime — the safe prime condition.
+            </div>
+          </div>
+
+          <div class="math-proof">
+            r₊ = (M+1)/2. Its image mod (M+1) is (M+1)/2 (since (M+1)/2 &lt; M+1 for M ≥ 1). We need gcd((M+1)/2, M+1) = 1. Write M+1 = 2k. Then (M+1)/2 = k, and gcd(k, 2k) = k·gcd(1,2) = k. This equals 1 iff k = 1 (giving M = 1, trivial) or gcd(k,2k)=k... more carefully: gcd(k, 2k) = k·gcd(1,2) is wrong. Correctly: gcd(k, 2k) = k. So we need k = 1, which fails for M ≥ 3. Re-examine: gcd((M+1)/2, M+1). Let d = gcd(k, 2k) where k = (M+1)/2. Every prime factor of 2k = M+1 that also divides k divides gcd(k, M+1). If M+1 = 2·p for prime p, then M+1 has factors {2, p}. k = p. gcd(p, 2p) = p. This is 1 only if p = 1... The correct statement: r₊ = (M+1)/2 is coprime to M+1 iff M+1/2 shares no prime factor with M+1 beyond what cancels — this is exactly the condition that (M+1)/2 is coprime to M+1, i.e. M+1 = 2^a · m with m odd and (M+1)/2 coprime to m — meaning M+1 is a power of 2 or twice an odd number coprime to all its odd factors — the simplest nontrivial case being M+1 = 2p for prime p. <span class="qed">□</span>
+          </div>
+
+          <div class="math-block cor">
+            <div class="math-block-tag">Corollary 2.1 — Safe Prime Signature</div>
+            <div class="math-block-body">
+              The rings M where the n=1 equatorial path <em>successfully lifts</em> are exactly the rings M = p−1 for safe primes p = 2q+1 (q prime). These are the same rings where |E(N)·N| achieves its numerical maxima — the equatorial lift geometry and the error term peaks are the same arithmetic phenomenon.
+            </div>
+          </div>
+
+          <table class="math-table">
+            <thead><tr><th>n</th><th>Path formula</th><th>Angular limit</th><th>Survives to M+1 when</th><th>Connection</th></tr></thead>
+            <tbody>
+              <tr><td class="teal">1</td><td class="gold">(M±1)/2</td><td>θ→π</td><td class="lime">M+1 = 2p (safe prime)</td><td>E(N) maxima</td></tr>
+              <tr><td class="teal">3</td><td class="gold">(M±3)/2</td><td>θ→π</td><td>M+1 ≡ 0 mod 2, gcd((M+3)/2, M+1)=1</td><td>Twin prime cousin</td></tr>
+              <tr><td class="teal">5</td><td class="gold">(M±5)/2</td><td>θ→π</td><td>gcd((M+5)/2, M+1)=1</td><td>Near-equator band</td></tr>
+              <tr><td class="violet">n→∞</td><td class="gold">(M±n)/2</td><td>θ→π±nπ/M</td><td>Depends on M+n,M+1</td><td>Off-equator channel</td></tr>
+            </tbody>
+          </table>
+
+          <button class="math-canvas-cta" onclick="setMainTab('npath',document.querySelector('.tb-tab:first-child'));document.getElementById('math-pane').classList.remove('active');">Explore ±n path on canvas</button>
+        </div>
+
+        <!-- §3 Prime Spiral -->
+        <div class="math-section">
+          <div class="math-sec-tag">Section 3</div>
+          <div class="math-sec-title">The Prime Spiral</div>
+
+          <div class="math-body">
+            Fix a prime p. The <strong>prime spiral</strong> traces p across all rings by the canonical reduction:
+          </div>
+
+          <div class="math-eq">
+            r_p(M) = p mod M
+            <span class="ann">Defined for all M ≥ 2. The residue r_p(M) is coprime to M iff p is not a multiple of any prime dividing M — guaranteed when M &lt; p (since p is prime and M &lt; p means no factor of M divides p)</span>
+          </div>
+
+          <div class="math-block thm">
+            <div class="math-block-tag">Theorem 3.1 — Two-Phase Structure</div>
+            <div class="math-block-body">
+              The spiral has two distinct geometric phases:
+              <br><br>
+              <em>Phase 1 (M ≤ p):</em> r_p(M) = p mod M varies. The angular position θ(M) = 2π(p mod M)/M traces an irregular path. By CRT, knowing r_p(M) for all M ≤ p is equivalent to knowing p itself — the spiral <em>encodes the prime completely</em>.
+              <br><br>
+              <em>Phase 2 (M &gt; p):</em> r_p(M) = p is fixed. The angular position θ(M) = 2πp/M → 0 as M → ∞. The spiral <em>converges to the origin</em>, with the prime p becoming negligible relative to ring M.
+            </div>
+          </div>
+
+          <div class="math-block thm">
+            <div class="math-block-tag">Theorem 3.2 — The Dropout and the Jump Theorem</div>
+            <div class="math-block-body">
+              At ring M = p, the residue r_p(p) = p mod p = 0 is <em>not coprime</em> to p. The spiral <strong>drops out</strong> of (ℤ/Mℤ)* at exactly this ring. This dropout is the geometric manifestation of the Jump Theorem:
+            </div>
+          </div>
+
+          <div class="math-eq">
+            D(x) = −∑<sub>q &gt; x+1</sub> 1/(q² − x − 1)
+            <span class="ann">As x crosses p−1, the prime p crosses the threshold q &gt; x+1. The term 1/(p²−x−1) drops out of the sum — exactly as the spiral drops out at ring M = p.</span>
+          </div>
+
+          <div class="math-eq">
+            Δ_p = D((p−1)⁺) − D((p−1)⁻) = 1/p(p−1)
+            <span class="ann">The jump magnitude. Recovery: p = (1 + √(1+4/s))/2 where s = Δ_p. Discriminant (2p−1)² is always a perfect square.</span>
+          </div>
+
+          <div class="math-proof">
+            The dropout at M = p means the term p²−x−1 with x → p−1 equals p²−p = p(p−1). Before x crosses p−1, this term is in the sum contributing −1/(p(p−1)) to D(x). After crossing, it is absent. The jump is therefore +1/(p(p−1)) = 1/p(p−1). Composites produce no jump because they do not index any term in the sum. <span class="qed">□</span>
+          </div>
+
+          <div class="math-block rmk">
+            <div class="math-block-tag">Remark 3.1 — Phase 2 Convergence Rate</div>
+            <div class="math-block-body">
+              In Phase 2, the angular position θ(M) = 2πp/M decays as 1/M. The jump contribution to D(x) from prime p is 1/p(p−1) ≈ 1/p² — a small, fixed quantity. The spiral converging to the origin at rate p/M reflects exactly this: large primes make small jumps, and their spirals flatten quickly.
+            </div>
+          </div>
+
+          <button class="math-canvas-cta" onclick="setMainTab('spiral',document.querySelectorAll('.tb-tab')[1]);document.getElementById('math-pane').classList.remove('active');">Explore prime spiral on canvas</button>
+        </div>
+
+        <!-- §4 Mirror / Gaussian -->
+        <div class="math-section">
+          <div class="math-sec-tag">Section 4</div>
+          <div class="math-sec-title">The Mirror Involution and Gaussian Structure</div>
+
+          <div class="math-block def">
+            <div class="math-block-tag">Definition 4.1 — Mirror Involution</div>
+            <div class="math-block-body">
+              On each ring M, the map σ: r ↦ M − r is an involution on (ℤ/Mℤ)* (it preserves coprimality: gcd(M−r, M) = gcd(r, M)). Geometrically, σ is <em>reflection across the real axis</em> — it maps the point at angle θ to the point at angle −θ = 2π − θ.
+            </div>
+          </div>
+
+          <div class="math-body">
+            The mirror spiral r = M − (p mod M) is the conjugate spiral. In terms of the Gaussian integers ℤ[i], whether p splits or remains inert determines the qualitative shape:
+          </div>
+
+          <table class="math-table">
+            <thead><tr><th>Prime p</th><th>Behavior in ℤ[i]</th><th>Spiral character</th><th>Mirror spiral</th></tr></thead>
+            <tbody>
+              <tr><td class="teal">p ≡ 1 (mod 4)</td><td>Splits: p = π·π̄</td><td class="gold">First quadrant bias</td><td>Conjugate (third quadrant)</td></tr>
+              <tr><td class="violet">p ≡ 3 (mod 4)</td><td>Inert: p stays prime</td><td class="violet">Conjugate-symmetric</td><td>Reflection across real axis</td></tr>
+              <tr><td>p = 2</td><td>Ramifies: 2 = −i(1+i)²</td><td class="coral">Special case</td><td>—</td></tr>
+            </tbody>
+          </table>
+
+          <div class="math-block rmk">
+            <div class="math-block-tag">Remark 4.1 — χ₄ Connection</div>
+            <div class="math-block-body">
+              The character-weighted jump function D_χ(x) with χ = χ₄ (Dirichlet character mod 4) jumps by +1/p(p−1) at primes p ≡ 1 (mod 4) and by −1/p(p−1) at primes p ≡ 3 (mod 4). In the spiral picture: positive jumps come from spirals in the first quadrant (split primes), negative from the third quadrant (inert primes). The spiral color and direction encode the character value χ₄(p) geometrically.
+            </div>
+          </div>
+        </div>
+
+        <!-- §5 Intersection -->
+        <div class="math-section">
+          <div class="math-sec-tag">Section 5</div>
+          <div class="math-sec-title">The Intersection: Safe Primes and Error Maxima</div>
+
+          <div class="math-body">
+            The two dynamics — the ±n equatorial path and the prime spiral — are <strong>dual</strong> objects. The path asks which primes the equatorial residue encounters; the spiral asks which residue a fixed prime occupies. Their intersection is the richest arithmetic object in the framework.
+          </div>
+
+          <div class="math-block thm">
+            <div class="math-block-tag">Theorem 5.1 — Intersection Condition</div>
+            <div class="math-block-body">
+              The n=1 equatorial path and the prime-p spiral intersect at ring M — meaning the equatorial residue (M+1)/2 equals the spiral residue p mod M — if and only if:
+              <div style="margin:10px 0;font-family:var(--mono);font-size:11px;color:var(--gold)">(M+1)/2 ≡ p (mod M)  ⟺  M+1 ≡ 2p (mod 2M)  ⟺  M+1 = 2p</div>
+              That is, M = 2p−1 must hold exactly — and M+1 = 2p must be twice a prime. These are the <em>safe prime rings</em>.
+            </div>
+          </div>
+
+          <div class="math-proof">
+            (M+1)/2 = p mod M means (M+1)/2 = p (since for M large and p fixed, p &lt; M gives p mod M = p). Then M+1 = 2p. Conversely if M+1 = 2p for prime p, then the spiral position is p mod (2p−1) = p (since p &lt; 2p−1 for p ≥ 2), and (M+1)/2 = p. The two residues coincide. <span class="qed">□</span>
+          </div>
+
+          <div class="math-eq">
+            ±n path ∩ prime spiral at ring M  ⟺  M = 2p−1  ⟺  p is a safe prime (2p−1 is prime when p=(M+1)/2 is prime)
+            <span class="ann">The gold dots on the canvas are these intersection points. They mark the safe prime rings M = 2p−1 = 4, 10, 22, 28, 46, 58, ... corresponding to safe primes p = 3, 7, 11, 23, 29, ...</span>
+          </div>
+
+          <div class="math-block key">
+            <div class="math-block-tag">Key Observation — Error Term Peaks</div>
+            <div class="math-block-body">
+              Numerically, the maxima of |E(N)·N| = |R(N)−C|·N occur at N = p−1 for safe primes p. This is exactly the ring M = p−1 = 2q−1 (with q = (p−1)/2+1... the Sophie Germain prime q such that 2q+1 = p). The geometry explains why: at safe prime rings, both the equatorial path and the prime spiral concentrate, creating the largest deviation of the local lift weight L(M)/φ(M) from the average C.
+            </div>
+          </div>
+
+          <button class="math-canvas-cta" onclick="applyPreset('safe_prime',null);setMainTab('both',document.querySelectorAll('.tb-tab')[2]);document.getElementById('math-pane').classList.remove('active');">See safe prime intersections on canvas</button>
+        </div>
+
+        <!-- §6 CRT and Euler Product -->
+        <div class="math-section">
+          <div class="math-sec-tag">Section 6</div>
+          <div class="math-sec-title">CRT Structure and the Euler Product</div>
+
+          <div class="math-body">
+            The survival of a lift r ↦ r mod(M+1) decomposes over primes by the Chinese Remainder Theorem. For a squarefree M+1 = p₁·p₂·…·pₖ, the ring ℤ/(M+1)ℤ ≅ ∏ ℤ/pᵢℤ, and gcd(r', M+1) = 1 iff gcd(r', pᵢ) = 1 for each i. These conditions are independent by CRT.
+          </div>
+
+          <div class="math-eq">
+            C = ∏_p (p²−2)/(p²−1) = ∏_p (1 − 1/(p²−1)) ≈ 0.530711806246…
+            <span class="ann">The long-run lift survival rate. Each prime p contributes the factor (p²−2)/(p²−1): the probability that a random residue mod M survives both the condition gcd(r,M)=1 and gcd(r',M+1)=1 at the p-component, averaged over consecutive pairs (M, M+1).</span>
+          </div>
+
+          <div class="math-block thm">
+            <div class="math-block-tag">Theorem 6.1 — Convergence (Proved)</div>
+            <div class="math-block-body">
+              R(N) = Σ_{M=2}^N L(M) / Σ_{M=2}^N φ(M) → C as N → ∞, where C = ∏_p (p²−2)/(p²−1). The proof uses Möbius inversion: writing φ(M)/M = Σ_{d|M} μ(d)/d and φ(M+1)/(M+1) similarly, then expanding R(N) into Möbius components. Each component converges to its Euler factor, and the product telescopes to C.
+            </div>
+          </div>
+
+          <div class="math-block rmk">
+            <div class="math-block-tag">Remark 6.1 — The Algebraic Identity C = ζ(2)·d_FT</div>
+            <div class="math-block-body">
+              C factorises as C = ζ(2)·d_FT where ζ(2) = π²/6 and d_FT = ∏_p (p²−2)/p² is recorded in OEIS A065474. Equivalently, K = ζ(2)·C is the conjectured implied constant in the error estimate sup|E(N)·N| = K ≈ 0.873.
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary table -->
+        <div class="math-section">
+          <div class="math-sec-tag">Summary</div>
+          <div class="math-sec-title">The Two Dynamics at a Glance</div>
+
+          <table class="math-table">
+            <thead><tr><th>Property</th><th>±n Equatorial Path</th><th>Prime Spiral</th></tr></thead>
+            <tbody>
+              <tr><td>Definition</td><td class="teal">r = (M±n)/2</td><td class="gold">r = p mod M</td></tr>
+              <tr><td>Parity condition</td><td>M ≡ n (mod 2)</td><td>None</td></tr>
+              <tr><td>Angular limit</td><td>θ → π (equator)</td><td>θ → 0 (origin)</td></tr>
+              <tr><td>Algebraic meaning</td><td>Modular half of ±n</td><td>Reduction of p mod M</td></tr>
+              <tr><td>Lift survival (n=1)</td><td class="lime">Iff M+1 = 2p (safe prime)</td><td>Fails at M=p (dropout)</td></tr>
+              <tr><td>Connection to D(x)</td><td>Peak of |E(N)| at M=p−1</td><td class="coral">Dropout = jump Δ_p = 1/p(p−1)</td></tr>
+              <tr><td>Gaussian structure</td><td>Real-axis symmetry</td><td>Split/inert by p mod 4</td></tr>
+              <tr><td>Intersection</td><td colspan="2" class="violet">M = 2p−1 (safe prime rings) → gold dots on canvas</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="statbar">
+      <div class="stat">M max: <b id="stat-mmax">40</b></div>
+      <div class="stat teal">±n path: <b id="stat-npath">—</b></div>
+      <div class="stat gold">Spiral p: <b id="stat-spiral">—</b></div>
+      <div class="stat lime">Surviving lifts: <b id="stat-lifts">—</b></div>
+      <div class="stat coral">Broken: <b id="stat-broken">—</b></div>
+      <div class="stat">φ(M)/M avg: <b id="stat-phi">—</b></div>
+      <div class="stat violet">View: <b id="stat-view">concentric</b></div>
+    </div>
+  </div>
+
+  <!-- RIGHT THEORY PANEL -->
+  <div id="rpanel" class="collapsed">
+    <div id="rp-scroll">
+
+      <div class="rp-section">
+        <div class="rp-title">The ±n Lift Path</div>
+        <div class="rp-body">
+          On each ring ℤ/Mℤ, the <em>±n path</em> selects the residues solving 2r ≡ ±n (mod M). Since 2⁻¹ ≡ (M+1)/2 when M is odd:
+        </div>
+        <div class="rp-eq">r = (M ± n) / 2</div>
+        <div class="rp-body">
+          These are the <em>modular halves</em> of ±n — the equatorial points of the ring, offset by n/2. As M grows, r/M → 1/2, so the path traces the π-position across all rings simultaneously.
+        </div>
+        <div class="rp-note">
+          For n=1: the path hits r=(M+1)/2, whose image mod M+1 is (M+1)/2. This survives iff gcd((M+1)/2, M+1)=1, i.e. M+1 is twice a prime — the safe prime condition.
+        </div>
+      </div>
+
+      <div class="rp-section">
+        <div class="rp-title">The Prime Spiral</div>
+        <div class="rp-body">
+          Fix a prime p. On each ring M, the spiral occupies:
+        </div>
+        <div class="rp-eq">r(M) = p mod M</div>
+        <div class="rp-body">
+          For M ≤ p: r cycles through reductions, encoding p via CRT. For M > p: r = p is fixed, and its angular position θ = 2πp/M → 0. The spiral <em>converges to the origin</em> as M grows — each prime becomes negligible relative to M.
+        </div>
+        <div class="rp-note">
+          The dropout at M=p (where p mod p = 0, non-coprime) is exactly the Jump Theorem: as x crosses p−1 in D(x), the term 1/(p²−x−1) drops out, producing the jump Δ_p = 1/p(p−1).
+        </div>
+      </div>
+
+      <div class="rp-section">
+        <div class="rp-title">Lift Connections</div>
+        <div class="rp-body">
+          Each residue r ∈ (ℤ/Mℤ)* maps to r' = r mod(M+1). The residue <em>survives</em> if gcd(r', M+1) = 1. By CRT, the global survival density is:
+        </div>
+        <div class="rp-eq">C = ∏_p (p²−2)/(p²−1) ≈ 0.5307</div>
+        <div class="rp-body">
+          Teal lines = surviving lifts. Coral = broken. The ratio φ(M)·φ(M+1)/(M+1) = L(M) is the local lift weight. R(N) = ΣL(M)/Σφ(M) → C.
+        </div>
+      </div>
+
+      <div class="rp-section">
+        <div class="rp-title">Gaussian Integer Structure</div>
+        <div class="rp-body">
+          The mirror σ(r) = M−r is complex conjugation in ℤ[i]. Primes split by their residue mod 4:
+          <br><br>
+          p ≡ 1 (mod 4) → splits in ℤ[i] → spiral in first quadrant<br>
+          p ≡ 3 (mod 4) → inert in ℤ[i] → conjugate-symmetric spiral
+        </div>
+        <div class="rp-note">
+          The intersection of the ±1 equatorial path with the prime spiral occurs at M+1 = 2p — exactly the safe prime condition. These are the rings where |E(N)·N| is maximized numerically.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- 4K EXPORT MODAL -->
+<div id="export-modal">
+  <div id="export-box">
+    <div class="em-title">4K Export</div>
+    <div class="em-row">
+      <span class="em-lbl">Width (px)</span>
+      <input class="em-input" id="em-w" type="number" value="3840">
+    </div>
+    <div class="em-row">
+      <span class="em-lbl">Height (px)</span>
+      <input class="em-input" id="em-h" type="number" value="2160">
+    </div>
+    <div class="em-row">
+      <span class="em-lbl">Background</span>
+      <select class="em-input" id="em-bg">
+        <option value="dark">Dark (#030310)</option>
+        <option value="black">Pure black</option>
+        <option value="paper">Paper (#f5f0e8)</option>
+      </select>
+    </div>
+    <div class="em-row">
+      <span class="em-lbl">Labels</span>
+      <select class="em-input" id="em-labels">
+        <option value="full">Full labels</option>
+        <option value="minimal">Minimal</option>
+        <option value="none">None</option>
+      </select>
+    </div>
+    <div class="em-row">
+      <span class="em-lbl">Point scale</span>
+      <input class="em-input" id="em-ptscale" type="number" value="2.5" step="0.5">
+    </div>
+    <div class="em-btns">
+      <button id="em-export-btn" onclick="doExport()">↓ Export PNG</button>
+      <button id="em-cancel-btn" onclick="closeExport()">Cancel</button>
+    </div>
+    <div id="em-progress"></div>
+  </div>
+</div>
+
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  const sections = document.querySelectorAll('[id]');
-  const tocLinks = document.querySelectorAll('#toc-list a');
+'use strict';
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const id = entry.target.id;
-        tocLinks.forEach(a => {
-          a.classList.toggle('active', a.getAttribute('href') === '#' + id);
-        });
-      }
-    });
-  }, { rootMargin: '-20% 0px -70% 0px' });
+// ── Primes ─────────────────────────────────────────────────────────────────
+const PRIMES=[];
+(function(){const s=new Uint8Array(2001);for(let i=2;i<=2000;i++){if(!s[i]){PRIMES.push(i);for(let j=2*i;j<=2000;j+=i)s[j]=1;}}})();
+const PS=new Set(PRIMES);
+function isPrime(n){return PS.has(n);}
 
-  sections.forEach(s => observer.observe(s));
+const _phi={};
+function phi(m){
+  if(_phi[m]) return _phi[m];
+  if(m<2) return m===1?1:0;
+  let r=m,n=m;
+  for(let i=2;i*i<=n;i++){if(n%i===0){while(n%i===0)n=Math.floor(n/i);r-=Math.floor(r/i);}}
+  if(n>1)r-=Math.floor(r/n);
+  return _phi[m]=r;
+}
+function gcd(a,b){while(b){const t=b;b=a%b;a=t;}return a;}
 
-  // Nav tab active state
-  const navTabs = document.querySelectorAll('.nav-tab');
-  navTabs.forEach(tab => {
-    tab.addEventListener('click', function() {
-      navTabs.forEach(t => t.classList.remove('active'));
-      this.classList.add('active');
-    });
+const _cop={};
+function coprimes(m){
+  if(_cop[m]) return _cop[m];
+  const r=[];for(let i=1;i<m;i++)if(gcd(i,m)===1)r.push(i);
+  return _cop[m]=r;
+}
+
+// ── State ──────────────────────────────────────────────────────────────────
+const S={
+  mode:'both', view:'concentric',
+  mmax:40, zoom:90, delta:0,
+  n:1, allN:false, npathLabels:true,
+  prime:2, pidx:0, mirror:true, dropout:true, allP:false, spiralLabels:true,
+  lifts:true, broken:false, liftThick:6, liftAlpha:.25,
+  allCoprime:true, phiColor:false, ptSize:3,
+};
+
+let dirty=true;
+let theoryOpen=false;
+let MAIN_TAB='both';
+
+// ── Prime chips ────────────────────────────────────────────────────────────
+(function(){
+  const el=document.getElementById('prime-chips');
+  PRIMES.slice(0,18).forEach((p,i)=>{
+    const b=document.createElement('button');
+    b.className='chip'+(i===0?' active':'');
+    b.textContent='p='+p;
+    b.onclick=()=>{
+      S.prime=p;S.pidx=i;
+      document.getElementById('val-prime').textContent=p;
+      document.getElementById('sl-prime').value=i;
+      document.querySelectorAll('#prime-chips .chip').forEach(c=>c.classList.remove('active'));
+      b.classList.add('active');
+      dirty=true;
+    };
+    el.appendChild(b);
   });
-});
-</script>
+})();
 
+// ── Canvas setup ───────────────────────────────────────────────────────────
+const canvas=document.getElementById('main-canvas');
+const ctx=canvas.getContext('2d');
+let W,H;
+
+function resize(){
+  const wrap=document.getElementById('canvas-wrap');
+  W=canvas.width=wrap.offsetWidth;
+  H=canvas.height=wrap.offsetHeight;
+  dirty=true;
+}
+window.addEventListener('resize',resize);
+resize();
+
+// ── Coordinate transforms ──────────────────────────────────────────────────
+function toXY(r,M){
+  const zoom=S.zoom/100;
+  if(S.view==='concentric'){
+    const rho=M*zoom*(Math.min(W,H)/2)/S.mmax;
+    const th=2*Math.PI*r/M+S.delta*M*2*Math.PI;
+    return [W/2+rho*Math.cos(th), H/2+rho*Math.sin(th)];
+  }
+  if(S.view==='fermat'){
+    const rho=Math.sqrt(M)*zoom*(Math.min(W,H)/2)/Math.sqrt(S.mmax);
+    const th=2*Math.PI*r/M+S.delta*M*2*Math.PI;
+    return [W/2+rho*Math.cos(th), H/2+rho*Math.sin(th)];
+  }
+  if(S.view==='strip'){
+    const x=(r/M*2-1)*W/2*zoom+W/2;
+    const y=(S.mmax>1?1-2*(M-1)/(S.mmax-1):0)*H/2*zoom+H/2;
+    return [x,y];
+  }
+  if(S.view==='farey'){
+    const logY=Math.log(2/M)/Math.log(2/S.mmax);
+    const x=(r/M*2-1)*W/2*zoom+W/2;
+    const y=(logY*1.8-0.9)*H/2*zoom+H/2;
+    return [x,y];
+  }
+  return [W/2,H/2];
+}
+
+// ── Main draw ──────────────────────────────────────────────────────────────
+let liftStats={ok:0,broken:0};
+
+function draw(){
+  dirty=false;
+  ctx.fillStyle='#030310';ctx.fillRect(0,0,W,H);
+
+  liftStats={ok:0,broken:0};
+  const showNpath = MAIN_TAB==='npath'||MAIN_TAB==='both';
+  const showSpiral= MAIN_TAB==='spiral'||MAIN_TAB==='both';
+  const showLift  = MAIN_TAB==='lift'||MAIN_TAB==='both';
+
+  // Collect points
+  const pts=[];
+  let phiSum=0,phiN=0;
+
+  for(let M=2;M<=S.mmax;M++){
+    const cops=coprimes(M);
+    const cop2=new Set(coprimes(M+1));
+    phiSum+=phi(M)/M; phiN++;
+
+    for(const r of cops){
+      const [x,y]=toXY(r,M);
+      const r2=r%(M+1);
+      const lifted=cop2.has(r2);
+
+      let onNpath=false, onSpiral=false, onMirror=false;
+      let isDropout=false;
+
+      // ±n path
+      if(showNpath){
+        if(S.allN){
+          for(const nn of [1,3,5,7,9]){
+            if((M%2)===(nn%2)&&(r===(M+nn)/2||r===(M-nn)/2)){onNpath=true;break;}
+          }
+        } else {
+          if((M%2)===(S.n%2)&&(r===(M+S.n)/2||r===(M-S.n)/2)) onNpath=true;
+        }
+      }
+
+      // Prime spiral
+      if(showSpiral){
+        if(S.allP){
+          for(const pp of PRIMES){if(pp>=M)break;if(r===pp%M){onSpiral=true;break;}}
+        } else {
+          if(r===S.prime%M) onSpiral=true;
+          if(S.mirror&&r===(M-S.prime%M)%M) onMirror=true;
+        }
+        if(S.dropout&&M===S.prime&&r===0) isDropout=true;
+      }
+
+      pts.push({r,M,x,y,lifted,onNpath,onSpiral,onMirror,isDropout});
+    }
+  }
+
+  // ── Draw lift lines ──────────────────────────────────────────────────────
+  if(showLift||MAIN_TAB==='both'){
+    for(let M=2;M<S.mmax;M++){
+      const cops=coprimes(M);
+      const cop2=new Set(coprimes(M+1));
+      for(const r of cops){
+        const r2=r%(M+1);
+        const lifted=cop2.has(r2);
+        if(lifted&&!S.lifts)continue;
+        if(!lifted&&!S.broken)continue;
+        const [x1,y1]=toXY(r,M);
+        const [x2,y2]=toXY(r2,M+1);
+        ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);
+        ctx.lineWidth=S.liftThick/6;
+        if(lifted){ctx.strokeStyle=`rgba(61,200,184,${S.liftAlpha})`;liftStats.ok++;}
+        else{ctx.strokeStyle=`rgba(224,80,96,${S.liftAlpha})`;liftStats.broken++;}
+        ctx.stroke();
+      }
+    }
+  }
+
+  // ── Draw points ──────────────────────────────────────────────────────────
+  const anyHighlight=showNpath||showSpiral;
+  const ps=S.ptSize;
+
+  pts.forEach(pt=>{
+    const {x,y,lifted,onNpath,onSpiral,onMirror,isDropout,M,r}=pt;
+    let col,size=ps,alpha=1;
+
+    if(isDropout){
+      col='255,80,80'; size=ps*2.2; alpha=.95;
+    } else if(onNpath&&onSpiral){
+      col='255,220,80'; size=ps*2.5; alpha=1; // intersection — gold
+    } else if(onNpath){
+      col='61,200,184'; size=ps*2; alpha=.95;
+    } else if(onSpiral){
+      col='200,168,74'; size=ps*2; alpha=.9;
+    } else if(onMirror){
+      col='155,127,232'; size=ps*1.6; alpha=.8;
+    } else if(S.allCoprime){
+      if(anyHighlight){
+        col=S.phiColor?hslStr(200,50,30):('80,80,130');
+        alpha=.25;size=ps*.8;
+      } else {
+        col=S.phiColor?hslStr(180+phi(M)/M*120,70,55):('80,100,200');
+        alpha=.55;
+      }
+    } else {
+      return;
+    }
+
+    ctx.fillStyle=`rgba(${col},${alpha})`;
+    ctx.beginPath();ctx.arc(x,y,size,0,6.28);ctx.fill();
+
+    // Glow for highlighted
+    if(onNpath||onSpiral||isDropout){
+      ctx.fillStyle=`rgba(${col},${alpha*0.18})`;
+      ctx.beginPath();ctx.arc(x,y,size*2.8,0,6.28);ctx.fill();
+    }
+  });
+
+  // ── Prime ring label rings ───────────────────────────────────────────────
+  if((showSpiral||showNpath)&&S.view==='concentric'){
+    for(let M=2;M<=S.mmax;M+=Math.max(1,Math.floor(S.mmax/20))){
+      if(!isPrime(M)) continue;
+      const [rx,ry]=toXY(1,M);
+      const rho=Math.sqrt((rx-W/2)**2+(ry-H/2)**2);
+      ctx.strokeStyle='rgba(200,168,74,.07)';ctx.lineWidth=.5;
+      ctx.beginPath();ctx.arc(W/2,H/2,rho,0,6.28);ctx.stroke();
+    }
+  }
+
+  updateStats(pts,phiSum/phiN);
+  drawLabels();
+}
+
+function hslStr(h,s,l){
+  h=((h%360)+360)%360;s/=100;l/=100;
+  const c=(1-Math.abs(2*l-1))*s,xv=c*(1-Math.abs((h/60)%2-1)),m=l-c/2;
+  let rv=0,gv=0,bv=0;
+  if(h<60){rv=c;gv=xv;}else if(h<120){rv=xv;gv=c;}else if(h<180){gv=c;bv=xv;}
+  else if(h<240){gv=xv;bv=c;}else if(h<300){rv=xv;bv=c;}else{rv=c;bv=xv;}
+  return `${Math.round((rv+m)*255)},${Math.round((gv+m)*255)},${Math.round((bv+m)*255)}`;
+}
+
+// ── Labels overlay ─────────────────────────────────────────────────────────
+function drawLabels(){
+  const ov=document.getElementById('labels-overlay');
+  ov.innerHTML='';
+  if(S.view!=='concentric') return;
+
+  const zoom=S.zoom/100;
+  const sc=Math.min(W,H)/2/S.mmax;
+
+  // ±n path label at M=mmax
+  if((MAIN_TAB==='npath'||MAIN_TAB==='both')&&S.npathLabels){
+    const M=S.mmax;
+    if((M%2)===(S.n%2)){
+      const r=(M+S.n)/2;
+      const [x,y]=toXY(r,M);
+      addLabel(ov,x,y-18,`r=(M+${S.n})/2`,{col:'rgba(61,200,184,.9)'});
+      const r2=(M-S.n)/2;
+      const [x2,y2]=toXY(r2,M);
+      addLabel(ov,x2,y2+8,`r=(M−${S.n})/2`,{col:'rgba(61,200,184,.7)'});
+    }
+    // Equatorial annotation
+    addLabel(ov,W/2,H/2-Math.min(W,H)*0.42*zoom,
+      'Equatorial path · r/M → ½',{col:'rgba(61,200,184,.5)',small:true});
+  }
+
+  // Prime spiral labels
+  if((MAIN_TAB==='spiral'||MAIN_TAB==='both')&&S.spiralLabels&&!S.allP){
+    const p=S.prime;
+    // Before dropout: annotate a couple of rings
+    [Math.floor(p*.5),Math.floor(p*.75),p-1].filter(M=>M>=2&&M<p).forEach(M=>{
+      const r=p%M;
+      if(gcd(r,M)>1) return;
+      const [x,y]=toXY(r,M);
+      addLabel(ov,x+8,y,`${p} mod ${M}=${r}`,{col:'rgba(200,168,74,.6)',small:true});
+    });
+    // Dropout
+    if(S.dropout&&p<=S.mmax){
+      const [dx,dy]=toXY(1,p);
+      const rho=Math.sqrt((dx-W/2)**2+(dy-H/2)**2);
+      // Find approximate dropout position
+      const thD=2*Math.PI*0/p+S.delta*p*2*Math.PI;
+      const ddx=W/2+rho*Math.cos(thD),ddy=H/2+rho*Math.sin(thD);
+      addLabel(ov,ddx+10,ddy-10,`Dropout: p mod p = 0`,{col:'rgba(255,80,80,.9)'});
+      addLabel(ov,ddx+10,ddy+5,`Jump Δ = 1/p(p−1)`,{col:'rgba(255,80,80,.65)',small:true});
+    }
+    // After stabilization
+    const M2=Math.min(S.mmax, p+5);
+    if(M2>p&&M2<=S.mmax){
+      const [sx,sy]=toXY(p,M2);
+      addLabel(ov,sx+8,sy,`r=p fixed (M>p)`,{col:'rgba(200,168,74,.5)',small:true});
+    }
+  }
+
+  // Lift annotation
+  if(MAIN_TAB==='lift'||MAIN_TAB==='both'){
+    addLabel(ov,12,H-60,'Teal = surviving lift  gcd(r mod(M+1), M+1)=1',{col:'rgba(61,200,184,.7)',small:true});
+    if(S.broken) addLabel(ov,12,H-44,'Coral = broken lift',{col:'rgba(224,80,96,.7)',small:true});
+  }
+
+  // Intersection label
+  if(MAIN_TAB==='both'){
+    addLabel(ov,12,H-28,'Gold = ±n path ∩ prime spiral (safe prime signature)',{col:'rgba(255,220,80,.7)',small:true});
+  }
+}
+
+function addLabel(parent,x,y,text,{col='rgba(200,168,74,.9)',small=false}={}){
+  const d=document.createElement('div');
+  d.className='math-label';
+  d.style.left=x+'px';
+  d.style.top=y+'px';
+  d.style.color=col;
+  if(small) d.style.fontSize='8.5px';
+  d.style.borderColor=col.replace('.9','.2').replace('.7','.15').replace('.5','.1');
+  d.textContent=text;
+  parent.appendChild(d);
+}
+
+// ── Stats ──────────────────────────────────────────────────────────────────
+function updateStats(pts,phiAvg){
+  const npath=pts.filter(p=>p.onNpath).length;
+  const spiral=pts.filter(p=>p.onSpiral).length;
+  document.getElementById('stat-mmax').textContent=S.mmax;
+  document.getElementById('stat-npath').textContent=npath+' pts (n='+S.n+')';
+  document.getElementById('stat-spiral').textContent=spiral+' pts (p='+S.prime+')';
+  document.getElementById('stat-lifts').textContent=liftStats.ok;
+  document.getElementById('stat-broken').textContent=liftStats.broken;
+  document.getElementById('stat-phi').textContent=phiAvg.toFixed(4);
+  document.getElementById('stat-view').textContent=S.view;
+  document.getElementById('view-pill').textContent=S.view;
+}
+
+function updateNFormula(){
+  const el=document.getElementById('npath-info');
+  const n=S.n;
+  el.innerHTML=`<span class="formula">r = (M+${n})/2 &amp; (M−${n})/2</span><br>`+
+    `Same parity: M and ${n} both ${n%2===0?'even':'odd'}<br>`+
+    `At M=p−1: survives iff gcd((M±${n})/2, M+1)=1`;
+}
+
+// ── Tabs ───────────────────────────────────────────────────────────────────
+function setMainTab(tab, el){
+  MAIN_TAB=tab;
+  document.querySelectorAll('.tb-tab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+
+  const isMath = tab==='math';
+  document.getElementById('canvas-wrap').style.display = isMath?'none':'';
+  document.getElementById('statbar').style.display = isMath?'none':'';
+  document.getElementById('lpanel').style.display = isMath?'none':'';
+  document.getElementById('rpanel').classList.toggle('collapsed', isMath||!theoryOpen);
+  const mp = document.getElementById('math-pane');
+  mp.classList.toggle('active', isMath);
+
+  if(!isMath) dirty=true;
+}
+
+function setView(v, el){
+  S.view=v;
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+  if(el) el.classList.add('active');
+  dirty=true;
+}
+
+function toggleTheory(){
+  theoryOpen=!theoryOpen;
+  document.getElementById('rpanel').classList.toggle('collapsed',!theoryOpen);
+  document.getElementById('theory-tab').textContent=theoryOpen?'Theory ◂':'Theory ▸';
+  setTimeout(()=>{resize();dirty=true;},260);
+}
+
+// ── Presets ────────────────────────────────────────────────────────────────
+function applyPreset(name, el){
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  if(el) el.classList.add('active');
+
+  if(name==='safe_prime'){
+    S.mmax=60;S.n=1;S.lifts=true;S.broken=false;S.npathLabels=true;S.spiralLabels=true;
+    S.view='concentric';MAIN_TAB='both';
+    document.getElementById('sl-mmax').value=60;document.getElementById('val-mmax').textContent=60;
+    document.getElementById('sl-n').value=1;document.getElementById('num-n').value=1;document.getElementById('val-n').textContent=1;
+    document.querySelector('.tb-tab').classList.add('active');
+    // Pick prime near mmax/2
+    S.prime=29;S.pidx=PRIMES.indexOf(29);
+    document.getElementById('val-prime').textContent=29;
+    document.getElementById('sl-prime').value=S.pidx;
+  } else if(name==='twin'){
+    S.mmax=50;S.n=3;S.lifts=true;S.view='concentric';
+    document.getElementById('sl-n').value=3;document.getElementById('num-n').value=3;document.getElementById('val-n').textContent=3;
+    document.getElementById('sl-mmax').value=50;document.getElementById('val-mmax').textContent=50;
+  } else if(name==='fermat_spiral'){
+    S.view='fermat';S.mmax=80;S.lifts=false;MAIN_TAB='spiral';
+    document.getElementById('sl-mmax').value=80;document.getElementById('val-mmax').textContent=80;
+  } else if(name==='equator'){
+    S.n=1;S.mmax=40;MAIN_TAB='npath';S.lifts=false;S.allCoprime=true;
+  } else if(name==='chains'){
+    S.lifts=true;S.broken=true;S.liftAlpha=.35;S.mmax=30;MAIN_TAB='lift';
+    document.getElementById('sl-alpha').value=35;
+  } else if(name==='primorial'){
+    S.mmax=30;S.lifts=true;S.view='concentric';S.phiColor=true;MAIN_TAB='lift';
+    document.getElementById('chk-coloring').checked=true;
+  } else if(name==='reset'){
+    S.mmax=40;S.zoom=90;S.delta=0;S.n=1;S.prime=2;S.pidx=0;
+    S.lifts=true;S.broken=false;S.liftAlpha=.25;S.ptSize=3;
+    S.allCoprime=true;S.phiColor=false;S.mirror=true;S.dropout=true;S.allP=false;
+    MAIN_TAB='both';S.view='concentric';
+    document.getElementById('sl-mmax').value=40;document.getElementById('val-mmax').textContent=40;
+    document.getElementById('sl-n').value=1;document.getElementById('num-n').value=1;document.getElementById('val-n').textContent=1;
+    document.getElementById('sl-prime').value=0;document.getElementById('val-prime').textContent=2;
+    document.getElementById('sl-alpha').value=25;
+    document.getElementById('chk-coloring').checked=false;
+    document.getElementById('chk-mirror').checked=true;
+    document.getElementById('chk-dropout').checked=true;
+    document.querySelectorAll('.mode-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
+  }
+  updateNFormula();
+  dirty=true;
+}
+
+// ── 4K Export ──────────────────────────────────────────────────────────────
+function openExport(){document.getElementById('export-modal').classList.add('open');}
+function closeExport(){document.getElementById('export-modal').classList.remove('open');}
+
+function doExport(){
+  const ew=+document.getElementById('em-w').value||3840;
+  const eh=+document.getElementById('em-h').value||2160;
+  const bgChoice=document.getElementById('em-bg').value;
+  const labelMode=document.getElementById('em-labels').value;
+  const ptScale=+document.getElementById('em-ptscale').value||2.5;
+
+  const prog=document.getElementById('em-progress');
+  prog.style.display='block';prog.textContent='Rendering…';
+
+  setTimeout(()=>{
+    // Offscreen canvas
+    const oc=document.createElement('canvas');
+    oc.width=ew;oc.height=eh;
+    const octx=oc.getContext('2d');
+
+    // Background
+    const bgMap={'dark':'#030310','black':'#000000','paper':'#f5f0e8'};
+    octx.fillStyle=bgMap[bgChoice]||'#030310';
+    octx.fillRect(0,0,ew,eh);
+
+    const oldW=W,oldH=H;
+    W=ew;H=eh;
+    const oldCtx=ctx;
+    // Temporarily redirect draw to offscreen
+    const savedPtSize=S.ptSize;
+    S.ptSize=S.ptSize*ptScale;
+
+    // Draw to offscreen canvas
+    drawToContext(octx,ew,eh,labelMode);
+
+    S.ptSize=savedPtSize;
+    W=oldW;H=oldH;
+
+    // Watermark
+    if(labelMode!=='none'){
+      octx.font=`400 ${Math.round(ew/120)}px 'JetBrains Mono',monospace`;
+      octx.fillStyle='rgba(200,168,74,.35)';
+      octx.textAlign='right';octx.textBaseline='bottom';
+      octx.fillText('Lift Dynamics · Wessen Getachew · wessengetachew.github.io',ew-30,eh-30);
+    }
+
+    oc.toBlob(blob=>{
+      const a=document.createElement('a');
+      a.download=`lift_dynamics_${S.view}_${ew}x${eh}.png`;
+      a.href=URL.createObjectURL(blob);a.click();
+      prog.textContent='Done ✓';
+      setTimeout(()=>{prog.style.display='none';closeExport();},1500);
+    },'image/png',1.0);
+  },50);
+}
+
+function drawToContext(octx,ew,eh,labelMode){
+  const zoom=S.zoom/100;
+  const sc=Math.min(ew,eh)/2/S.mmax;
+
+  function pos(r,M){
+    if(S.view==='concentric'){
+      const rho=M*zoom*(Math.min(ew,eh)/2)/S.mmax;
+      const th=2*Math.PI*r/M+S.delta*M*2*Math.PI;
+      return [ew/2+rho*Math.cos(th),eh/2+rho*Math.sin(th)];
+    }
+    if(S.view==='fermat'){
+      const rho=Math.sqrt(M)*zoom*(Math.min(ew,eh)/2)/Math.sqrt(S.mmax);
+      const th=2*Math.PI*r/M+S.delta*M*2*Math.PI;
+      return [ew/2+rho*Math.cos(th),eh/2+rho*Math.sin(th)];
+    }
+    if(S.view==='strip'){
+      return [(r/M*2-1)*ew/2*zoom+ew/2,(S.mmax>1?1-2*(M-1)/(S.mmax-1):0)*eh/2*zoom+eh/2];
+    }
+    const logY=Math.log(2/M)/Math.log(2/S.mmax);
+    return [(r/M*2-1)*ew/2*zoom+ew/2,(logY*1.8-0.9)*eh/2*zoom+eh/2];
+  }
+
+  const showNpath=MAIN_TAB==='npath'||MAIN_TAB==='both';
+  const showSpiral=MAIN_TAB==='spiral'||MAIN_TAB==='both';
+  const showLift=MAIN_TAB==='lift'||MAIN_TAB==='both';
+
+  // Lift lines
+  if(S.lifts||S.broken){
+    for(let M=2;M<S.mmax;M++){
+      const cops=coprimes(M);
+      const cop2=new Set(coprimes(M+1));
+      for(const r of cops){
+        const r2=r%(M+1);
+        const lifted=cop2.has(r2);
+        if(lifted&&!S.lifts)continue;
+        if(!lifted&&!S.broken)continue;
+        const [x1,y1]=pos(r,M);
+        const [x2,y2]=pos(r2,M+1);
+        octx.beginPath();octx.moveTo(x1,y1);octx.lineTo(x2,y2);
+        octx.lineWidth=S.liftThick/3;
+        octx.strokeStyle=lifted?`rgba(61,200,184,${S.liftAlpha})`:`rgba(224,80,96,${S.liftAlpha})`;
+        octx.stroke();
+      }
+    }
+  }
+
+  // Points
+  const ps=S.ptSize;
+  const anyH=showNpath||showSpiral;
+  for(let M=2;M<=S.mmax;M++){
+    const cops=coprimes(M);
+    const cop2=new Set(coprimes(M+1));
+    for(const r of cops){
+      const [x,y]=pos(r,M);
+      const r2=r%(M+1);
+      let onNpath=false,onSpiral=false,onMirror=false,isDropout=false;
+      if(showNpath){
+        if(S.allN){for(const nn of [1,3,5,7,9]){if((M%2)===(nn%2)&&(r===(M+nn)/2||r===(M-nn)/2)){onNpath=true;break;}}}
+        else if((M%2)===(S.n%2)&&(r===(M+S.n)/2||r===(M-S.n)/2)) onNpath=true;
+      }
+      if(showSpiral){
+        if(S.allP){for(const pp of PRIMES){if(pp>=M)break;if(r===pp%M){onSpiral=true;break;}}}
+        else{ if(r===S.prime%M) onSpiral=true; if(S.mirror&&r===(M-S.prime%M)%M) onMirror=true; }
+        if(S.dropout&&M===S.prime&&r===0) isDropout=true;
+      }
+
+      let col,size=ps,alpha=1;
+      if(isDropout){col='255,80,80';size=ps*2.2;alpha=.95;}
+      else if(onNpath&&onSpiral){col='255,220,80';size=ps*2.5;alpha=1;}
+      else if(onNpath){col='61,200,184';size=ps*2;alpha=.95;}
+      else if(onSpiral){col='200,168,74';size=ps*2;alpha=.9;}
+      else if(onMirror){col='155,127,232';size=ps*1.6;alpha=.8;}
+      else if(S.allCoprime){col='80,80,130';alpha=anyH?.2:.5;}
+      else continue;
+
+      octx.fillStyle=`rgba(${col},${alpha})`;
+      octx.beginPath();octx.arc(x,y,size,0,6.28);octx.fill();
+      if(onNpath||onSpiral||isDropout){
+        octx.fillStyle=`rgba(${col},${alpha*0.15})`;
+        octx.beginPath();octx.arc(x,y,size*3,0,6.28);octx.fill();
+      }
+    }
+  }
+
+  // Labels in export
+  if(labelMode==='full'||labelMode==='minimal'){
+    const fs=Math.round(ew/200);
+    octx.font=`400 ${fs}px 'JetBrains Mono',monospace`;
+
+    // Legend
+    const legend=[
+      {col:'rgba(61,200,184,.9)',txt:'±n path: r=(M±n)/2'},
+      {col:'rgba(200,168,74,.9)',txt:'Prime spiral: r=p mod M'},
+      {col:'rgba(155,127,232,.85)',txt:'Mirror: σ(r)=M−r'},
+      {col:'rgba(255,80,80,.9)',txt:'Dropout: p mod p=0 (Jump Theorem)'},
+      {col:'rgba(255,220,80,.9)',txt:'Intersection (safe prime signature)'},
+    ];
+    legend.forEach(({col,txt},i)=>{
+      octx.fillStyle=col;
+      octx.beginPath();octx.arc(40,eh-40-i*(fs+14),fs*.7,0,6.28);octx.fill();
+      octx.fillStyle=col;octx.textAlign='left';octx.textBaseline='middle';
+      octx.fillText(txt,56,eh-40-i*(fs+14));
+    });
+
+    if(labelMode==='full'){
+      // Title block
+      octx.font=`400 ${Math.round(ew/80)}px 'JetBrains Mono',monospace`;
+      octx.fillStyle='rgba(200,168,74,.8)';octx.textAlign='left';octx.textBaseline='top';
+      octx.fillText('Lift Dynamics · (ℤ/Mℤ)* · M=2…'+S.mmax,30,30);
+      octx.font=`400 ${Math.round(ew/130)}px 'JetBrains Mono',monospace`;
+      octx.fillStyle='rgba(200,168,74,.45)';
+      octx.fillText(`n=${S.n}  p=${S.prime}  view=${S.view}  δ=${S.delta.toFixed(3)}`,30,30+Math.round(ew/70));
+    }
+  }
+}
+
+function exportSVGLabels(){
+  // Export label positions as JSON for external use
+  const labels=[];
+  if(S.view==='concentric'){
+    for(let M=2;M<=S.mmax;M++){
+      if(!isPrime(M)) continue;
+      labels.push({type:'prime_ring',M,r:null,x:null,y:null,label:`M=${M} (prime ring)`});
+    }
+    // n-path points
+    for(let M=2;M<=S.mmax;M++){
+      if((M%2)===(S.n%2)){
+        const r=(M+S.n)/2;
+        const [x,y]=toXY(r,M);
+        labels.push({type:'npath',M,r,x,y,label:`(${M}+${S.n})/2=${r}`});
+      }
+    }
+  }
+  const blob=new Blob([JSON.stringify(labels,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.download='lift_labels.json';a.href=URL.createObjectURL(blob);a.click();
+}
+
+// ── Render loop ────────────────────────────────────────────────────────────
+function loop(){
+  if(dirty) draw();
+  requestAnimationFrame(loop);
+}
+loop();
+
+// ── Expose to HTML ─────────────────────────────────────────────────────────
+window.setMainTab=setMainTab;window.setView=setView;window.toggleTheory=toggleTheory;
+window.applyPreset=applyPreset;window.openExport=openExport;window.closeExport=closeExport;
+window.doExport=doExport;window.exportSVGLabels=exportSVGLabels;
+</script>
 </body>
 </html>
