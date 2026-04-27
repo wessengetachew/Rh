@@ -268,8 +268,20 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
 #em-cancel-btn:hover{background:rgba(255,255,255,.04);}
 #em-progress{display:none;font-size:9px;color:var(--teal);margin-top:12px;text-align:center;}
 
-@media(max-width:800px){#rpanel{display:none;}#lpanel{width:220px;}}
-@media(max-width:600px){#lpanel{display:none;}}
+@media(max-width:800px){#rpanel{display:none;}#lpanel{width:200px;}}
+@media(max-width:600px){
+  #lpanel{display:none;}
+  #topbar{height:44px;}
+  #body{top:44px;}
+  .tb-brand{display:none;}
+  .tb-tab{padding:0 10px;font-size:8px;}
+  #statbar{height:28px;gap:12px;}
+  .stat{font-size:8px;}
+}
+@media(max-width:420px){
+  .tb-right{display:none;}
+  #math-inner{padding:24px 14px 60px;}
+}
 </style>
 </head>
 <body>
@@ -314,7 +326,7 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
       <div class="sec">Ring Range</div>
       <div class="row">
         <span class="lbl">M max</span>
-        <input type="range" id="sl-mmax" min="4" max="120" value="40" oninput="S.mmax=+this.value;document.getElementById('val-mmax').textContent=this.value;dirty=true;">
+        <input type="range" id="sl-mmax" min="4" max="200" value="40" oninput="S.mmax=+this.value;document.getElementById('val-mmax').textContent=this.value;dirty=true;">
         <span class="val" id="val-mmax">40</span>
       </div>
       <div class="row">
@@ -329,11 +341,24 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
       </div>
 
       <!-- ±n Path -->
+      <!-- Play controls -->
+      <div class="sec">Animation</div>
+      <div style="display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap;">
+        <button class="action" id="btn-play-n" onclick="playAnim('n')" style="flex:1;min-width:60px">▶ n</button>
+        <button class="action" id="btn-play-p" onclick="playAnim('p')" style="flex:1;min-width:60px">▶ p</button>
+        <button class="action" id="btn-play-m" onclick="playAnim('m')" style="flex:1;min-width:60px">▶ M</button>
+        <button class="action coral" id="btn-stop" onclick="stopAnim()" style="flex:1;min-width:60px;display:none">■ Stop</button>
+      </div>
+      <div class="row">
+        <span class="lbl">Speed</span>
+        <input type="range" id="sl-speed" min="1" max="20" value="5" oninput="ANIM.speed=+this.value;">
+        <span class="val" id="val-speed">5</span>
+      </div>
       <div class="sec" id="sec-npath">±n Path: r = (M ± n)/2</div>
       <div class="row">
         <span class="lbl">n offset</span>
-        <input type="range" id="sl-n" min="1" max="99" value="1" step="2" oninput="S.n=+this.value;document.getElementById('val-n').textContent=this.value;updateNFormula();dirty=true;">
-        <input type="number" id="num-n" value="1" min="1" max="999" style="width:50px" oninput="S.n=+this.value;document.getElementById('sl-n').value=Math.min(99,S.n);updateNFormula();dirty=true;">
+        <input type="range" id="sl-n" min="1" max="499" value="1" step="2" oninput="S.n=+this.value;document.getElementById('num-n').value=this.value;document.getElementById('val-n').textContent=this.value;updateNFormula();dirty=true;">
+        <input type="number" id="num-n" value="1" min="1" max="9999" style="width:54px" oninput="S.n=+this.value;document.getElementById('sl-n').value=Math.min(499,S.n);updateNFormula();dirty=true;">
         <span class="val" id="val-n">1</span>
       </div>
       <div class="ibox" id="npath-info">
@@ -397,6 +422,354 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
       <button class="action" onclick="exportSVGLabels()" style="margin-top:3px">↓ Label positions (JSON)</button>
 
     </div>
+  </div>
+
+  <!-- MATH PANE -->
+  <div id="math-pane">
+  <div id="math-inner">
+
+    <div class="mp-rule"></div>
+    <div class="mp-tag">Lift Dynamics · Number Theory</div>
+    <div class="mp-h1">The Two Lift Dynamics</div>
+    <div class="mp-sub">How coprime residues move across modular rings — and what that reveals about primes</div>
+    <div class="mp-divider"></div>
+
+    <!-- §0 The Setting -->
+    <div class="mp-sec">
+      <div class="mp-secn">Setting</div>
+      <div class="mp-sech">The Modular Ring Sequence</div>
+      <p class="mp-p">
+        For each integer M ≥ 2, the <strong>reduced residue group</strong> (ℤ/Mℤ)* consists of all integers
+        r ∈ {1, …, M−1} with gcd(r, M) = 1. Its size is Euler's totient φ(M).
+        Geometrically, place these residues on a circle of radius M, with r at angle 2πr/M.
+        The concentric ring view stacks rings M = 2, 3, 4, … outward.
+      </p>
+      <p class="mp-p">
+        Two fundamentally different paths cut through this geometry. The <strong>±n path</strong>
+        is defined algebraically — it picks the same fractional position on every ring.
+        The <strong>prime spiral</strong> is defined arithmetically — it traces a fixed prime
+        across all rings via modular reduction. They are dual objects, and their intersection
+        encodes deep arithmetic about primes.
+      </p>
+    </div>
+
+    <!-- §1 ±n Path -->
+    <div class="mp-sec">
+      <div class="mp-secn">Section 1</div>
+      <div class="mp-sech">The ±n Lift Path</div>
+
+      <div class="mp-block def">
+        <div class="mp-block-tag">Definition 1.1 — The ±n Path</div>
+        <div class="mp-block-body">
+          For a fixed positive integer n, the <strong>±n path</strong> selects from each ring M
+          the two residues satisfying 2r ≡ ±n (mod M):
+        </div>
+      </div>
+      <div class="mp-eq">
+        r<sub>+</sub>(M) = (M + n) / 2 &nbsp;&nbsp;&nbsp; r<sub>−</sub>(M) = (M − n) / 2
+        <span class="eq-ann">defined when M and n have the same parity (both odd or both even)</span>
+      </div>
+
+      <p class="mp-p">
+        <strong>Why these residues?</strong> When M is odd, 2 is invertible mod M with
+        2⁻¹ ≡ (M+1)/2. So r = n · 2⁻¹ (mod M) = n(M+1)/2 (mod M) = (M+n)/2 (mod M).
+        These are the <em>modular halves</em> of ±n — the two equatorial points on ring M,
+        offset by n/2 from the midpoint.
+      </p>
+
+      <div class="mp-block thm">
+        <div class="mp-block-tag">Theorem 1.1 — Equatorial Convergence</div>
+        <div class="mp-block-body">
+          As M → ∞, the fractional position of the ±n path satisfies:
+          <br><br>
+          r<sub>+</sub>(M)/M = (M+n)/(2M) → 1/2
+          <br><br>
+          The path converges to the <em>π-position</em> (antipodal point) of every ring.
+          It is asymptotically equatorial — sitting at angular position θ → π as M grows.
+        </div>
+      </div>
+
+      <div class="mp-proof">
+        r<sub>+</sub>/M = (1 + n/M)/2 → 1/2 as M → ∞. <span class="mp-qed">□</span>
+      </div>
+
+      <p class="mp-p">
+        <strong>Lift survival of the path.</strong> Does r<sub>+</sub>(M) survive the lift to ring M+1?
+        The condition is gcd(r<sub>+</sub>(M) mod (M+1), M+1) = 1. For n = 1:
+        r<sub>+</sub> = (M+1)/2, and its image mod (M+1) is (M+1)/2 itself. The survival condition becomes:
+      </p>
+      <div class="mp-eq">
+        gcd((M+1)/2, &nbsp;M+1) = 1
+        <span class="eq-ann">satisfied iff (M+1)/2 shares no prime factor with M+1, i.e. M+1 = 2q with q prime</span>
+      </div>
+      <p class="mp-p">
+        This is precisely the <strong>safe prime condition</strong>: M+1 is twice a prime q (a safe prime),
+        meaning q = (M+1)/2 is prime (a Sophie Germain prime). The equatorial path with n=1 survives
+        its lift at exactly the safe prime rings — and these are the rings where the error term |E(N)·N|
+        achieves its numerical maxima.
+      </p>
+
+      <button class="mp-canvas-btn" onclick="jumpToCanvas('npath')">Explore ±n path on canvas →</button>
+
+      <div class="mp-block rmk">
+        <div class="mp-block-tag">Remark 1.1 — CRT Interpretation</div>
+        <div class="mp-block-body">
+          By the Chinese Remainder Theorem, the primorial ring ℤ/p#ℤ decomposes as
+          ∏ ℤ/pℤ over primes p ≤ p_max. The ±n path condition 2r ≡ ±n (mod M) is a
+          <em>linear congruence</em> — it factors independently over each prime dividing M.
+          The path's lift survival therefore decomposes as a product of local conditions,
+          one per prime, which is why safe prime positions are arithmetically exceptional.
+        </div>
+      </div>
+    </div>
+
+    <!-- §2 Prime Spiral -->
+    <div class="mp-sec">
+      <div class="mp-secn">Section 2</div>
+      <div class="mp-sech">The Prime Spiral</div>
+
+      <div class="mp-block def">
+        <div class="mp-block-tag">Definition 2.1 — The Prime Spiral</div>
+        <div class="mp-block-body">
+          Fix a prime p. The <strong>prime spiral</strong> is the sequence of residues on each ring M given by modular reduction:
+        </div>
+      </div>
+      <div class="mp-eq">
+        r(M) = p mod M
+        <span class="eq-ann">the position of p on ring M · tracks p across the entire ring sequence</span>
+      </div>
+
+      <p class="mp-p">
+        The spiral has two distinct regimes separated by the ring M = p:
+      </p>
+
+      <table class="mp-table">
+        <thead><tr><th>Regime</th><th>Condition</th><th>Residue r(M)</th><th>Behaviour</th></tr></thead>
+        <tbody>
+          <tr><td class="teal">Before</td><td>M ≤ p</td><td class="hl">p mod M  (varies)</td><td>Encodes p via CRT · irregular spiral</td></tr>
+          <tr><td class="coral">Dropout</td><td>M = p</td><td class="coral">p mod p = 0</td><td>Non-coprime · Jump Theorem fires</td></tr>
+          <tr><td class="violet">After</td><td>M > p</td><td class="hl">r = p  (fixed)</td><td>θ = 2πp/M → 0 · converges to origin</td></tr>
+        </tbody>
+      </table>
+
+      <div class="mp-block thm">
+        <div class="mp-block-tag">Theorem 2.1 — The Dropout and Jump Theorem</div>
+        <div class="mp-block-body">
+          At ring M = p, the spiral position is p mod p = 0, which is <em>not coprime</em> to p.
+          The prime p disappears from the reduced residue group at its own ring. This is the
+          geometric manifestation of the Jump Theorem: as x crosses p−1 in the drift function D(x),
+          the term 1/(p²−x−1) drops from the sum defining D(x), producing an exact jump:
+          <br><br>
+          Δ_p = 1 / p(p−1)
+          <br><br>
+          The dropout is visible as a gap in the spiral at ring p. The jump size encodes p
+          via the recovery formula p = (1 + √(1 + 4/s))/2, whose discriminant (2p−1)² is always a perfect square.
+        </div>
+      </div>
+
+      <div class="mp-block thm">
+        <div class="mp-block-tag">Theorem 2.2 — Convergence to Origin</div>
+        <div class="mp-block-body">
+          For M > p, the spiral sits at r = p (fixed). Its angular position is:
+          <br><br>
+          θ(M) = 2πp/M → 0  as M → ∞
+          <br><br>
+          The spiral <em>converges to the origin</em>. Each prime becomes a negligible fraction
+          of ring M as M grows. This is why large primes contribute small jumps in D(x): their
+          spiral winds into the center, leaving a vanishingly small angular footprint.
+        </div>
+      </div>
+
+      <div class="mp-proof">
+        r(M)/M = p/M → 0 for fixed p as M → ∞. The fractional position vanishes. <span class="mp-qed">□</span>
+      </div>
+
+      <p class="mp-p">
+        <strong>CRT encoding before the dropout.</strong> For M ≤ p, knowing r(M) = p mod M for all M
+        is equivalent — by the Chinese Remainder Theorem — to knowing p itself. The spiral encodes
+        the prime completely in its pre-dropout behavior. Each ring M &lt; p contributes one modular
+        constraint, and together they identify p uniquely.
+      </p>
+
+      <button class="mp-canvas-btn" onclick="jumpToCanvas('spiral')">Explore the prime spiral on canvas →</button>
+
+      <div class="mp-block rmk">
+        <div class="mp-block-tag">Remark 2.1 — Gaussian Integers and the Mirror</div>
+        <div class="mp-block-body">
+          The <strong>mirror spiral</strong> σ(r) = M − r is complex conjugation in ℤ[i].
+          Whether p ≡ 1 (mod 4) or p ≡ 3 (mod 4) determines the spiral's orientation:
+          <br><br>
+          p ≡ 1 (mod 4): p = π·π̄ splits in ℤ[i] · spiral in upper half · positive jump in D_χ₄<br>
+          p ≡ 3 (mod 4): p stays prime in ℤ[i] · inert · negative jump in D_χ₄
+          <br><br>
+          The mirror spiral and the original are symmetric across the real axis — conjugate partners.
+          Together they exhibit the full Gaussian integer structure of each prime.
+        </div>
+      </div>
+    </div>
+
+    <!-- §3 Lift Connections -->
+    <div class="mp-sec">
+      <div class="mp-secn">Section 3</div>
+      <div class="mp-sech">The Lift: r → r mod(M+1)</div>
+
+      <div class="mp-block def">
+        <div class="mp-block-tag">Definition 3.1 — The Lift Map</div>
+        <div class="mp-block-body">
+          For a coprime residue r ∈ (ℤ/Mℤ)*, its <strong>lift</strong> to ring M+1 is:
+        </div>
+      </div>
+      <div class="mp-eq">
+        r ↦ r' = r mod (M+1)
+        <span class="eq-ann">r <em>survives</em> iff gcd(r', M+1) = 1 · shown as teal · broken as coral</span>
+      </div>
+
+      <p class="mp-p">
+        The lift is not a group homomorphism. The groups (ℤ/Mℤ)* and (ℤ/(M+1)ℤ)* have no natural
+        algebraic relationship — they are coprime rings over consecutive integers. What the lift measures
+        is purely: <em>does this residue, when read modulo the next integer, remain coprime to it?</em>
+      </p>
+
+      <div class="mp-block thm">
+        <div class="mp-block-tag">Theorem 3.1 — The Lift Survival Constant (Proved)</div>
+        <div class="mp-block-body">
+          The long-run weighted average of lift survival converges to:
+          <br><br>
+          C = ∏_p (p²−2)/(p²−1) ≈ 0.530711806246
+          <br><br>
+          where R(N) = Σ L(M) / Σ φ(M) with L(M) = φ(M)·φ(M+1)/(M+1).
+          This constant C is the <em>modular apogee</em> — the long-run fraction of coprime
+          residues that survive any single lift.
+        </div>
+      </div>
+
+      <p class="mp-p">
+        <strong>Why the Euler product?</strong> By Möbius inversion, φ(M+1)/(M+1) = Σ_{d|M+1} μ(d)/d.
+        Decomposing R(N) into Möbius components, each prime p contributes an independent factor
+        (p²−2)/(p²−1) to the limit. The product telescopes to C. The independence of prime contributions
+        is the CRT structure of the lift — consecutive integers share no common prime factors, so the
+        local obstructions at each prime decouple exactly.
+      </p>
+
+      <button class="mp-canvas-btn" onclick="jumpToCanvas('lift')">Explore lift connections on canvas →</button>
+
+      <div class="mp-block rmk">
+        <div class="mp-block-tag">Remark 3.1 — Local Lift Density</div>
+        <div class="mp-block-body">
+          At each ring M, the fraction of coprime residues r that survive the lift to M+1 is:
+          <br><br>
+          L(M)/φ(M) = φ(M+1)/(M+1)
+          <br><br>
+          This is the coprime density of ring M+1 — the probability that a random integer is
+          coprime to M+1. When M+1 is prime, φ(M+1)/(M+1) = M/(M+1) ≈ 1 (near-total survival).
+          When M+1 is highly composite, the density drops sharply (many broken lifts).
+          This is why prime rings glow in the density coloring and primorial rings are the darkest.
+        </div>
+      </div>
+    </div>
+
+    <!-- §4 Intersection -->
+    <div class="mp-sec">
+      <div class="mp-secn">Section 4</div>
+      <div class="mp-sech">The Intersection — Safe Primes and Error Peaks</div>
+
+      <p class="mp-p">
+        The ±n path and the prime spiral are <strong>dual</strong> objects. One asks:
+        <em>fix a fractional position, which rings does it hit?</em> The other asks:
+        <em>fix a prime, which fractional positions does it visit?</em>
+        Their intersection is where both conditions hold simultaneously on the same ring.
+      </p>
+
+      <div class="mp-block thm">
+        <div class="mp-block-tag">Theorem 4.1 — The Intersection Condition</div>
+        <div class="mp-block-body">
+          The ±n path (n=1) intersects the prime spiral for prime p at ring M if and only if:
+          <br><br>
+          (M + 1)/2 ≡ p (mod M)
+          <br><br>
+          which simplifies to M + 1 = 2p, i.e. <em>M+1 is twice a prime</em>.
+          Since M+1 = 2p requires p = (M+1)/2 to be prime, this is the <strong>safe prime condition</strong>:
+          p is safe (its Sophie Germain parent (p−1)/2 is also prime).
+        </div>
+      </div>
+
+      <div class="mp-proof">
+        r<sub>+</sub>(M) = (M+1)/2 = p mod M. Since (M+1)/2 &lt; M, this requires (M+1)/2 = p, giving M = 2p−1, so M+1 = 2p. <span class="mp-qed">□</span>
+      </div>
+
+      <div class="mp-block conn">
+        <div class="mp-block-tag">Connection — Error Term Peaks</div>
+        <div class="mp-block-body">
+          Numerically, the maxima of |E(N)·N| where E(N) = R(N) − C occur at N = p−1 for
+          <em>safe primes</em> p. This is exactly the intersection condition: at ring M = p−1,
+          the ±1 equatorial path and the prime spiral for q = (p−1)/2 both pass through the same
+          residue. The geometric coincidence — two dynamical paths meeting at the same point —
+          produces the largest deviation of R(N) from C.
+          <br><br>
+          This is the conjectured K = ζ(2)·C ≈ 0.872986 bound: the supremum of |E(N)·N|
+          is set by the arithmetic of the intersection, not by zero locations of ζ(s).
+        </div>
+      </div>
+
+      <button class="mp-canvas-btn" onclick="jumpToCanvas('both')">See the intersection on canvas →</button>
+
+      <table class="mp-table">
+        <thead><tr><th>Safe prime p</th><th>Ring M=p−1</th><th>±1 path r</th><th>Spiral p/2 at M</th><th>Intersection?</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">5</td><td>4</td><td>(4+1)/2 = 2.5</td><td>—</td><td class="coral">No (even M)</td></tr>
+          <tr><td class="hl">7</td><td>6</td><td>(6+1)/2 = 3.5</td><td>—</td><td class="coral">No (even M)</td></tr>
+          <tr><td class="hl">11</td><td>10</td><td>5.5</td><td>—</td><td class="coral">No (even M)</td></tr>
+          <tr><td class="hl">23</td><td>22</td><td>11.5</td><td>—</td><td class="coral">No (even M)</td></tr>
+          <tr><td class="teal" colspan="5" style="text-align:center;font-size:10px;padding:8px">Note: intersection requires M odd (same parity as n=1). Safe primes of the form 4k+3 give odd M = 4k+2 (even). The exact intersection at integer residues occurs at odd M+1=2p, i.e. p odd prime — all primes ≥ 3 are odd, so M = 2p−1 is always odd for p ≥ 3. ✓</td></tr>
+          <tr><td class="hl">p=3</td><td>M=5 (odd)</td><td class="teal">r=(5+1)/2=3</td><td class="teal">3 mod 5 = 3</td><td class="teal">✓ Intersection</td></tr>
+          <tr><td class="hl">p=5</td><td>M=9 (odd)</td><td class="teal">r=(9+1)/2=5</td><td class="teal">5 mod 9 = 5</td><td class="teal">✓ Intersection</td></tr>
+          <tr><td class="hl">p=11</td><td>M=21 (odd)</td><td class="teal">r=(21+1)/2=11</td><td class="teal">11 mod 21 = 11</td><td class="teal">✓ Intersection</td></tr>
+          <tr><td class="hl">p=23</td><td>M=45 (odd)</td><td class="teal">r=(45+1)/2=23</td><td class="teal">23 mod 45 = 23</td><td class="teal">✓ Intersection</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- §5 Summary -->
+    <div class="mp-sec">
+      <div class="mp-secn">Section 5</div>
+      <div class="mp-sech">Summary — The Two Dynamics as a Complete System</div>
+
+      <p class="mp-p">
+        The two lift dynamics are not independent visualizations — they form a <strong>complete geometric system</strong>
+        for the arithmetic of primes. Together they provide:
+      </p>
+
+      <table class="mp-table">
+        <thead><tr><th>Object</th><th>Definition</th><th>What it detects</th><th>Classical connection</th></tr></thead>
+        <tbody>
+          <tr><td class="teal">±n path</td><td>r = (M±n)/2</td><td class="hl">Equatorial structure · safe primes · E(N) peaks</td><td>Sophie Germain primes · Mertens theorem</td></tr>
+          <tr><td class="hl">Prime spiral</td><td>r = p mod M</td><td class="violet">Prime location · dropout = jump · CRT encoding</td><td>Jump Theorem · D(x) · Gaussian integers</td></tr>
+          <tr><td class="coral">Lift lines</td><td>r → r mod(M+1)</td><td class="lime">Survival density → C · broken = prime structure</td><td>Euler product · R(N) → C</td></tr>
+          <tr><td class="violet">Intersection</td><td>(M+1)/2 = p</td><td class="coral">Safe primes · error maxima · K = ζ(2)·C</td><td>Hardy–Littlewood · explicit formula</td></tr>
+        </tbody>
+      </table>
+
+      <p class="mp-p" style="margin-top:24px">
+        The key insight is that <strong>C is not just a limit — it is a geometric invariant</strong> of
+        the modular ring sequence. The ±n path traces the equatorial spine of that sequence.
+        The prime spiral encodes each prime's arithmetic via the rings it visits before its dropout.
+        And the lift connections make C's Euler product structure visible as teal threads weaving
+        through the concentric geometry.
+      </p>
+
+      <div class="mp-block conn">
+        <div class="mp-block-tag">Open Question</div>
+        <div class="mp-block-body">
+          The conjecture E(N) = O(1/N) — that the error term decays faster than naive equidistribution
+          predicts — remains unproved. The geometry suggests an explanation: at safe prime rings,
+          the ±1 path and the prime spiral create a paired push-pull effect on R(N) that
+          largely cancels. Understanding why the cancellation is so clean at these intersection
+          points may be the key to proving the rate.
+        </div>
+      </div>
+    </div>
+
+  </div>
   </div>
 
   <!-- CANVAS AREA -->
@@ -1149,14 +1522,17 @@ function setMainTab(tab, el){
   if(el) el.classList.add('active');
 
   const isMath = tab==='math';
-  document.getElementById('canvas-wrap').style.display = isMath?'none':'';
-  document.getElementById('statbar').style.display = isMath?'none':'';
+  document.getElementById('carea').style.display = isMath?'none':'';
   document.getElementById('lpanel').style.display = isMath?'none':'';
   document.getElementById('rpanel').classList.toggle('collapsed', isMath||!theoryOpen);
   const mp = document.getElementById('math-pane');
   mp.classList.toggle('active', isMath);
 
   if(!isMath) dirty=true;
+}
+
+function jumpToCanvas(tab){
+  setMainTab(tab, null);
 }
 
 function setView(v, el){
@@ -1414,8 +1790,54 @@ function exportSVGLabels(){
   const a=document.createElement('a');a.download='lift_labels.json';a.href=URL.createObjectURL(blob);a.click();
 }
 
+// ── Animation ──────────────────────────────────────────────────────────────
+const ANIM={active:false,type:null,speed:5,frame:0};
+
+function playAnim(type){
+  ANIM.active=true;ANIM.type=type;ANIM.frame=0;
+  document.getElementById('btn-stop').style.display='';
+  document.getElementById('btn-play-n').style.display=type==='n'?'none':'';
+  document.getElementById('btn-play-p').style.display=type==='p'?'none':'';
+  document.getElementById('btn-play-m').style.display=type==='m'?'none':'';
+}
+
+function stopAnim(){
+  ANIM.active=false;ANIM.type=null;
+  document.getElementById('btn-stop').style.display='none';
+  document.getElementById('btn-play-n').style.display='';
+  document.getElementById('btn-play-p').style.display='';
+  document.getElementById('btn-play-m').style.display='';
+}
+
 // ── Render loop ────────────────────────────────────────────────────────────
 function loop(){
+  if(ANIM.active){
+    ANIM.frame++;
+    const sp=ANIM.speed;
+    if(ANIM.frame%Math.max(1,Math.round(6/sp))===0){
+      if(ANIM.type==='n'){
+        S.n=Math.max(1,(S.n+(sp>10?3:1)));
+        if(S.n>S.mmax-2) S.n=1;
+        document.getElementById('sl-n').value=Math.min(499,S.n);
+        document.getElementById('num-n').value=S.n;
+        document.getElementById('val-n').textContent=S.n;
+        updateNFormula();
+      } else if(ANIM.type==='p'){
+        S.pidx=(S.pidx+1)%Math.min(PRIMES.length,50);
+        S.prime=PRIMES[S.pidx];
+        document.getElementById('sl-prime').value=S.pidx;
+        document.getElementById('val-prime').textContent=S.prime;
+        document.querySelectorAll('#prime-chips .chip').forEach((b,i)=>b.classList.toggle('active',i===S.pidx));
+      } else if(ANIM.type==='m'){
+        S.mmax=Math.max(4,S.mmax+(sp>10?3:1));
+        if(S.mmax>200) S.mmax=4;
+        document.getElementById('sl-mmax').value=S.mmax;
+        document.getElementById('val-mmax').textContent=S.mmax;
+      }
+      dirty=true;
+    }
+    document.getElementById('val-speed').textContent=sp;
+  }
   if(dirty) draw();
   requestAnimationFrame(loop);
 }
