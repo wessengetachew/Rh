@@ -252,34 +252,7 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
 .math-canvas-cta:hover{background:rgba(61,200,184,.12);}
 .math-canvas-cta::before{content:'◈';}
 
-@media(max-width:600px){#math-inner{padding:32px 20px 80px;}}
-#export-modal{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.75);align-items:center;justify-content:center;}
-#export-modal.open{display:flex;}
-#export-box{background:var(--bg1);border:1px solid var(--edge2);padding:28px 32px;width:380px;}
-.em-title{font-family:var(--disp);font-size:.85rem;color:var(--cream);margin-bottom:20px;letter-spacing:.04em;}
-.em-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-.em-lbl{font-size:9px;color:var(--cream3);width:90px;letter-spacing:.1em;}
-.em-input{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--edge2);color:var(--cream);font-family:var(--mono);font-size:11px;padding:5px 8px;}
-.em-btns{display:flex;gap:8px;margin-top:20px;}
-.em-btns button{flex:1;padding:10px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;border:1px solid;transition:background .15s;}
-#em-export-btn{color:var(--gold);border-color:rgba(200,168,74,.5);background:rgba(200,168,74,.08);}
-#em-export-btn:hover{background:rgba(200,168,74,.18);}
-#em-cancel-btn{color:var(--cream3);border-color:var(--edge2);background:transparent;}
-#em-cancel-btn:hover{background:rgba(255,255,255,.04);}
-#em-progress{display:none;font-size:9px;color:var(--teal);margin-top:12px;text-align:center;}
-
-@media(max-width:800px){#rpanel{display:none;}#lpanel{width:200px;}}
-@media(max-width:600px){
-  #lpanel{display:none;}
-  #topbar{height:44px;}
-  #body{top:92px;}
-  .tb-brand{display:none;}
-  .tb-tab{padding:0 10px;font-size:8px;}
-  #statbar{height:28px;gap:12px;}
-  .stat{font-size:8px;}
-}
-@media(min-width:601px){
-  #mobile-bar{display:none;}
+#mobile-bar{display:none;}
   #body{top:50px;}
 }
 @media(max-width:420px){
@@ -333,12 +306,168 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
 #pt-popup .pt-val.lime{color:var(--lime);}
 #pt-popup .pt-val.violet{color:var(--violet);}
 #pt-popup .pt-head{color:var(--gold);font-size:10px;margin-bottom:5px;border-bottom:1px solid rgba(200,168,74,.2);padding-bottom:4px;}
+#pt-popup{
+  display:none;position:absolute;z-index:200;
+  background:rgba(5,5,20,.97);border:1px solid rgba(200,168,74,.4);
+  padding:10px 14px;min-width:200px;max-width:280px;
+  font-family:var(--mono);font-size:9.5px;line-height:1.9;
+  color:var(--cream2);pointer-events:none;
+  box-shadow:0 4px 24px rgba(0,0,0,.6);
+}
+#pt-popup .pt-close{pointer-events:all;float:right;cursor:pointer;color:var(--cream3);font-size:11px;margin:-2px -4px 0 8px;}
+#pt-popup .pt-row{display:flex;justify-content:space-between;gap:12px;}
+#pt-popup .pt-key{color:var(--cream3);}
+#pt-popup .pt-val{color:var(--cream);}
+#pt-popup .pt-val.teal{color:var(--teal);}
+#pt-popup .pt-val.coral{color:var(--coral);}
+#pt-popup .pt-val.gold{color:var(--gold);}
+#pt-popup .pt-val.lime{color:var(--lime);}
+#pt-popup .pt-val.violet{color:var(--violet);}
+#pt-popup .pt-head{color:var(--gold);font-size:10px;margin-bottom:5px;border-bottom:1px solid rgba(200,168,74,.2);padding-bottom:4px;}
+@media(max-width:600px){#math-inner{padding:32px 20px 80px;}}
+
+/* ── Inspect tooltip ── */
+#tooltip{position:absolute;pointer-events:none;z-index:50;background:rgba(4,4,16,.97);border:1px solid var(--edge2);padding:10px 14px;font-family:var(--mono);font-size:10px;color:var(--cream2);line-height:1.85;max-width:240px;display:none;box-shadow:0 4px 24px rgba(0,0,0,.5);}
+#tooltip .tt-title{font-size:7.5px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:7px;color:var(--gold);}
+#tooltip .tt-row{display:flex;justify-content:space-between;gap:16px;}
+#tooltip .tt-k{color:var(--cream3);}
+#tooltip .tt-v{color:var(--gold);}
+#tooltip .tt-v.teal{color:var(--teal);}
+#tooltip .tt-v.coral{color:var(--coral);}
+#tooltip .tt-v.violet{color:var(--violet);}
+#tooltip .tt-v.lime{color:var(--lime);}
+#tooltip .tt-sep{height:1px;background:var(--edge);margin:6px 0;}
+#tooltip .tt-hint{font-size:8.5px;color:var(--cream3);margin-top:5px;font-family:'Spectral',serif;font-style:italic;}
+/* ── Pinned points panel ── */
+#pin-panel{position:absolute;bottom:0;left:0;right:0;z-index:60;background:rgba(4,4,16,.97);border-top:1px solid rgba(200,168,74,.3);display:none;flex-direction:column;max-height:220px;}
+#pin-panel.open{display:flex;}
+#pin-header{display:flex;align-items:center;padding:5px 12px;border-bottom:1px solid var(--edge);flex-shrink:0;gap:8px;}
+#pin-header-title{font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);flex:1;}
+#pin-header-count{font-size:9px;color:var(--cream3);}
+#pin-header-clear{font-size:8px;color:var(--coral);cursor:pointer;padding:2px 6px;border:1px solid rgba(224,80,96,.3);transition:background .12s;}
+#pin-header-clear:hover{background:rgba(224,80,96,.1);}
+#pin-header-close{font-size:10px;color:var(--cream3);cursor:pointer;padding:2px 6px;margin-left:4px;}
+#pin-header-close:hover{color:var(--cream);}
+#pin-list{flex:1;overflow-y:auto;scrollbar-width:thin;}
+#pin-list::-webkit-scrollbar{width:3px;}
+.pin-item{border-bottom:1px solid var(--edge);cursor:pointer;}
+.pin-item:hover{background:rgba(255,255,255,.03);}
+.pin-item.active-pin{background:rgba(200,168,74,.07);}
+.pin-summary{display:flex;align-items:center;padding:6px 12px;gap:10px;}
+.pin-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.pin-label-text{font-size:9px;color:var(--cream2);flex:1;}
+.pin-badge{font-size:7.5px;padding:1px 6px;border:1px solid;flex-shrink:0;}
+.pin-remove{font-size:9px;color:var(--cream3);padding:2px 6px;cursor:pointer;transition:color .12s;}
+.pin-remove:hover{color:var(--coral);}
+.pin-detail{display:none;padding:6px 12px 10px 32px;background:rgba(0,0,0,.2);}
+.pin-item.open .pin-detail{display:grid;grid-template-columns:1fr 1fr;gap:2px 16px;}
+.pin-item.open .pin-summary::before{content:'▾';color:var(--gold);font-size:8px;margin-right:-6px;}
+.pin-item:not(.open) .pin-summary::before{content:'▸';color:var(--cream3);font-size:8px;margin-right:-6px;}
+.pd-row{display:flex;justify-content:space-between;}
+.pd-k{font-size:8.5px;color:var(--cream3);}
+.pd-v{font-size:8.5px;color:var(--teal);}
+.pd-v.gold{color:var(--gold);}
+.pd-v.lime{color:var(--lime);}
+.pd-v.coral{color:var(--coral);}
+.pd-v.violet{color:var(--violet);}
+#main-canvas{cursor:crosshair;}
+#main-canvas.hovering{cursor:default;}
+
+#export-modal{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.75);align-items:center;justify-content:center;}
+#export-modal.open{display:flex;}
+#export-box{background:var(--bg1);border:1px solid var(--edge2);padding:28px 32px;width:380px;}
+.em-title{font-family:var(--disp);font-size:.85rem;color:var(--cream);margin-bottom:20px;letter-spacing:.04em;}
+.em-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.em-lbl{font-size:9px;color:var(--cream3);width:90px;letter-spacing:.1em;}
+.em-input{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--edge2);color:var(--cream);font-family:var(--mono);font-size:11px;padding:5px 8px;}
+.em-btns{display:flex;gap:8px;margin-top:20px;}
+.em-btns button{flex:1;padding:10px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;border:1px solid;transition:background .15s;}
+#em-export-btn{color:var(--gold);border-color:rgba(200,168,74,.5);background:rgba(200,168,74,.08);}
+#em-export-btn:hover{background:rgba(200,168,74,.18);}
+#em-cancel-btn{color:var(--cream3);border-color:var(--edge2);background:transparent;}
+#em-cancel-btn:hover{background:rgba(255,255,255,.04);}
+#em-progress{display:none;font-size:9px;color:var(--teal);margin-top:12px;text-align:center;}
+
+@media(max-width:800px){#rpanel{display:none;}#lpanel{width:200px;}}
+@media(max-width:600px){
+  #lpanel{display:none;}
+  #topbar{height:44px;}
+  #body{top:44px;}
+  .tb-brand{display:none;}
+  .tb-tab{padding:0 10px;font-size:8px;}
+  #statbar{height:28px;gap:12px;}
+  .stat{font-size:8px;}
+}
+@media(max-width:420px){
+  .tb-right{display:none;}
+  #math-inner{padding:24px 14px 60px;}
+}
+
+/* ── Other works dropdown ── */
+.ow-link{display:block;font-family:var(--mono);font-size:10px;padding:6px 16px;color:rgba(200,195,185,.7);text-decoration:none;transition:background .12s,color .12s;white-space:nowrap;}
+.ow-link:hover{background:rgba(255,255,255,.05);color:var(--cream);}
+
+/* ── Floating export button ── */
+#float-export{
+  position:fixed;bottom:48px;right:14px;z-index:150;
+  font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--gold);background:rgba(4,4,13,.92);
+  border:1px solid rgba(200,168,74,.45);
+  padding:8px 14px;cursor:pointer;
+  backdrop-filter:blur(8px);
+  transition:opacity .2s,background .15s;
+  display:none;
+}
+#float-export:hover{background:rgba(200,168,74,.12);}
+#float-export.visible{display:block;}
+
+/* ── Overnight screen ── */
+#night-screen{position:fixed;inset:0;z-index:600;background:#03030a;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:opacity .8s;}
+#night-screen.fade-out{opacity:0;pointer-events:none;}
+#night-canvas{position:absolute;inset:0;width:100%;height:100%;}
+#night-content{position:relative;z-index:2;text-align:center;animation:nFade 2s ease forwards;}
+@keyframes nFade{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+#night-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(61,200,184,.6);margin-bottom:20px;}
+#night-title{font-family:'Cinzel',serif;font-size:clamp(1.8rem,5vw,3.2rem);font-weight:400;line-height:1.2;color:#ddd8cc;letter-spacing:.06em;margin-bottom:24px;}
+#night-eq{font-family:'JetBrains Mono',monospace;font-size:clamp(.9rem,2.2vw,1.4rem);color:#c8a84a;letter-spacing:.04em;margin-bottom:14px;padding:12px 24px;border:1px solid rgba(200,168,74,.2);background:rgba(200,168,74,.05);display:inline-block;}
+#night-sub{font-family:'Spectral',serif;font-size:clamp(.8rem,1.5vw,.95rem);font-style:italic;color:rgba(200,190,160,.5);margin-bottom:44px;line-height:1.7;max-width:420px;}
+#night-enter{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#3dc8b8;background:transparent;border:1px solid rgba(61,200,184,.4);padding:12px 36px;cursor:pointer;transition:all .22s;animation:nPulse 2.5s ease-in-out infinite;}
+#night-enter:hover{background:rgba(61,200,184,.1);border-color:rgba(61,200,184,.8);color:#ddd8cc;animation:none;}
+@keyframes nPulse{0%,100%{box-shadow:0 0 0 0 rgba(61,200,184,0);}50%{box-shadow:0 0 20px 4px rgba(61,200,184,.14);}}
+.n-popup{position:absolute;z-index:3;font-family:'JetBrains Mono',monospace;font-size:clamp(8px,1.2vw,11px);color:rgba(61,200,184,.9);background:rgba(4,4,12,.92);border:1px solid rgba(61,200,184,.2);padding:6px 13px;opacity:0;pointer-events:none;transition:opacity .7s;white-space:nowrap;}
+.n-popup.visible{opacity:1;}
 </style>
 </head>
 <body>
 
+<!-- ══ Opening Screen ══ -->
+<div id="night-screen">
+  <canvas id="night-canvas"></canvas>
+  <div id="night-content">
+    <div id="night-tag">Lift Survival Framework · Wessen Getachew</div>
+    <div id="night-title">Lift Dynamics<br><span style="font-size:.55em;letter-spacing:.12em;color:var(--teal)">(ℤ/Mℤ)*</span></div>
+    <div id="night-eq">r = (M ± n)/2 &nbsp;&nbsp;·&nbsp;&nbsp; r_p(M) = p mod M</div>
+    <div id="night-sub">Two geometric structures on the modular ring sequence — the equatorial path and the prime spiral — and their intersection at safe prime rings</div>
+    <button id="night-enter" onclick="enterPage()">Explore →</button>
+  </div>
+  <div class="n-popup" id="np1" style="left:8%;top:18%">r = (M+1)/2  ·  equatorial path</div>
+  <div class="n-popup" id="np2" style="left:55%;top:7%">dropout at M=p  →  Δ_p = 1/p(p−1)</div>
+  <div class="n-popup" id="np3" style="right:6%;top:55%">safe prime rings: M+1 = 2p</div>
+  <div class="n-popup" id="np4" style="left:5%;top:60%">C = Π_p (p²−2)/(p²−1) ≈ 0.5307</div>
+  <div class="n-popup" id="np5" style="left:38%;bottom:12%">mirror σ(r) = M−r  ·  conjugation in ℤ[i]</div>
+</div>
+
 <!-- MOBILE CONTROL BAR -->
 <div id="mobile-bar">
+  <!-- Animation play controls — always visible on mobile -->
+  <div class="mb-group" id="mb-anim-group">
+    <span class="mb-label" style="color:var(--lime)">▶</span>
+    <button class="mb-btn" id="mb-play-n" onclick="playAnim('n');document.getElementById('mb-stop').style.display='';['mb-play-n','mb-play-p','mb-play-m'].forEach(id=>document.getElementById(id).style.display='none');" style="color:var(--teal);border-color:rgba(61,200,184,.4)">n</button>
+    <button class="mb-btn" id="mb-play-p" onclick="playAnim('p');document.getElementById('mb-stop').style.display='';['mb-play-n','mb-play-p','mb-play-m'].forEach(id=>document.getElementById(id).style.display='none');" style="color:var(--gold);border-color:rgba(200,168,74,.4)">p</button>
+    <button class="mb-btn" id="mb-play-m" onclick="playAnim('m');document.getElementById('mb-stop').style.display='';['mb-play-n','mb-play-p','mb-play-m'].forEach(id=>document.getElementById(id).style.display='none');" style="color:var(--violet);border-color:rgba(192,132,252,.4)">M</button>
+    <button class="mb-btn" id="mb-stop" onclick="stopAnim();document.getElementById('mb-stop').style.display='none';['mb-play-n','mb-play-p','mb-play-m'].forEach(id=>document.getElementById(id).style.display='');" style="display:none;color:var(--coral);border-color:rgba(224,80,96,.4)">■</button>
+  </div>
+  <div class="mb-sep"></div>
   <!-- ±n controls -->
   <div class="mb-group" id="mb-n-group">
     <span class="mb-label">n</span>
@@ -378,21 +507,50 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
 </div>
 
 <!-- TOP BAR -->
+
+<!-- TOP BAR -->
 <div id="topbar">
   <div class="tb-brand">Lift Dynamics</div>
   <div class="tb-tabs">
+    <a class="tb-tab" href="index.html" style="color:var(--cream3);text-decoration:none;flex-shrink:0">← All Pages</a>
+    <div class="tb-sep"></div>
     <div class="tb-tab active" onclick="setMainTab('npath',this)">±n Path</div>
     <div class="tb-tab" onclick="setMainTab('spiral',this)">Prime Spiral</div>
     <div class="tb-tab" onclick="setMainTab('both',this)">Both</div>
     <div class="tb-tab" onclick="setMainTab('lift',this)">Lift Connections</div>
     <div class="tb-tab" onclick="setMainTab('math',this)" style="color:var(--violet)">The Math</div>
-    <div class="tb-tab" onclick="setMainTab('dchi',this)" style="color:var(--coral)">D<sub>χ</sub> &amp; RH</div>
+    <div class="tb-tab" onclick="setMainTab('dchi',this)" style="color:var(--coral)">D_χ · Jump Theory</div>
+    <div class="tb-tab" onclick="setMainTab('fu',this)" style="color:var(--lime)">F(u) · Analytic Lift</div>
   </div>
   <div class="tb-sep"></div>
   <div class="tb-right">
     <div class="tb-pill" id="view-pill">concentric</div>
     <div class="tb-tab" onclick="toggleTheory()" id="theory-tab" style="color:var(--cream3)">Theory ▸</div>
     <div class="tb-tab gold" onclick="openExport()">↓ 4K Export</div>
+    <div class="tb-tab" id="btn-snap" onclick="snapNow()" title="Capture current frame at 4K without stopping animation" style="color:var(--lime);border-bottom:2px solid transparent;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;padding:0 12px;height:50px;display:flex;align-items:center;cursor:pointer;white-space:nowrap;">⚡ Snap</div>
+    <div style="position:relative;">
+      <div class="tb-tab" onclick="toggleOtherWorks()" style="color:var(--cream3)">Other Works ▾</div>
+      <div id="other-works-menu" style="display:none;position:absolute;right:0;top:50px;background:rgba(4,4,13,.98);border:1px solid var(--edge2);min-width:250px;z-index:300;padding:6px 0;box-shadow:0 8px 32px rgba(0,0,0,.6);">
+        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);padding:8px 16px 4px;opacity:.55;">Lift Survival Framework</div>
+        <a class="ow-link" href="index.html">Opener</a>
+        <a class="ow-link" href="preprint.html">Preprint</a>
+        <a class="ow-link" href="EN_explorer-1-2.html">E(N) Explorer</a>
+        <a class="ow-link" href="EN_explorer-updated.html">Deep Analysis</a>
+        <a class="ow-link" href="zmmz_explorer-1.html">Geometric Canvas</a>
+        <a class="ow-link" href="wessen_identity.html">Primorial Sieve Identity</a>
+        <a class="ow-link" href="dchi_explorer.html">D_χ Explorer</a>
+        <a class="ow-link" href="complexity_wall.html">Complexity Wall</a>
+        <a class="ow-link" href="sophie_germain.html">Sophie Germain Primes</a>
+        <a class="ow-link" href="zeta_lift_bridge.html">ζ–Lift Bridge</a>
+        <a class="ow-link" href="k_explorer.html">K Constant</a>
+        <a class="ow-link" href="spectral_theory-1.html">Spectral Theory</a>
+        <a class="ow-link" href="zeta_explorer.html">ζ(2) Explorer</a>
+        <a class="ow-link" href="gcd_explorer.html">GCD Coprimality</a>
+        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);padding:10px 16px 4px;opacity:.55;border-top:1px solid var(--edge);margin-top:4px;">GitHub</div>
+        <a class="ow-link" href="https://github.com/wessengetachew" target="_blank" rel="noopener">github.com/wessengetachew ↗</a>
+        <a class="ow-link" href="https://wessengetachew.github.io" target="_blank" rel="noopener">wessengetachew.github.io ↗</a>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -426,7 +584,6 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
         <span class="lbl">Rotate δ</span>
         <input type="range" id="sl-delta" min="-50" max="50" value="0" oninput="S.delta=(+this.value)/1000;document.getElementById('val-delta').textContent=(S.delta).toFixed(3);dirty=true;">
         <span class="val" id="val-delta">0.000</span>
-        <button style="font-family:var(--mono);font-size:8px;padding:2px 6px;border:1px solid var(--edge2);background:transparent;color:var(--cream3);cursor:pointer;flex-shrink:0;" onclick="S.delta=0;document.getElementById('sl-delta').value=0;document.getElementById('val-delta').textContent='0.000';dirty=true;">↺</button>
       </div>
       <div class="row">
         <span class="lbl">Zoom</span>
@@ -452,17 +609,16 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
       <div class="row">
         <span class="lbl">n offset</span>
         <input type="range" id="sl-n" min="1" max="499" value="1" step="2" oninput="S.n=+this.value;document.getElementById('num-n').value=this.value;document.getElementById('val-n').textContent=this.value;updateNFormula();dirty=true;">
-        <input type="number" id="num-n" value="1" min="1" max="499" style="width:54px" oninput="S.n=+this.value;document.getElementById('sl-n').value=Math.min(+document.getElementById('nmax-n').value||499,S.n);updateNFormula();dirty=true;">
+        <input type="number" id="num-n" value="1" min="1" max="9999" style="width:54px" oninput="S.n=+this.value;document.getElementById('sl-n').value=Math.min(499,S.n);updateNFormula();dirty=true;">
         <span class="val" id="val-n">1</span>
-      </div>
-      <div class="row">
-        <span class="lbl">n max</span>
-        <input type="number" id="nmax-n" value="499" min="1" max="99999" step="2" style="width:64px" oninput="var mx=Math.max(1,+this.value||499);document.getElementById('sl-n').max=mx;document.getElementById('num-n').max=mx;if(S.n>mx){S.n=mx;document.getElementById('sl-n').value=mx;document.getElementById('num-n').value=mx;document.getElementById('val-n').textContent=mx;updateNFormula();dirty=true;}">
       </div>
       <div class="ibox" id="npath-info">
         <span class="formula">r = (M+1)/2 &amp; (M−1)/2</span><br>
         Equatorial path · same parity as M<br>
         Tracks lift survival near π
+      </div>
+      <div class="row"><span class="lbl">n max</span>
+        <input type="number" id="nmax-n" value="499" min="1" max="99999" step="2" style="width:64px" oninput="var mx=Math.max(1,+this.value||499);document.getElementById('sl-n').max=mx;document.getElementById('num-n').max=mx;if(S.n>mx){S.n=mx;document.getElementById('sl-n').value=mx;document.getElementById('num-n').value=mx;document.getElementById('val-n').textContent=mx;updateNFormula();dirty=true;}">
       </div>
       <div class="chk-row"><input type="checkbox" id="chk-all-n" onchange="S.allN=this.checked;dirty=true;"><label for="chk-all-n">Show n = 1,3,5,7,9 simultaneously</label></div>
       <div class="chk-row"><input type="checkbox" id="chk-npath-labels" checked onchange="S.npathLabels=this.checked;drawLabels();"><label for="chk-npath-labels">Show labels</label></div>
@@ -481,7 +637,15 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
       <div class="chk-row"><input type="checkbox" id="chk-spiral-labels" checked onchange="S.spiralLabels=this.checked;drawLabels();"><label for="chk-spiral-labels">Show labels</label></div>
 
       <!-- Lift connections -->
-      <div class="sec">Lift Connections r → r mod(M+1)</div>
+      <div class="sec">Gap Chords</div>
+      <div class="chk-row"><input type="checkbox" id="chk-chords" onchange="S.chords=this.checked;dirty=true;"><label for="chk-chords">Draw gap chords</label></div>
+      <div class="row"><span class="lbl">Gaps</span>
+        <input type="text" id="txt-gaps" value="2,4,6" style="flex:1;background:rgba(255,255,255,.04);border:1px solid var(--edge2);color:var(--cream);font-family:var(--mono);font-size:10px;padding:3px 6px;" oninput="S.gapStr=this.value;dirty=true;">
+      </div>
+      <div class="row"><span class="lbl">Chord α</span>
+        <input type="range" id="sl-chord-alpha" min="3" max="80" value="20" oninput="S.chordAlpha=+this.value/100;dirty=true;">
+      </div>
+            <div class="sec">Lift Connections r → r mod(M+1)</div>
       <div class="chk-row"><input type="checkbox" id="chk-lifts" checked onchange="S.lifts=this.checked;dirty=true;"><label for="chk-lifts">Surviving lifts (teal)</label></div>
       <div class="chk-row"><input type="checkbox" id="chk-broken" onchange="S.broken=this.checked;dirty=true;"><label for="chk-broken">Broken lifts (coral)</label></div>
       <div class="row">
@@ -496,14 +660,76 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
       <!-- Display -->
       <div class="sec">Display</div>
       <div class="chk-row"><input type="checkbox" id="chk-coprime" checked onchange="S.allCoprime=this.checked;dirty=true;"><label for="chk-coprime">All coprime residues</label></div>
-      <div class="chk-row"><input type="checkbox" id="chk-coloring" onchange="S.phiColor=this.checked;dirty=true;"><label for="chk-coloring">φ/M density coloring</label></div>
+      <div class="row"><span class="lbl">Color by</span>
+        <select id="sel-color" onchange="S.colorMode=this.value;dirty=true;">
+          <option value="default">Default (highlight)</option>
+          <option value="phi">φ(M)/M density</option>
+          <option value="angle">Angle (r/M hue)</option>
+          <option value="lift">Lift survival ✓/✗</option>
+          <option value="chi4">χ₄ Gaussian split/inert</option>
+          <option value="error_corr">E(N) contribution</option>
+          <option value="prime_ring">Prime / composite rings</option>
+          <option value="gap">Gap class (r mod 12)</option>
+          <option value="mod6">Mod-6 residue class</option>
+          <option value="primorial">Primorial rings</option>
+          <option value="mersenne">Mersenne rings</option>
+          <option value="entropy">Coprime entropy</option>
+          <option value="half">Upper / lower half</option>
+          <option value="mertens">Mertens drift</option>
+          <option value="jump">Jump size 1/p(p-1)</option>
+          <option value="safeprime">Safe prime rings</option>
+        </select>
+      </div>
+      <div class="row"><span class="lbl">Label pts</span>
+        <select id="sel-label" onchange="S.ptLabel=this.value;dirty=true;">
+          <option value="none">None</option>
+          <option value="r">r</option>
+          <option value="ratio">r/M</option>
+          <option value="M">M</option>
+          <option value="deg">θ (degrees)</option>
+          <option value="pi">θ/π</option>
+          <option value="lift">lift ✓/✗</option>
+        </select>
+      </div>
+      <div class="row"><span class="lbl">Label on</span>
+        <select id="sel-labelon" onchange="S.labelOn=this.value;dirty=true;">
+          <option value="all">All points</option>
+          <option value="path">±n path only</option>
+          <option value="spiral">Spiral only</option>
+          <option value="pinned">Pinned only</option>
+          <option value="prime">Prime rings only</option>
+        </select>
+      </div>
       <div class="row">
-        <span class="lbl">Point size</span>
+        <span class="lbl">Pt size</span>
         <input type="range" id="sl-ptsize" min="1" max="16" value="3" oninput="S.ptSize=+this.value;dirty=true;">
+      </div>
+      <div class="row">
+        <span class="lbl">Label sz</span>
+        <input type="range" id="sl-lblsz" min="7" max="18" value="9" oninput="S.labelSize=+this.value;dirty=true;">
+      </div>
+      <div class="row"><span class="lbl">Hue shift</span>
+        <input type="range" id="sl-hue" min="0" max="360" value="0" oninput="S.hue=+this.value;dirty=true;">
+        <span class="val" id="val-hue">0</span>
+      </div>
+      <div class="row"><span class="lbl">Saturation</span>
+        <input type="range" id="sl-sat" min="10" max="150" value="100" oninput="S.sat=+this.value/100;dirty=true;">
+      </div>
+      <div class="row"><span class="lbl">Brightness</span>
+        <input type="range" id="sl-bri" min="20" max="180" value="100" oninput="S.bri=+this.value/100;dirty=true;">
       </div>
 
       <!-- Presets -->
-      <div class="sec">Presets</div>
+      <div class="sec">Theorem Presets</div>
+      <div class="chip-row">
+        <button class="chip" onclick="applyThm('lift_survival')" style="color:var(--teal)">C≈0.531</button>
+        <button class="chip" onclick="applyThm('jump_thm')" style="color:var(--coral)">Jump Thm</button>
+        <button class="chip" onclick="applyThm('chi4')" style="color:var(--violet)">χ₄ split</button>
+        <button class="chip" onclick="applyThm('error_mode')" style="color:var(--gold)">E(N) mode</button>
+        <button class="chip" onclick="applyThm('primorial')" style="color:var(--lime)">Primorial</button>
+        <button class="chip" onclick="applyThm('safe_chain')" style="color:var(--teal)">Safe chain</button>
+      </div>
+            <div class="sec">Presets</div>
       <div class="chip-row">
         <button class="chip active" onclick="applyPreset('safe_prime',this)">Safe primes</button>
         <button class="chip" onclick="applyPreset('twin',this)">Twin primes</button>
@@ -518,6 +744,7 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
       <div class="sec">Export</div>
       <button class="action gold" onclick="openExport()">↓ 4K PNG Export</button>
       <button class="action" onclick="exportSVGLabels()" style="margin-top:3px">↓ Label positions (JSON)</button>
+      <button class="action coral" onclick="clearAllPins()" style="margin-top:3px">✕ Clear pinned cards</button>
 
     </div>
   </div>
@@ -875,7 +1102,18 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
     <div id="canvas-wrap">
       <canvas id="main-canvas"></canvas>
       <div id="labels-overlay"></div>
-  <div id="pt-popup"><span class="pt-close" onclick="document.getElementById('pt-popup').style.display='none'">✕</span><div id="pt-popup-inner"></div></div>
+      <div id="tooltip"></div>
+      <div id="pt-popup"><span class="pt-close" onclick="document.getElementById('pt-popup').style.display='none'">✕</span><div id="pt-popup-inner"></div></div>
+      <!-- Pinned points panel -->
+      <div id="pin-panel">
+        <div id="pin-header">
+          <span id="pin-header-title">Pinned Points</span>
+          <span id="pin-header-count">0 points</span>
+          <span id="pin-header-clear" onclick="clearAllPins()">Clear all</span>
+          <span id="pin-header-close" onclick="closePinPanel()">✕</span>
+        </div>
+        <div id="pin-list"></div>
+      </div>
     </div>
 
     <!-- THE MATH PANE -->
@@ -1087,7 +1325,7 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
             <div class="math-block-body">
               The n=1 equatorial path and the prime-p spiral intersect at ring M — meaning the equatorial residue (M+1)/2 equals the spiral residue p mod M — if and only if:
               <div style="margin:10px 0;font-family:var(--mono);font-size:11px;color:var(--gold)">(M+1)/2 ≡ p (mod M)  ⟺  M+1 ≡ 2p (mod 2M)  ⟺  M+1 = 2p</div>
-              That is, M = 2p−1 must hold exactly — and (M+1)/2 = p must be prime. These are the <em>intersection rings</em>; the subset where M is also prime are the safe prime rings.
+              That is, M = 2p−1 must hold exactly — and M+1 = 2p must be twice a prime. These are the <em>safe prime rings</em>.
             </div>
           </div>
 
@@ -1096,8 +1334,8 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
           </div>
 
           <div class="math-eq">
-            ±n path ∩ prime spiral at ring M  ⟺  M = 2p−1  (p any prime, M+1 = 2p)
-            <span class="ann">The gold dots on the canvas mark these intersection rings. For all primes p: M = 2p−1 = 3, 5, 9, 13, 21, 25, 33, 37, 45, 57, … (i.e. p = 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, …). Note: the intersection condition requires only that p is prime; it does not require M itself to be prime. "Safe prime rings" (where both M and (M+1)/2 are prime) are a subset.</span>
+            ±n path ∩ prime spiral at ring M  ⟺  M = 2p−1  ⟺  p is a safe prime (2p−1 is prime when p=(M+1)/2 is prime)
+            <span class="ann">The gold dots on the canvas are these intersection points. They mark the safe prime rings M = 2p−1 = 4, 10, 22, 28, 46, 58, ... corresponding to safe primes p = 3, 7, 11, 23, 29, ...</span>
           </div>
 
           <div class="math-block key">
@@ -1151,7 +1389,7 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
               <tr><td>Parity condition</td><td>M ≡ n (mod 2)</td><td>None</td></tr>
               <tr><td>Angular limit</td><td>θ → π (equator)</td><td>θ → 0 (origin)</td></tr>
               <tr><td>Algebraic meaning</td><td>Modular half of ±n</td><td>Reduction of p mod M</td></tr>
-              <tr><td>Lift survival (n=1)</td><td class="coral">Never (gcd((M+1)/2, M+1) = (M+1)/2 &gt; 1)</td><td>Fails at M=p (dropout)</td></tr>
+              <tr><td>Lift survival (n=1)</td><td class="lime">Iff M+1 = 2p (safe prime)</td><td>Fails at M=p (dropout)</td></tr>
               <tr><td>Connection to D(x)</td><td>Peak of |E(N)| at M=p−1</td><td class="coral">Dropout = jump Δ_p = 1/p(p−1)</td></tr>
               <tr><td>Gaussian structure</td><td>Real-axis symmetry</td><td>Split/inert by p mod 4</td></tr>
               <tr><td>Intersection</td><td colspan="2" class="violet">M = 2p−1 (safe prime rings) → gold dots on canvas</td></tr>
@@ -1162,7 +1400,88 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
       </div>
     </div>
 
-    <!-- D_chi PANE -->
+    <div id="statbar">
+      <div class="stat">M: <b id="stat-mmax">40</b></div>
+      <div class="stat">Rings: <b id="stat-rings">—</b></div>
+      <div class="stat">Total pts: <b id="stat-total">—</b></div>
+      <div class="stat teal">±n path: <b id="stat-npath">—</b></div>
+      <div class="stat gold">Spiral p=<b id="stat-spiral">—</b></div>
+      <div class="stat" style="color:var(--lime)">Intersect: <b id="stat-intersect" style="color:var(--lime)">—</b></div>
+      <div class="stat lime">Lifts ✓: <b id="stat-lifts">—</b></div>
+      <div class="stat coral">Lifts ✗: <b id="stat-broken">—</b></div>
+      <div class="stat">Survival: <b id="stat-survival" style="color:var(--teal)">—</b></div>
+      <div class="stat">C(M): <b id="stat-C" style="color:var(--gold)">—</b></div>
+      <div class="stat">J(M): <b id="stat-J" style="color:var(--gold)">—</b></div>
+      <div class="stat">φ/M avg: <b id="stat-phi">—</b></div>
+      <div class="stat">Safe rings: <b id="stat-safe" style="color:var(--gold)">—</b></div>
+      <div class="stat violet">Color: <b id="stat-color">—</b></div>
+      <div class="stat">View: <b id="stat-view">concentric</b></div>
+    </div>
+  </div>
+
+  <!-- RIGHT THEORY PANEL -->
+  <div id="rpanel" class="collapsed">
+    <div id="rp-scroll">
+
+      <div class="rp-section">
+        <div class="rp-title">The ±n Lift Path</div>
+        <div class="rp-body">
+          On each ring ℤ/Mℤ, the <em>±n path</em> selects the residues solving 2r ≡ ±n (mod M). Since 2⁻¹ ≡ (M+1)/2 when M is odd:
+        </div>
+        <div class="rp-eq">r = (M ± n) / 2</div>
+        <div class="rp-body">
+          These are the <em>modular halves</em> of ±n — the equatorial points of the ring, offset by n/2. As M grows, r/M → 1/2, so the path traces the π-position across all rings simultaneously.
+        </div>
+        <div class="rp-note">
+          For n=1: the path hits r=(M+1)/2, whose image mod M+1 is (M+1)/2. This survives iff gcd((M+1)/2, M+1)=1, i.e. M+1 is twice a prime — the safe prime condition.
+        </div>
+      </div>
+
+      <div class="rp-section">
+        <div class="rp-title">The Prime Spiral</div>
+        <div class="rp-body">
+          Fix a prime p. On each ring M, the spiral occupies:
+        </div>
+        <div class="rp-eq">r(M) = p mod M</div>
+        <div class="rp-body">
+          For M ≤ p: r cycles through reductions, encoding p via CRT. For M > p: r = p is fixed, and its angular position θ = 2πp/M → 0. The spiral <em>converges to the origin</em> as M grows — each prime becomes negligible relative to M.
+        </div>
+        <div class="rp-note">
+          The dropout at M=p (where p mod p = 0, non-coprime) is exactly the Jump Theorem: as x crosses p−1 in D(x), the term 1/(p²−x−1) drops out, producing the jump Δ_p = 1/p(p−1).
+        </div>
+      </div>
+
+      <div class="rp-section">
+        <div class="rp-title">Lift Connections</div>
+        <div class="rp-body">
+          Each residue r ∈ (ℤ/Mℤ)* maps to r' = r mod(M+1). The residue <em>survives</em> if gcd(r', M+1) = 1. By CRT, the global survival density is:
+        </div>
+        <div class="rp-eq">C = ∏_p (p²−2)/(p²−1) ≈ 0.5307</div>
+        <div class="rp-body">
+          Teal lines = surviving lifts. Coral = broken. The ratio φ(M)·φ(M+1)/(M+1) = L(M) is the local lift weight. R(N) = ΣL(M)/Σφ(M) → C.
+        </div>
+      </div>
+
+      <div class="rp-section">
+        <div class="rp-title">Gaussian Integer Structure</div>
+        <div class="rp-body">
+          The mirror σ(r) = M−r is complex conjugation in ℤ[i]. Primes split by their residue mod 4:
+          <br><br>
+          p ≡ 1 (mod 4) → splits in ℤ[i] → spiral in first quadrant<br>
+          p ≡ 3 (mod 4) → inert in ℤ[i] → conjugate-symmetric spiral
+        </div>
+        <div class="rp-note">
+          The intersection of the ±1 equatorial path with the prime spiral occurs at M+1 = 2p — exactly the safe prime condition. These are the rings where |E(N)·N| is maximized numerically.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+
+
     <div id="dchi-pane" style="display:none;position:fixed;top:50px;left:0;right:0;bottom:0;z-index:50;overflow-y:auto;background:var(--bg);scrollbar-width:thin;">
     <style>
     #dchi-pane::-webkit-scrollbar{width:5px;}
@@ -1490,76 +1809,286 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
     </div>
     </div>
 
-    <div id="statbar">
-      <div class="stat">M max: <b id="stat-mmax">40</b></div>
-      <div class="stat teal">±n path: <b id="stat-npath">—</b></div>
-      <div class="stat gold">Spiral p: <b id="stat-spiral">—</b></div>
-      <div class="stat lime">Surviving lifts: <b id="stat-lifts">—</b></div>
-      <div class="stat coral">Broken: <b id="stat-broken">—</b></div>
-      <div class="stat">φ(M)/M avg: <b id="stat-phi">—</b></div>
-      <div class="stat violet">View: <b id="stat-view">concentric</b></div>
+<!-- Floating export button (always visible on desktop, shown during animation) -->
+<button id="float-export" onclick="openExport()">↓ 4K</button>
+
+<!-- ══ F(u) ANALYTIC LIFT PANE ══ -->
+<div id="fu-pane" style="display:none;position:fixed;top:50px;left:0;right:0;bottom:0;z-index:50;overflow-y:auto;background:var(--bg);scrollbar-width:thin;">
+<style>
+#fu-pane::-webkit-scrollbar{width:5px;}
+#fu-pane::-webkit-scrollbar-thumb{background:rgba(126,200,122,.25);}
+#fu-inner{max-width:860px;margin:0 auto;padding:52px 40px 100px;}
+.fu-rule{width:32px;height:2px;background:var(--lime);margin-bottom:20px;}
+.fu-tag{font-size:8px;letter-spacing:.26em;text-transform:uppercase;color:var(--lime);opacity:.7;margin-bottom:10px;}
+.fu-h1{font-family:var(--disp);font-size:clamp(1.5rem,3.2vw,2.2rem);font-weight:400;color:var(--cream);line-height:1.2;letter-spacing:.06em;margin-bottom:8px;}
+.fu-sub{font-family:var(--serif);font-size:1rem;font-style:italic;color:var(--cream3);margin-bottom:36px;line-height:1.65;}
+.fu-divider{width:100%;height:1px;background:linear-gradient(90deg,var(--lime),transparent);opacity:.3;margin-bottom:48px;}
+.fu-sec{margin-bottom:52px;}
+.fu-sec-tag{font-size:7.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--lime);opacity:.5;margin-bottom:8px;}
+.fu-sec-title{font-family:var(--disp);font-size:1.05rem;font-weight:400;color:var(--cream);letter-spacing:.05em;margin-bottom:18px;padding-bottom:8px;border-bottom:1px solid var(--edge);}
+.fu-body{font-family:var(--serif);font-size:15px;color:rgba(200,195,185,.85);line-height:1.88;margin-bottom:14px;}
+.fu-body strong{color:var(--cream);font-weight:500;}
+.fu-body em{color:var(--lime);font-style:normal;}
+.fu-eq{font-family:var(--mono);font-size:12px;color:var(--lime);background:rgba(126,200,122,.06);border:1px solid rgba(126,200,122,.18);padding:14px 22px;margin:20px 0;text-align:center;line-height:2.1;overflow-x:auto;}
+.fu-eq .ann{display:block;text-align:left;font-size:10px;color:var(--cream3);margin-top:6px;font-family:var(--serif);font-style:italic;}
+.fu-block{margin:20px 0;padding:16px 20px;background:var(--bg1);border:1px solid var(--edge);border-left:3px solid;}
+.fu-block.thm{border-left-color:var(--lime);}
+.fu-block.rmk{border-left-color:var(--gold);}
+.fu-block.key{border-left-color:var(--teal);}
+.fu-block.conn{border-left-color:var(--violet);}
+.fu-block-tag{font-size:7.5px;letter-spacing:.17em;text-transform:uppercase;margin-bottom:8px;}
+.thm .fu-block-tag{color:var(--lime);}
+.rmk .fu-block-tag{color:var(--gold);}
+.key .fu-block-tag{color:var(--teal);}
+.conn .fu-block-tag{color:var(--violet);}
+.fu-block-body{font-family:var(--serif);font-size:14.5px;color:var(--cream);line-height:1.85;}
+.fu-block-body em{color:var(--lime);font-style:normal;}
+.fu-vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:20px 0;}
+.fu-val-card{background:var(--bg2);border:1px solid var(--edge);padding:14px 16px;text-align:center;}
+.fu-val-label{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--cream3);margin-bottom:8px;}
+.fu-val-num{font-family:var(--mono);font-size:1.3rem;color:var(--lime);font-weight:500;}
+.fu-val-desc{font-family:var(--serif);font-size:11px;color:var(--cream3);margin-top:4px;font-style:italic;}
+/* Interactive canvas */
+.fu-canvas-wrap{background:var(--bg1);border:1px solid var(--edge);margin:20px 0;position:relative;}
+.fu-canvas-ann{font-family:var(--mono);font-size:8.5px;color:var(--cream3);padding:6px 12px;border-bottom:1px solid var(--edge);}
+#fu-canvas{display:block;width:100%;height:300px;}
+#fu-u-canvas{display:block;width:100%;height:220px;}
+.fu-slider-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-top:1px solid var(--edge);}
+.fu-slider-row label{font-family:var(--mono);font-size:9px;color:var(--cream3);min-width:50px;}
+.fu-slider-row input[type=range]{flex:1;accent-color:var(--lime);}
+.fu-slider-val{font-family:var(--mono);font-size:11px;color:var(--lime);min-width:60px;text-align:right;}
+.fu-jump-btn{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border:1px solid rgba(126,200,122,.35);color:var(--lime);background:rgba(126,200,122,.06);cursor:pointer;transition:background .15s;}
+.fu-jump-btn:hover{background:rgba(126,200,122,.14);}
+@media(max-width:600px){#fu-inner{padding:32px 18px 80px;}}
+</style>
+<div id="fu-inner">
+
+  <div class="fu-rule"></div>
+  <div class="fu-tag">Analytic Number Theory · 2026</div>
+  <div class="fu-h1">The Analytic Lift Function F(u)</div>
+  <div class="fu-sub">An entire function connecting ζ(2), C, and the prime squares — the Laguerre–Pólya class object underlying all lift dynamics</div>
+  <div class="fu-divider"></div>
+
+  <!-- §1 Definition -->
+  <div class="fu-sec">
+    <div class="fu-sec-tag">Section 1</div>
+    <div class="fu-sec-title">Definition and Key Values</div>
+
+    <div class="fu-body">
+      The lift survival constant C ≈ 0.5307 appears as a fixed point of the modular ring sequence — the asymptotic density to which R(N) converges. But C is not merely a constant. It is a single evaluation of a coherent analytic function defined over all complex u:
+    </div>
+
+    <div class="fu-eq">
+      F(u) = ∏<sub>p prime</sub> (p² − u) / (p² − 1)
+      <span class="ann">Product over all primes. Converges absolutely for all u ∈ ℂ because Σ 1/p² &lt; ∞.</span>
+    </div>
+
+    <div class="fu-vals">
+      <div class="fu-val-card">
+        <div class="fu-val-label">F(0)</div>
+        <div class="fu-val-num">π²/6</div>
+        <div class="fu-val-desc">= ζ(2) ≈ 1.6449</div>
+      </div>
+      <div class="fu-val-card">
+        <div class="fu-val-label">F(1)</div>
+        <div class="fu-val-num">1.0000</div>
+        <div class="fu-val-desc">normalization point</div>
+      </div>
+      <div class="fu-val-card">
+        <div class="fu-val-label">F(2)</div>
+        <div class="fu-val-num">C ≈ 0.5307</div>
+        <div class="fu-val-desc">the lift survival constant</div>
+      </div>
+      <div class="fu-val-card">
+        <div class="fu-val-label">F(p²)</div>
+        <div class="fu-val-num">0</div>
+        <div class="fu-val-desc">zero at every prime square</div>
+      </div>
+    </div>
+
+    <div class="fu-body">
+      The factorisation F(u) = ζ(2) · ∏_p (1 − u/p²) reveals the structure: F is ζ(2) times an entire function with zeros exactly at the prime squares. The product ∏(1 − u/p²) converges because Σ 1/p² converges absolutely — unlike the product ∏(1 − u/p) which would be far more delicate.
+    </div>
+
+    <div class="fu-block key">
+      <div class="fu-block-tag">Key Identity</div>
+      <div class="fu-block-body">
+        F(0) · F(2) = ζ(2) · C = K ≈ 0.8730
+        <br><br>
+        where K is the conjectured implied constant in sup|E(N)·N| = K. The supremum of the error term envelope is the product of the two most natural evaluations of F — at u=0 (the zeta value) and u=2 (the lift constant).
+      </div>
+    </div>
+
+    <!-- Live F(u) calculator -->
+    <div class="fu-canvas-wrap">
+      <div class="fu-canvas-ann">F(u) evaluated live · Move slider to see how the Euler product changes · Gold = key values</div>
+      <canvas id="fu-canvas"></canvas>
+      <div class="fu-slider-row">
+        <label>u =</label>
+        <input type="range" id="fu-u-sl" min="-6" max="8" step="0.01" value="2" oninput="updateFU(+this.value)">
+        <span class="fu-slider-val" id="fu-u-val">2.00</span>
+        <span class="fu-slider-val" id="fu-result" style="color:var(--lime);min-width:100px">F(2) = C</span>
+      </div>
+      <div style="display:flex;gap:6px;padding:0 14px 10px;flex-wrap:wrap;">
+        <button class="fu-jump-btn" onclick="jumpFU(0)">u=0 → ζ(2)</button>
+        <button class="fu-jump-btn" onclick="jumpFU(1)">u=1 → 1</button>
+        <button class="fu-jump-btn" onclick="jumpFU(2)">u=2 → C</button>
+        <button class="fu-jump-btn" onclick="jumpFU(4)">u=4 → F(4)</button>
+        <button class="fu-jump-btn" onclick="jumpFU(9)">u=9 → F(9)=0</button>
+        <button class="fu-jump-btn" onclick="animateFU()">▶ Animate 0→2→ζ</button>
+      </div>
     </div>
   </div>
 
-  <!-- RIGHT THEORY PANEL -->
-  <div id="rpanel" class="collapsed">
-    <div id="rp-scroll">
+  <!-- §2 The Laguerre–Pólya Class -->
+  <div class="fu-sec">
+    <div class="fu-sec-tag">Section 2</div>
+    <div class="fu-sec-title">The Laguerre–Pólya Class</div>
 
-      <div class="rp-section">
-        <div class="rp-title">The ±n Lift Path</div>
-        <div class="rp-body">
-          On each ring ℤ/Mℤ, the <em>±n path</em> selects the residues solving 2r ≡ ±n (mod M). Since 2⁻¹ ≡ (M+1)/2 when M is odd:
-        </div>
-        <div class="rp-eq">r = (M ± n) / 2</div>
-        <div class="rp-body">
-          These are the <em>modular halves</em> of ±n — the equatorial points of the ring, offset by n/2. As M grows, r/M → 1/2, so the path traces the π-position across all rings simultaneously.
-        </div>
-        <div class="rp-note">
-          For n=1: the path hits r=(M+1)/2. Since (M+1)/2 divides M+1, we have gcd((M+1)/2, M+1) = (M+1)/2 &gt; 1 for all M &gt; 1, so the ±1 path <em>never</em> survives the lift. Its significance is geometric: the path meets the prime-p spiral at ring M exactly when M+1 = 2p — the intersection condition, not a survival condition.
-        </div>
+    <div class="fu-body">
+      The Laguerre–Pólya class LP consists of entire functions that are locally uniform limits of polynomials with only real roots. Equivalently: entire functions of the form
+    </div>
+
+    <div class="fu-eq">
+      g(u) = e<sup>−αu² + βu</sup> · ∏<sub>n</sub> (1 − u/aₙ) e<sup>u/aₙ</sup>
+      <span class="ann">with all aₙ ∈ ℝ and α ≥ 0. For F(u): α = 0, all aₙ = p² > 0.</span>
+    </div>
+
+    <div class="fu-block thm">
+      <div class="fu-block-tag">Theorem — F(u) is Laguerre–Pólya Class (Unconditional)</div>
+      <div class="fu-block-body">
+        F(u) is an entire function of genus 0 belonging to the Laguerre–Pólya class. Its zeros are exactly the prime squares {4, 9, 25, 49, 121, 169, …} — all real, positive, and simple. This is unconditional: no hypothesis required. The proof uses only Σ_p 1/p² &lt; ∞ (which follows from ζ(2) &lt; ∞) and the Weierstrass product theorem.
       </div>
+    </div>
 
-      <div class="rp-section">
-        <div class="rp-title">The Prime Spiral</div>
-        <div class="rp-body">
-          Fix a prime p. On each ring M, the spiral occupies:
-        </div>
-        <div class="rp-eq">r(M) = p mod M</div>
-        <div class="rp-body">
-          For M ≤ p: r cycles through reductions, encoding p via CRT. For M > p: r = p is fixed, and its angular position θ = 2πp/M → 0. The spiral <em>converges to the origin</em> as M grows — each prime becomes negligible relative to M.
-        </div>
-        <div class="rp-note">
-          The dropout at M=p (where p mod p = 0, non-coprime) is exactly the Jump Theorem: as x crosses p−1 in D(x), the term 1/(p²−x−1) drops out, producing the jump Δ_p = 1/p(p−1).
-        </div>
+    <div class="fu-block conn">
+      <div class="fu-block-tag">Connection — Riemann Xi and GRH</div>
+      <div class="fu-block-body">
+        The Riemann Xi function Ξ(t) = ½s(s−1)π<sup>−s/2</sup>Γ(s/2)ζ(s) with s = ½+it is <em>conjectured</em> to be in the LP class — this is equivalent to the Riemann Hypothesis (all non-trivial zeros of ζ have real part ½). That F(u) is LP class was proved unconditionally in 2019 by Griffin–Ono–Rolen–Zagier for the Riemann Xi function in a related sense.
+        <br><br>
+        F(u) sits in the same function class as Ξ but for an entirely elementary reason: its zeros are prime squares, all manifestly real. No hypothesis is needed. This makes F a concrete, fully proved LP-class object — a useful companion to the conjectural LP status of Ξ.
       </div>
+    </div>
 
-      <div class="rp-section">
-        <div class="rp-title">Lift Connections</div>
-        <div class="rp-body">
-          Each residue r ∈ (ℤ/Mℤ)* maps to r' = r mod(M+1). The residue <em>survives</em> if gcd(r', M+1) = 1. By CRT, the global survival density is:
-        </div>
-        <div class="rp-eq">C = ∏_p (p²−2)/(p²−1) ≈ 0.5307</div>
-        <div class="rp-body">
-          Teal lines = surviving lifts. Coral = broken. The ratio φ(M)·φ(M+1)/(M+1) = L(M) is the local lift weight. R(N) = ΣL(M)/Σφ(M) → C.
-        </div>
-      </div>
-
-      <div class="rp-section">
-        <div class="rp-title">Gaussian Integer Structure</div>
-        <div class="rp-body">
-          The mirror σ(r) = M−r is complex conjugation in ℤ[i]. Primes split by their residue mod 4:
-          <br><br>
-          p ≡ 1 (mod 4) → splits in ℤ[i] → spiral in first quadrant<br>
-          p ≡ 3 (mod 4) → inert in ℤ[i] → conjugate-symmetric spiral
-        </div>
-        <div class="rp-note">
-          The intersection of the ±1 equatorial path with the prime spiral occurs at M+1 = 2p — exactly the safe prime condition. These are the rings where |E(N)·N| is maximized numerically.
-        </div>
-      </div>
-
+    <!-- Zero spectrum canvas -->
+    <div class="fu-canvas-wrap">
+      <div class="fu-canvas-ann">Zero spectrum of F(u) · Prime squares on real axis · Compare to Riemann zeros (conjectural) on Re(s)=½</div>
+      <canvas id="fu-u-canvas"></canvas>
     </div>
   </div>
 
+  <!-- §3 The Journey 0 → 1 → 2 -->
+  <div class="fu-sec">
+    <div class="fu-sec-tag">Section 3</div>
+    <div class="fu-sec-title">The Journey from ζ(2) to C</div>
+
+    <div class="fu-body">
+      Evaluating F at u=0, 1, 2 traces a path through three mathematically significant values:
+    </div>
+
+    <div class="fu-eq">
+      F(0) = ζ(2) = π²/6  →  F(1) = 1  →  F(2) = C ≈ 0.5307
+      <span class="ann">The product ∏_p (p²−u)/(p²−1) decreases from π²/6 to C as u increases from 0 to 2. Each prime p contributes a factor that dips below 1 as u approaches p².</span>
+    </div>
+
+    <div class="fu-block rmk">
+      <div class="fu-block-tag">Remark — What F(1) = 1 Means</div>
+      <div class="fu-block-body">
+        At u=1: F(1) = ∏_p (p²−1)/(p²−1) = 1 exactly. This is a normalization: the denominator of the product is precisely the value that makes u=1 the identity. The product is constructed so that each factor (p²−u)/(p²−1) equals 1 when u=1. This is the unique normalization point built into the definition.
+      </div>
+    </div>
+
+    <div class="fu-block rmk">
+      <div class="fu-block-tag">Remark — C = F(2) and the Lift Dynamics</div>
+      <div class="fu-block-body">
+        The canvas on the other tabs shows the geometry of (ℤ/Mℤ)* converging to C. In analytic terms: C = F(2) is the value of the entire function at u=2. The u=2 argument is natural: it counts the quadratic term p² − 2 versus the normalization p² − 1, measuring how the coprime density shifts when one unit of "weight" is placed at the threshold. As M → ∞, R(M) → F(2) = C unconditionally.
+      </div>
+    </div>
+
+    <div class="fu-block key">
+      <div class="fu-block-tag">The Functional Identity</div>
+      <div class="fu-block-body">
+        Since F(0) = ζ(2) and F(2) = C:
+        <br><br>
+        <em>K = F(0) · F(2) = ζ(2) · C</em>
+        <br><br>
+        K ≈ 0.872986 is the conjectured implied constant in the error term supremum. It is the product of the two most natural evaluations of F — and it emerges as a single algebraic consequence of the definition without any additional hypothesis.
+      </div>
+    </div>
+  </div>
+
+  <!-- §4 Zeros and Gaps -->
+  <div class="fu-sec">
+    <div class="fu-sec-tag">Section 4</div>
+    <div class="fu-sec-title">The Zero Spectrum — Prime Squares</div>
+
+    <div class="fu-body">
+      The zeros of F(u) are exactly {p² : p prime} = {4, 9, 25, 49, 121, 169, 289, 361, …}. These are all real, simple, and positive. The gaps between consecutive prime squares grow as the prime gaps widen:
+    </div>
+
+    <div class="fu-eq">
+      gap(p²,q²) = q² − p² = (q−p)(q+p)
+      <span class="ann">For twin primes (p,p+2): gap = 4(p+1). For consecutive primes with gap g: gap between their squares = g·(p+q) ≈ 2gp. The prime square gaps encode the prime gap structure.</span>
+    </div>
+
+    <div class="fu-block conn">
+      <div class="fu-block-tag">Connection — Jump Theorem and Zeros</div>
+      <div class="fu-block-body">
+        The dropout in the prime spiral at ring M=p (where p mod p = 0) corresponds to a zero of F at u=p². The Jump Theorem says D(x) jumps at x=p−1 — equivalently, at the point where the Euler product crosses through the zero p² in the u-parameterisation. The jump size 1/p(p−1) is the residue of D at that zero.
+        <br><br>
+        More precisely: d/du log F(u)|_{u=p²} = −1/(p²−p²) diverges — the log-derivative of F has simple poles at the prime squares, with residue −1. The jump in D(x) at x=p−1 is exactly the contribution of this pole.
+      </div>
+    </div>
+
+    <div class="fu-block thm">
+      <div class="fu-block-tag">Theorem — The Derivative Formula</div>
+      <div class="fu-block-body">
+        D(x) = F'(x+1)/F(x+1) · (−1) for x not an integer, where F' is the derivative with respect to u evaluated at u = x+1.
+        <br><br>
+        Explicitly: D(x) = −Σ_{p>x+1} 1/(p²−x−1) = Σ_{p>x+1} ∂/∂u [log(p²−u)/(p²−1)]|_{u=x+1}.
+        <br><br>
+        This is the log-derivative of F — but since F(x) is a step function in x (with x the ring index), the correct statement is that D(x) equals the log-derivative of F(u) evaluated continuously at u = x+1, not the derivative of the step function C(x).
+      </div>
+    </div>
+  </div>
+
+  <!-- §5 Summary -->
+  <div class="fu-sec">
+    <div class="fu-sec-tag">Section 5</div>
+    <div class="fu-sec-title">Everything Connected</div>
+
+    <div class="fu-body">
+      The Analytic Lift Function F(u) is the common parent of all the objects in this framework:
+    </div>
+
+    <table style="width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;margin:16px 0;">
+      <thead><tr>
+        <th style="text-align:left;padding:6px 10px;font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--cream3);border-bottom:1px solid var(--edge2)">Object</th>
+        <th style="text-align:left;padding:6px 10px;font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--cream3);border-bottom:1px solid var(--edge2)">As F(u)</th>
+        <th style="text-align:left;padding:6px 10px;font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--cream3);border-bottom:1px solid var(--edge2)">Value</th>
+      </tr></thead>
+      <tbody>
+        <tr><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--lime)">ζ(2)</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream2)">F(0)</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream3)">π²/6 ≈ 1.6449</td></tr>
+        <tr><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--lime)">C (lift constant)</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream2)">F(2)</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream3)">≈ 0.530711</td></tr>
+        <tr><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--lime)">K (error constant)</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream2)">F(0)·F(2)</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream3)">≈ 0.872986</td></tr>
+        <tr><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--lime)">Jump Δ_p</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream2)">Residue of F'/F at u=p²</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream3)">1/p(p−1)</td></tr>
+        <tr><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--lime)">Zeros of F</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream2)">u = p²</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream3)">prime squares</td></tr>
+        <tr><td style="padding:5px 10px;color:var(--lime)">LP class</td><td style="padding:5px 10px;color:var(--cream2)">same class as Ξ (conjectural)</td><td style="padding:5px 10px;color:var(--cream3)">proved unconditionally for F</td></tr>
+      </tbody>
+    </table>
+
+    <div class="fu-block key">
+      <div class="fu-block-tag">The Central Picture</div>
+      <div class="fu-block-body">
+        The modular rings (ℤ/Mℤ)* you see on the canvas are the finite approximations to F(2). The prime spiral dropout at M=p is the geometric shadow of the zero F(p²)=0. The equatorial path at r=(M±n)/2 traces the equatorial slice of the same analytic object. And the error E(N) = R(N)−C measures how fast the finite product F_N(2) = ∏_{p≤N} (p²−2)/(p²−1) converges to the infinite product F(2) = C.
+        <br><br>
+        Everything visible in the ring geometry is a finite approximation to a single entire function.
+      </div>
+    </div>
+
+  </div>
+
+</div>
 </div>
 
 <!-- 4K EXPORT MODAL -->
@@ -1604,6 +2133,7 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
 
 <script>
 'use strict';
+const MONO="'JetBrains Mono',monospace";
 
 // ── Primes ─────────────────────────────────────────────────────────────────
 const PRIMES=[];
@@ -1636,7 +2166,8 @@ const S={
   n:1, allN:false, npathLabels:true,
   prime:2, pidx:0, mirror:true, dropout:true, allP:false, spiralLabels:true,
   lifts:true, broken:false, liftThick:6, liftAlpha:.25,
-  allCoprime:true, phiColor:false, ptSize:3,
+  allCoprime:true, phiColor:false, ptSize:3, colorMode:'default', ptLabel:'none', labelOn:'all', labelSize:9,
+  hue:0, sat:1.0, bri:1.0, chords:false, gapStr:'2,4,6', chordAlpha:.2,
 };
 
 let dirty=true;
@@ -1705,6 +2236,7 @@ function toXY(r,M){
 
 // ── Main draw ──────────────────────────────────────────────────────────────
 let liftStats={ok:0,broken:0};
+let phiAvgForExport=0;
 
 function draw(){
   dirty=false;
@@ -1798,28 +2330,124 @@ function draw(){
     } else if(onMirror){
       col='155,127,232'; size=ps*1.6; alpha=.8;
     } else if(S.allCoprime){
-      if(anyHighlight){
-        col=S.phiColor?hslStr(200,50,30):('80,80,130');
-        alpha=.25;size=ps*.8;
+      const cm=S.colorMode;
+      // hsl helper
+      const hsl=(h,s,l)=>{
+        h=((h+S.hue)%360+360)%360;s=Math.min(150,s*S.sat);l=Math.min(90,l*S.bri);
+        s/=100;l/=100;
+        const cc=(1-Math.abs(2*l-1))*s,xv=cc*(1-Math.abs((h/60)%2-1)),mm=l-cc/2;
+        let rv=0,gv=0,bv=0;
+        if(h<60){rv=cc;gv=xv;}else if(h<120){rv=xv;gv=cc;}else if(h<180){gv=cc;bv=xv;}
+        else if(h<240){gv=xv;bv=cc;}else if(h<300){rv=xv;bv=cc;}else{rv=cc;bv=xv;}
+        return `rgba(${Math.round((rv+mm)*255)},${Math.round((gv+mm)*255)},${Math.round((bv+mm)*255)}`;
+      };
+      if(cm==='phi'){
+        const d=phi(M)/M; col=hsl(120*d,80,50+d*20)+',0.75)'; alpha=1;
+      } else if(cm==='angle'){
+        col=hsl(360*r/M,70,55)+',0.8)'; alpha=1;
+      } else if(cm==='chi4'){
+        const mod4=r%4;
+        col=mod4===1?hsl(174,80,58)+',0.85)':mod4===3?hsl(294,80,58)+',0.85)':mod4===2?hsl(50,85,55)+',0.7)':hsl(200,40,38)+',0.4)'; alpha=1;
+      } else if(cm==='error_corr'){
+        const contrib=(phi(M)*phi(M+1)/(M+1))/phi(M)-0.5307;
+        const mag=Math.min(1,Math.abs(contrib)*M*15);
+        col=hsl(contrib>=0?280:170,85,35+mag*30)+',0.8)'; alpha=1;
+      } else if(cm==='prime_ring'){
+        col=isPrime(M)?hsl(300,90,55)+',0.85)':hsl(200,60,45)+',0.5)'; alpha=1;
+      } else if(cm==='gap'){
+        col=hsl((r%12)*30,80,55)+',0.75)'; alpha=1;
+      } else if(cm==='mod6'){
+        const cols6=[0,30,60,120,200,270];
+        col=hsl(cols6[r%6]||0,85,55)+',0.8)'; alpha=1;
+      } else if(cm==='primorial'){
+        const idx=[2,6,30,210,2310].findIndex(p=>M%p===0);
+        col=hsl(idx<0?200:idx*60,80,55)+',0.75)'; alpha=1;
+      } else if(cm==='mersenne'){
+        col=[3,7,31,127,511,8191].includes(M)?hsl(60,90,60)+',0.9)':hsl(200,50,40)+',0.4)'; alpha=1;
+      } else if(cm==='entropy'){
+        const e=-Math.log((M-phi(M))/M+0.01);
+        col=hsl(180*e/3,80,50)+',0.75)'; alpha=1;
+      } else if(cm==='half'){
+        col=r/M<0.5?hsl(200,70,55)+',0.75)':hsl(30,70,55)+',0.75)'; alpha=1;
+      } else if(cm==='mertens'){
+        const drift=Math.abs(phi(M)/M-0.6079);
+        col=hsl(120+drift*600,70,55)+',0.75)'; alpha=1;
+      } else if(cm==='jump'){
+        col=isPrime(M)?hsl(280-1/(M*(M-1))*3000,80,60)+',0.9)':hsl(200,30,30)+',0.2)'; alpha=1;
+      } else if(cm==='safeprime'){
+        const isSafe=isPrime(M)&&M>2&&isPrime((M-1)/2);
+        const isSafeRing=isPrime(M+1)&&isPrime((M+1)/2);
+        col=isSafe?hsl(45,90,60)+',0.9)':isSafeRing?hsl(174,80,55)+',0.8)':hsl(220,30,28)+',0.18)'; alpha=1;
+      } else if(cm==='lift'){
+        col=lifted?hsl(174,80,55)+',0.75)':hsl(0,80,55)+',0.6)'; alpha=1;
       } else {
-        col=S.phiColor?hslStr(180+phi(M)/M*120,70,55):('80,100,200');
-        alpha=.55;
+        col=anyHighlight?'rgba(80,80,130':'rgba(80,100,200';
+        alpha=anyHighlight?.22:.55;
+        col+=`,${alpha})`; alpha=1;
       }
     } else {
       return;
     }
 
-    ctx.fillStyle=`rgba(${col},${alpha})`;
+    ctx.fillStyle = col.startsWith('rgba') ? col : `rgba(${col},${alpha})`;
     ctx.beginPath();ctx.arc(x,y,size,0,6.28);ctx.fill();
 
     // Glow for highlighted
     if(onNpath||onSpiral||isDropout){
-      ctx.fillStyle=`rgba(${col},${alpha*0.18})`;
+      const glowCol = col.startsWith('rgba') ? col.replace(/[\d.]+\)$/,'0.15)') : `rgba(${col},${alpha*0.18})`;
+      ctx.fillStyle = glowCol;
       ctx.beginPath();ctx.arc(x,y,size*2.8,0,6.28);ctx.fill();
     }
   });
 
-  // ── Prime ring label rings ───────────────────────────────────────────────
+  // ── Gap chords ────────────────────────────────────────────────────────────
+  drawChords(ctx,W,H);
+
+  // ── Point labels ──────────────────────────────────────────────────────────
+  if(S.ptLabel!=='none'){
+    ctx.font=`400 ${S.labelSize}px ${MONO}`;
+    const pinnedSet = new Set(PINNED_PTS.map(p=>p.r+'_'+p.M));
+    pts.forEach(pt=>{
+      const {r,M,x,y,onNpath,onSpiral,isDropout,lifted} = pt;
+      const on = S.labelOn;
+      if(on==='path'&&!onNpath) return;
+      if(on==='spiral'&&!onSpiral) return;
+      if(on==='prime'&&!isPrime(M)) return;
+      if(on==='pinned'&&!pinnedSet.has(r+'_'+M)) return;
+      // Determine label text
+      let lbl='';
+      const th=(2*Math.PI*r/M+S.delta*M*2*Math.PI);
+      const thDeg=((th*180/Math.PI)%360+360)%360;
+      if(S.ptLabel==='r') lbl=String(r);
+      else if(S.ptLabel==='ratio') lbl=(r/M).toFixed(3);
+      else if(S.ptLabel==='M') lbl='M='+M;
+      else if(S.ptLabel==='deg') lbl=thDeg.toFixed(1)+'°';
+      else if(S.ptLabel==='pi') lbl=(thDeg/180).toFixed(3)+'π';
+      else if(S.ptLabel==='lift') lbl=lifted?'✓':'✗';
+      if(!lbl) return;
+      // Color
+      const isPin=pinnedSet.has(r+'_'+M);
+      ctx.fillStyle=isPin?'rgba(200,168,74,.95)':onNpath?'rgba(61,200,184,.85)':onSpiral?'rgba(200,168,74,.75)':'rgba(180,175,165,.55)';
+      ctx.textAlign='center';ctx.textBaseline='bottom';
+      ctx.fillText(lbl, x, y-S.ptSize-2);
+    });
+  }
+
+  // ── Pinned point circles on canvas ────────────────────────────────────────
+  if(PINNED_PTS.length>0){
+    PINNED_PTS.forEach((pt,i)=>{
+      ctx.strokeStyle='rgba(200,168,74,.9)';ctx.lineWidth=1.5;
+      ctx.setLineDash([3,3]);
+      ctx.beginPath();ctx.arc(pt.x,pt.y,S.ptSize*3.5+3,0,6.28);ctx.stroke();
+      ctx.setLineDash([]);
+      // Index number
+      ctx.fillStyle='rgba(200,168,74,.9)';
+      ctx.font=`500 9px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(i+1, pt.x, pt.y-S.ptSize*4.5);
+    });
+  }
+
+
   if((showSpiral||showNpath)&&S.view==='concentric'){
     for(let M=2;M<=S.mmax;M+=Math.max(1,Math.floor(S.mmax/20))){
       if(!isPrime(M)) continue;
@@ -1830,7 +2458,55 @@ function draw(){
     }
   }
 
+  // ── F(u) corner overlay ───────────────────────────────────────────────────
+  if(MAIN_TAB!=='math'&&MAIN_TAB!=='dchi'&&MAIN_TAB!=='fu'){
+    const Cv=PRIMES.filter(p=>p<=S.mmax).reduce((a,p)=>a*(p*p-2)/(p*p-1),1);
+    const Cinf=0.530711806246;
+    const err=Math.abs(Cv-Cinf);
+    const bw=Math.min(200,W*0.22), bh=54, bx=W-bw-8, by=8;
+    ctx.fillStyle='rgba(4,4,13,.82)';ctx.fillRect(bx,by,bw,bh);
+    ctx.strokeStyle='rgba(126,200,122,.3)';ctx.lineWidth=1;
+    ctx.strokeRect(bx,by,bw,bh);
+    ctx.font=`400 8px ${MONO}`;ctx.fillStyle='rgba(126,200,122,.55)';
+    ctx.textAlign='left';ctx.textBaseline='top';
+    ctx.fillText('F(2) = C(M) → C',bx+7,by+7);
+    ctx.font=`500 13px ${MONO}`;ctx.fillStyle='rgba(126,200,122,.95)';
+    ctx.fillText(Cv.toFixed(8),bx+7,by+20);
+    ctx.font=`400 8px ${MONO}`;ctx.fillStyle='rgba(255,255,255,.25)';
+    ctx.fillText('C(∞) = 0.53071180…  err='+err.toExponential(1),bx+7,by+38);
+  }
+
   updateStats(pts,phiSum/phiN);
+  buildCache(pts); // populate hit-test cache
+
+  // Ring highlight overlay
+  if(highlightedRing!==null){
+    const hM=highlightedRing;
+    const hPts=pts.filter(p=>p.M===hM);
+    ctx.save();
+    // Glow ring circle (concentric only)
+    if(S.view==='concentric'){
+      const zoom=S.zoom/100;
+      const rho=hM*zoom*(Math.min(W,H)/2)/S.mmax;
+      ctx.strokeStyle='rgba(200,168,74,.35)';ctx.lineWidth=2;
+      ctx.setLineDash([4,6]);
+      ctx.beginPath();ctx.arc(W/2,H/2,rho,0,6.28);ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    // Highlight all points on ring
+    hPts.forEach(pt=>{
+      ctx.fillStyle='rgba(200,168,74,.7)';
+      ctx.beginPath();ctx.arc(pt.x,pt.y,S.ptSize*2.2,0,6.28);ctx.fill();
+    });
+    // Ring info label
+    const hPhi=phi(hM);
+    const hPrime=isPrime(hM);
+    ctx.font=`400 10px ${MONO}`;ctx.fillStyle='rgba(200,168,74,.9)';
+    ctx.textAlign='left';ctx.textBaseline='top';
+    ctx.fillText(`Ring M=${hM}  φ(M)=${hPhi}  φ/M=${(hPhi/hM).toFixed(4)}${hPrime?' · prime ring':''}${isPrime(hM+1)&&isPrime((hM+1)/2)?' · safe prime ring':''}`,10,10);
+    ctx.restore();
+  }
+
   drawLabels();
 }
 
@@ -1924,12 +2600,31 @@ function addLabel(parent,x,y,text,{col='rgba(200,168,74,.9)',small=false}={}){
 function updateStats(pts,phiAvg){
   const npath=pts.filter(p=>p.onNpath).length;
   const spiral=pts.filter(p=>p.onSpiral).length;
+  const intersect=pts.filter(p=>p.onNpath&&p.onSpiral).length;
+  const total=pts.length;
+  const Cv=PRIMES.filter(p=>p<=S.mmax).reduce((a,p)=>a*(p*p-2)/(p*p-1),1);
+  const Jv=PRIMES.filter(p=>p<=S.mmax).reduce((a,p)=>a+1/(p*(p-1)),0);
+  const tot=liftStats.ok+liftStats.broken;
+  const survRate=tot>0?(liftStats.ok/tot):0;
+  let safeCount=0,lastSafe=0;
+  for(let M=2;M<=S.mmax;M++){
+    if(isPrime(M+1)&&M>2&&isPrime((M+1)/2)){safeCount++;lastSafe=M;}
+  }
   document.getElementById('stat-mmax').textContent=S.mmax;
-  document.getElementById('stat-npath').textContent=npath+' pts (n='+S.n+')';
-  document.getElementById('stat-spiral').textContent=spiral+' pts (p='+S.prime+')';
-  document.getElementById('stat-lifts').textContent=liftStats.ok;
-  document.getElementById('stat-broken').textContent=liftStats.broken;
-  document.getElementById('stat-phi').textContent=phiAvg.toFixed(4);
+  document.getElementById('stat-rings').textContent=(S.mmax-1);
+  document.getElementById('stat-total').textContent=total.toLocaleString();
+  document.getElementById('stat-npath').textContent=npath+' (n='+S.n+')';
+  document.getElementById('stat-spiral').textContent=S.prime+(spiral?' · '+spiral+' pts':'');
+  document.getElementById('stat-intersect').textContent=intersect||'—';
+  document.getElementById('stat-lifts').textContent=liftStats.ok.toLocaleString();
+  document.getElementById('stat-broken').textContent=liftStats.broken.toLocaleString();
+  document.getElementById('stat-survival').textContent=(survRate*100).toFixed(1)+'%';
+  document.getElementById('stat-C').textContent=Cv.toFixed(6);
+  document.getElementById('stat-J').textContent=Jv.toFixed(6);
+  document.getElementById('stat-phi').textContent=phiAvg.toFixed(5);
+  phiAvgForExport=phiAvg;
+  document.getElementById('stat-safe').textContent=safeCount+(lastSafe?' (M='+lastSafe+')':'');
+  document.getElementById('stat-color').textContent=S.colorMode;
   document.getElementById('stat-view').textContent=S.view;
   document.getElementById('view-pill').textContent=S.view;
 }
@@ -1948,23 +2643,28 @@ function setMainTab(tab, el){
   document.querySelectorAll('.tb-tab').forEach(t=>t.classList.remove('active'));
   if(el) el.classList.add('active');
 
-  const isMath = tab==='math';
-  const isDchi = tab==='dchi';
-  const isPane = isMath||isDchi;
+  const isMath=tab==='math', isDchi=tab==='dchi', isFu=tab==='fu', isPane=isMath||isDchi||isFu;
+  const carea=document.getElementById('carea');
+  if(carea) carea.style.display=isPane?'none':'';
+  document.getElementById('lpanel').style.display=isPane?'none':'';
+  document.getElementById('rpanel').classList.toggle('collapsed',isPane||!theoryOpen);
 
-  document.getElementById('carea').style.display = isMath?'none':'';
-  document.getElementById('lpanel').style.display = isPane?'none':'';
-  document.getElementById('rpanel').classList.toggle('collapsed', isPane||!theoryOpen);
+  const mp=document.getElementById('math-pane');
+  mp.classList.toggle('active',isMath);
 
-  const mp = document.getElementById('math-pane');
-  mp.classList.toggle('active', isMath);
+  const dp=document.getElementById('dchi-pane');
+  if(dp) dp.style.display=isDchi?'block':'none';
 
-  const dp = document.getElementById('dchi-pane');
-  dp.style.display = isDchi?'block':'none';
+  const fp=document.getElementById('fu-pane');
+  if(fp) fp.style.display=isFu?'block':'none';
+  if(isFu) setTimeout(()=>initFU(),60);
 
-  if(isDchi) setTimeout(drawEnChart, 60);
+  const pp=document.getElementById('pin-panel');
+  if(pp&&isPane) pp.classList.remove('open');
+
+  if(isDchi) setTimeout(()=>{if(typeof drawEnChart==='function')drawEnChart();},80);
   if(!isPane) dirty=true;
-  updateMobileBar();
+  if(typeof updateMobileBar==='function') updateMobileBar();
 }
 
 function jumpToCanvas(tab){
@@ -1993,7 +2693,7 @@ function applyPreset(name, el){
   if(name==='safe_prime'){
     S.mmax=60;S.n=1;S.lifts=true;S.broken=false;S.npathLabels=true;S.spiralLabels=true;
     S.view='concentric';MAIN_TAB='both';
-    document.getElementById('sl-mmax').value=60;document.getElementById('num-mmax').value=60;document.getElementById('val-mmax').textContent=60;
+    document.getElementById('sl-mmax').value=60;document.getElementById('val-mmax').textContent=60;
     document.getElementById('sl-n').value=1;document.getElementById('num-n').value=1;document.getElementById('val-n').textContent=1;
     document.querySelector('.tb-tab').classList.add('active');
     // Pick prime near mmax/2
@@ -2003,10 +2703,10 @@ function applyPreset(name, el){
   } else if(name==='twin'){
     S.mmax=50;S.n=3;S.lifts=true;S.view='concentric';
     document.getElementById('sl-n').value=3;document.getElementById('num-n').value=3;document.getElementById('val-n').textContent=3;
-    document.getElementById('sl-mmax').value=50;document.getElementById('num-mmax').value=50;document.getElementById('val-mmax').textContent=50;
+    document.getElementById('sl-mmax').value=50;document.getElementById('val-mmax').textContent=50;
   } else if(name==='fermat_spiral'){
     S.view='fermat';S.mmax=80;S.lifts=false;MAIN_TAB='spiral';
-    document.getElementById('sl-mmax').value=80;document.getElementById('num-mmax').value=80;document.getElementById('val-mmax').textContent=80;
+    document.getElementById('sl-mmax').value=80;document.getElementById('val-mmax').textContent=80;
   } else if(name==='equator'){
     S.n=1;S.mmax=40;MAIN_TAB='npath';S.lifts=false;S.allCoprime=true;
   } else if(name==='chains'){
@@ -2020,7 +2720,7 @@ function applyPreset(name, el){
     S.lifts=true;S.broken=false;S.liftAlpha=.25;S.ptSize=3;
     S.allCoprime=true;S.phiColor=false;S.mirror=true;S.dropout=true;S.allP=false;
     MAIN_TAB='both';S.view='concentric';
-    document.getElementById('sl-mmax').value=40;document.getElementById('num-mmax').value=40;document.getElementById('val-mmax').textContent=40;
+    document.getElementById('sl-mmax').value=40;document.getElementById('val-mmax').textContent=40;
     document.getElementById('sl-n').value=1;document.getElementById('num-n').value=1;document.getElementById('val-n').textContent=1;
     document.getElementById('sl-prime').value=0;document.getElementById('val-prime').textContent=2;
     document.getElementById('sl-alpha').value=25;
@@ -2033,6 +2733,140 @@ function applyPreset(name, el){
   dirty=true;
 }
 
+// ── Snap current frame at 4K (no modal, no animation pause) ────────────────
+function snapNow(){
+  const btn = document.getElementById('btn-snap');
+  if(btn){ btn.textContent='⏳'; btn.style.pointerEvents='none'; }
+
+  const ew=3840, eh=2160;
+  const U=Math.max(2,Math.round(ew/960));
+  const LEG=Math.round(ew*0.22);
+  const OUT_W=ew+LEG;
+
+  const oc=document.createElement('canvas');
+  oc.width=OUT_W; oc.height=eh;
+  const octx=oc.getContext('2d');
+  octx.fillStyle='#030310'; octx.fillRect(0,0,OUT_W,eh);
+
+  // Render geometry at 4K — save/restore state so live canvas is untouched
+  const savedW=W, savedH=H, savedPt=S.ptSize;
+  W=ew; H=eh; S.ptSize=S.ptSize*2.5;
+  drawToContext(octx,ew,eh);
+  S.ptSize=savedPt; W=savedW; H=savedH;
+
+  // Pinned circles at export scale
+  if(PINNED_PTS.length>0){
+    const svW=W,svH=H; W=ew;H=eh;
+    PINNED_PTS.forEach((pt,i)=>{
+      const[ex,ey2]=toXY(pt.r,pt.M);
+      octx.strokeStyle='rgba(200,168,74,.9)'; octx.lineWidth=U*1.5;
+      octx.setLineDash([U*3,U*3]);
+      octx.beginPath();octx.arc(ex,ey2,S.ptSize*2.5*3.5+U*2,0,6.28);octx.stroke();
+      octx.setLineDash([]);
+      octx.fillStyle='rgba(200,168,74,.9)';
+      octx.font=`500 ${U*9}px JetBrains Mono,monospace`;
+      octx.textAlign='center'; octx.textBaseline='middle';
+      octx.fillText(i+1,ex,ey2-S.ptSize*2.5*6);
+    });
+    W=svW; H=svH;
+  }
+
+  // Side legend panel (same as full export)
+  (function buildLegend(){
+    const LX=ew,LW=LEG,PAD=U*20;
+    const mutedC='rgba(255,255,255,.25)';
+    octx.fillStyle='#050510'; octx.fillRect(LX,0,LW,eh);
+    octx.strokeStyle='rgba(200,168,74,.3)'; octx.lineWidth=U*1.5;
+    octx.beginPath();octx.moveTo(LX,0);octx.lineTo(LX,eh);octx.stroke();
+    let ly=PAD*1.8;
+    const f=(sz,bold)=>{octx.font=(bold?'600 ':'400 ')+Math.round(sz*U)+'px JetBrains Mono,monospace';};
+    const wL=(t,sz,c,b)=>{f(sz,b);octx.fillStyle=c||'rgba(220,215,205,.85)';octx.textAlign='left';octx.textBaseline='top';octx.fillText(t,LX+PAD,ly);};
+    const wR=(t,sz,c)=>{f(sz,false);octx.fillStyle=c||'rgba(220,215,205,.85)';octx.textAlign='right';octx.textBaseline='top';octx.fillText(t,LX+LW-PAD,ly);};
+    const rule=c=>{octx.strokeStyle=c||'rgba(200,168,74,.25)';octx.lineWidth=U;octx.beginPath();octx.moveTo(LX+PAD,ly);octx.lineTo(LX+LW-PAD,ly);octx.stroke();};
+    const adv=px=>{ly+=px*U;};
+    const dot=(c,r=3)=>{octx.fillStyle=c;octx.beginPath();octx.arc(LX+PAD+r*U,ly+r*U,r*U,0,6.28);octx.fill();};
+    const row=(k,v,vc)=>{wL(k,11,mutedC);wR(v,11,vc||'rgba(61,200,184,.9)');adv(15);};
+
+    adv(2);
+    wL('Lift Dynamics',Math.round(ew/240),'rgba(200,168,74,.9)',true); adv(Math.round(ew/190));
+    const vLabel={concentric:'Concentric Rings',fermat:'Fermat Spiral',strip:'Unfolded Strip',farey:'Farey Half-Plane'}[S.view]||S.view;
+    wL('(\u2124/M\u2124)  \u00b7  '+vLabel,11,mutedC); adv(14);
+    // Animation state indicator
+    if(ANIM.active){
+      const animLabel={'n':'\u00b1n sweep  n='+S.n,'p':'prime sweep  p='+S.prime,'m':'M sweep  M='+S.mmax}[ANIM.type]||'';
+      wL('\u25b6 '+animLabel,10,'rgba(126,200,122,.7)'); adv(14);
+    }
+    wL('wessengetachew.github.io',10,'rgba(200,168,74,.28)'); adv(PAD*1.2);
+    rule(); adv(PAD*1.1);
+
+    wL('PARAMETERS',9,'rgba(200,168,74,.45)',true); adv(14);
+    row('M max',''+S.mmax);
+    row('\u00b1n (path)','n='+S.n,'rgba(61,200,184,.9)');
+    row('prime p',''+S.prime,'rgba(200,168,74,.9)');
+    row('view',S.view,'rgba(155,127,232,.8)');
+    row('color',S.colorMode,'rgba(220,215,205,.6)');
+    row('\u03b4 rotation',S.delta.toFixed(4),'rgba(220,215,205,.6)');
+    adv(PAD*.6);
+
+    rule('rgba(61,200,184,.2)'); adv(PAD*1.1);
+    wL('LIFT SURVIVAL CONSTANT',9,'rgba(61,200,184,.45)',true); adv(14);
+    const Cv=PRIMES.filter(p=>p<=S.mmax).reduce((a,p)=>a*(p*p-2)/(p*p-1),1);
+    wL('C = \u220f_p (p\u00b2\u22122)/(p\u00b2\u22121)',13,'rgba(255,255,255,.65)'); adv(18);
+    f(18,true); octx.fillStyle='rgba(61,200,184,.95)'; octx.textAlign='left'; octx.textBaseline='top';
+    octx.fillText(Cv.toFixed(10),LX+PAD,ly); adv(22);
+    wL('C(\u221e)=0.530711806246\u2026',10,'rgba(61,200,184,.3)'); adv(PAD);
+
+    const Jv=PRIMES.filter(p=>p<=S.mmax).reduce((a,p)=>a+1/(p*(p-1)),0);
+    row('J=\u03a3 1/p(p\u22121)',Jv.toFixed(8),'rgba(200,168,74,.9)');
+    adv(PAD*.6);
+
+    rule(); adv(PAD*1.1);
+    wL('ACTIVE OVERLAYS',9,mutedC,true); adv(14);
+    const showN=MAIN_TAB==='npath'||MAIN_TAB==='both';
+    const showSp=MAIN_TAB==='spiral'||MAIN_TAB==='both';
+    [
+      [showN,'rgba(61,200,184,.9)','\u00b1n path  r=(M\u00b1'+S.n+')/2'],
+      [showSp,'rgba(200,168,74,.9)','Prime spiral  p='+S.prime],
+      [S.mirror&&showSp,'rgba(155,127,232,.85)','Mirror \u03c3(r)=M\u2212r'],
+      [S.dropout&&showSp,'rgba(224,80,96,.9)','Dropout  \u0394_p=1/p(p\u22121)'],
+      [showN&&showSp,'rgba(255,220,80,.95)','Intersection  M+1=2p'],
+      [S.lifts,'rgba(61,200,184,.6)','Surviving lifts'],
+      [S.broken,'rgba(224,80,96,.6)','Broken lifts'],
+      [S.chords,'rgba(200,168,74,.45)','Gap chords  '+S.gapStr],
+    ].forEach(([on,c,t])=>{
+      if(!on)return;
+      dot(c,2.5); f(12,false); octx.fillStyle=c; octx.textAlign='left'; octx.textBaseline='top';
+      octx.fillText(t,LX+PAD+U*7,ly); adv(16);
+    });
+    adv(PAD*.5);
+
+    rule(); adv(PAD*1.1);
+    wL('COLOR: '+S.colorMode,9,'rgba(200,168,74,.45)',true); adv(14);
+    const sw={chi4:[['rgba(61,200,184,.9)','r\u22611(4) split'],['rgba(155,127,232,.85)','r\u22613(4) inert']],lift:[['rgba(61,200,184,.8)','\u2713 survives'],['rgba(224,80,96,.7)','\u2717 broken']],safeprime:[['rgba(200,168,74,.9)','safe prime'],['rgba(61,200,184,.8)','safe ring']]}[S.colorMode];
+    if(sw){sw.forEach(([c,l])=>{dot(c,2.5);f(10,false);octx.fillStyle=c;octx.textAlign='left';octx.textBaseline='top';octx.fillText(l,LX+PAD+U*7,ly);adv(14);});adv(PAD*.4);}
+
+    // Frame/time stamp
+    rule('rgba(255,255,255,.05)'); adv(PAD*.8);
+    const now=new Date();
+    wL(now.toISOString().slice(0,19).replace('T',' '),9,'rgba(255,255,255,.2)'); adv(12);
+    if(ANIM.active) wL('Frame '+ANIM.frame,9,'rgba(126,200,122,.4)'); adv(PAD*.8);
+
+    f(9,false); octx.fillStyle='rgba(200,168,74,.35)'; octx.textAlign='left'; octx.textBaseline='bottom';
+    octx.fillText('Lift Survival Framework  \u00b7  Wessen Getachew',LX+PAD,eh-PAD*0.8);
+    octx.fillStyle='rgba(200,168,74,.2)';
+    octx.fillText('wessengetachew.github.io',LX+PAD,eh-PAD*0.3);
+  })();
+
+  // Download
+  const ts=new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+  oc.toBlob(blob=>{
+    const a=document.createElement('a');
+    a.download=`lift_snap_${S.view}_${ts}.png`;
+    a.href=URL.createObjectURL(blob); a.click();
+    if(btn){ btn.textContent='\u26a1 Snap'; btn.style.pointerEvents=''; }
+  },'image/png',1.0);
+}
+
 // ── 4K Export ──────────────────────────────────────────────────────────────
 function openExport(){document.getElementById('export-modal').classList.add('open');}
 function closeExport(){document.getElementById('export-modal').classList.remove('open');}
@@ -2043,83 +2877,206 @@ function doExport(){
   const bgChoice=document.getElementById('em-bg').value;
   const labelMode=document.getElementById('em-labels').value;
   const ptScale=+document.getElementById('em-ptscale').value||2.5;
-
   const prog=document.getElementById('em-progress');
-  prog.style.display='block';prog.textContent='Rendering…';
+  prog.style.display='block';prog.textContent='Rendering\u2026';
 
   setTimeout(()=>{
-    // Offscreen canvas
-    const oc=document.createElement('canvas');
-    oc.width=ew;oc.height=eh;
-    const octx=oc.getContext('2d');
-
-    // Background
     const bgMap={'dark':'#030310','black':'#000000','paper':'#f5f0e8'};
-    octx.fillStyle=bgMap[bgChoice]||'#030310';
-    octx.fillRect(0,0,ew,eh);
+    const bg=bgMap[bgChoice]||'#030310';
+    const isPaper=bgChoice==='paper';
+    const hasLegend=labelMode==='full'||labelMode==='minimal';
+    const U=Math.max(2,Math.round(ew/960));
+    const LEG=hasLegend?Math.round(ew*0.22):0;
+    const OUT_W=ew+LEG;
 
-    const oldW=W,oldH=H;
-    W=ew;H=eh;
-    const oldCtx=ctx;
-    // Temporarily redirect draw to offscreen
-    const savedPtSize=S.ptSize;
-    S.ptSize=S.ptSize*ptScale;
+    const oc=document.createElement('canvas');
+    oc.width=OUT_W;oc.height=eh;
+    const octx=oc.getContext('2d');
+    octx.fillStyle=bg;octx.fillRect(0,0,OUT_W,eh);
 
-    // Draw to offscreen canvas
-    drawToContext(octx,ew,eh,labelMode);
+    // Draw geometry
+    const savedW=W,savedH=H,savedPt=S.ptSize;
+    W=ew;H=eh;S.ptSize=S.ptSize*ptScale;
+    drawToContext(octx,ew,eh);
+    S.ptSize=savedPt;W=savedW;H=savedH;
 
-    S.ptSize=savedPtSize;
-    W=oldW;H=oldH;
-
-    // Watermark
-    if(labelMode!=='none'){
-      octx.font=`400 ${Math.round(ew/120)}px 'JetBrains Mono',monospace`;
-      octx.fillStyle='rgba(200,168,74,.35)';
-      octx.textAlign='right';octx.textBaseline='bottom';
-      octx.fillText('Lift Dynamics · Wessen Getachew · wessengetachew.github.io',ew-30,eh-Math.round(eh/36)-30);
+    // Pinned circles
+    if(PINNED_PTS.length>0&&hasLegend){
+      const svW=W,svH=H;W=ew;H=eh;
+      PINNED_PTS.forEach((pt,i)=>{
+        const[ex,ey2]=toXY(pt.r,pt.M);
+        octx.strokeStyle='rgba(200,168,74,.9)';octx.lineWidth=U*1.5;
+        octx.setLineDash([U*3,U*3]);
+        octx.beginPath();octx.arc(ex,ey2,S.ptSize*ptScale*3.5+U*2,0,6.28);octx.stroke();
+        octx.setLineDash([]);
+        octx.fillStyle='rgba(200,168,74,.9)';
+        octx.font=`500 ${U*9}px JetBrains Mono,monospace`;
+        octx.textAlign='center';octx.textBaseline='middle';
+        octx.fillText(i+1,ex,ey2-S.ptSize*ptScale*6);
+      });
+      W=svW;H=svH;
     }
 
-    // Stat bar at bottom
+    // Legend side panel
+    if(hasLegend){
+      const LX=ew,LW=LEG,PAD=U*20;
+      const textC=isPaper?'#1a1814':'rgba(220,215,205,.85)';
+      const mutedC=isPaper?'rgba(0,0,0,.35)':'rgba(255,255,255,.25)';
+      octx.fillStyle=isPaper?'#f0ebe1':'#050510';
+      octx.fillRect(LX,0,LW,eh);
+      octx.strokeStyle=isPaper?'rgba(139,105,20,.4)':'rgba(200,168,74,.3)';
+      octx.lineWidth=U*1.5;
+      octx.beginPath();octx.moveTo(LX,0);octx.lineTo(LX,eh);octx.stroke();
+
+      let ly=PAD*1.8;
+      const f=(sz,bold)=>{octx.font=(bold?'600 ':'400 ')+Math.round(sz*U)+'px JetBrains Mono,monospace';};
+      const wL=(t,sz,c,b)=>{f(sz,b);octx.fillStyle=c||textC;octx.textAlign='left';octx.textBaseline='top';octx.fillText(t,LX+PAD,ly);};
+      const wR=(t,sz,c,b)=>{f(sz,b);octx.fillStyle=c||textC;octx.textAlign='right';octx.textBaseline='top';octx.fillText(t,LX+LW-PAD,ly);};
+      const rule=c=>{octx.strokeStyle=c||'rgba(200,168,74,.25)';octx.lineWidth=U;octx.beginPath();octx.moveTo(LX+PAD,ly);octx.lineTo(LX+LW-PAD,ly);octx.stroke();};
+      const adv=px=>{ly+=px*U;};
+      const dot=(c,r=3)=>{octx.fillStyle=c;octx.beginPath();octx.arc(LX+PAD+r*U,ly+r*U,r*U,0,6.28);octx.fill();};
+      const row=(k,v,vc)=>{wL(k,11,mutedC);wR(v,11,vc||'rgba(61,200,184,.9)');adv(15);};
+
+      // Title
+      adv(2);
+      wL('Lift Dynamics',Math.round(ew/240),'rgba(200,168,74,.9)',true);adv(Math.round(ew/190));
+      const vLabel={concentric:'Concentric Rings',fermat:'Fermat Spiral',strip:'Unfolded Strip',farey:'Farey Half-Plane'}[S.view]||S.view;
+      wL('(\u2124/M\u2124)*  \u00b7  '+vLabel,11,mutedC);adv(14);
+      wL('wessengetachew.github.io',10,'rgba(200,168,74,.28)');adv(PAD*1.2);
+      rule();adv(PAD*1.1);
+
+      // Parameters
+      if(labelMode==='full'){
+        wL('PARAMETERS',9,'rgba(200,168,74,.45)',true);adv(14);
+        row('M max',''+S.mmax);
+        row('\u00b1n (path)','n='+S.n,'rgba(61,200,184,.9)');
+        row('prime p',''+S.prime,'rgba(200,168,74,.9)');
+        row('view',S.view,'rgba(155,127,232,.8)');
+        row('color',S.colorMode,'rgba(220,215,205,.6)');
+        row('\u03b4 rotation',S.delta.toFixed(4),'rgba(220,215,205,.6)');
+        adv(PAD*.6);
+        rule('rgba(61,200,184,.2)');adv(PAD*1.1);
+        wL('LIFT SURVIVAL CONSTANT',9,'rgba(61,200,184,.45)',true);adv(14);
+        wL('C = \u220f_p (p\u00b2\u22122)/(p\u00b2\u22121)',13,'rgba(255,255,255,.65)');adv(18);
+        const Cv=PRIMES.filter(p=>p<=S.mmax).reduce((a,p)=>a*(p*p-2)/(p*p-1),1);
+        wL('C('+S.mmax+')\u2248',11,mutedC);adv(13);
+        f(18,true);octx.fillStyle='rgba(61,200,184,.95)';octx.textAlign='left';octx.textBaseline='top';
+        octx.fillText(Cv.toFixed(10),LX+PAD,ly);adv(22);
+        wL('C(\u221e)=0.530711806246\u2026',10,'rgba(61,200,184,.3)');adv(PAD);
+        const Jv=PRIMES.filter(p=>p<=S.mmax).reduce((a,p)=>a+1/(p*(p-1)),0);
+        row('J=\u03a3 1/p(p\u22121)',Jv.toFixed(8),'rgba(200,168,74,.9)');
+        adv(PAD*.6);
+      }
+
+      // Active overlays
+      rule();adv(PAD*1.1);
+      wL('ACTIVE OVERLAYS',9,mutedC,true);adv(14);
+      const showN=MAIN_TAB==='npath'||MAIN_TAB==='both';
+      const showSp=MAIN_TAB==='spiral'||MAIN_TAB==='both';
+      const overlays=[
+        [showN,'rgba(61,200,184,.9)','\u00b1n path  r=(M\u00b1'+S.n+')/2'],
+        [showSp,'rgba(200,168,74,.9)','Prime spiral  p='+S.prime+'  r\u2261p(mod M)'],
+        [S.mirror&&showSp,'rgba(155,127,232,.85)','Mirror  \u03c3(r)=M\u2212r  (conjugation)'],
+        [S.dropout&&showSp,'rgba(224,80,96,.9)','Dropout at M=p  \u0394_p=1/p(p\u22121)'],
+        [showN&&showSp,'rgba(255,220,80,.95)','Intersection  M+1=2p (safe prime)'],
+        [S.lifts,'rgba(61,200,184,.65)','Surviving lifts  gcd(r\u2019,M+1)=1'],
+        [S.broken,'rgba(224,80,96,.65)','Broken lifts'],
+        [S.chords,'rgba(200,168,74,.5)','Gap chords  '+S.gapStr],
+      ];
+      overlays.forEach(([on,c,t])=>{
+        if(!on)return;
+        dot(c,2.5);
+        f(12,false);octx.fillStyle=c;octx.textAlign='left';octx.textBaseline='top';
+        octx.fillText(t,LX+PAD+U*7,ly);adv(16);
+      });
+      adv(PAD*.5);
+
+      // Color swatches
+      rule();adv(PAD*1.1);
+      wL('COLOR: '+S.colorMode,9,'rgba(200,168,74,.45)',true);adv(14);
+      const sw={chi4:[['rgba(61,200,184,.9)','r\u22611(4) split \u2124[i]'],['rgba(155,127,232,.85)','r\u22613(4) inert \u2124[i]']],lift:[['rgba(61,200,184,.8)','\u2713 survives'],['rgba(224,80,96,.7)','\u2717 broken']],safeprime:[['rgba(200,168,74,.9)','safe prime M'],['rgba(61,200,184,.8)','safe prime ring']],error_corr:[['rgba(155,127,232,.8)','R>C (above)'],['rgba(61,200,184,.7)','R<C (below)']],phi:[['rgba(126,200,122,.8)','high \u03c6/M'],['rgba(61,200,184,.5)','lower \u03c6/M']]}[S.colorMode];
+      if(sw){sw.forEach(([c,l])=>{dot(c,2.5);f(10,false);octx.fillStyle=c;octx.textAlign='left';octx.textBaseline='top';octx.fillText(l,LX+PAD+U*7,ly);adv(14);});adv(PAD*.4);}
+
+      // Pinned points detail
+      if(PINNED_PTS.length>0&&labelMode==='full'){
+        rule();adv(PAD*1.1);
+        wL('PINNED POINTS',9,'rgba(200,168,74,.45)',true);adv(14);
+        PINNED_PTS.forEach((pt,i)=>{
+          const th=(2*Math.PI*pt.r/pt.M+S.delta*pt.M*2*Math.PI);
+          const thDeg=((th*180/Math.PI)%360+360)%360;
+          const r2=pt.r%(pt.M+1),cop2=new Set(coprimes(pt.M+1)),lifted=cop2.has(r2);
+          f(11,true);octx.fillStyle='rgba(200,168,74,.8)';octx.textAlign='left';octx.textBaseline='top';
+          octx.fillText('#'+(i+1)+'  r='+pt.r+'  M='+pt.M,LX+PAD,ly);adv(13);
+          row('r/M',(pt.r/pt.M).toFixed(6),'rgba(61,200,184,.8)');
+          row('\u03b8',thDeg.toFixed(2)+'\u00b0','rgba(200,168,74,.7)');
+          row('lift',lifted?'\u2713 survives':'\u2717 broken',lifted?'rgba(126,200,122,.9)':'rgba(224,80,96,.9)');
+          adv(6);
+        });
+      }
+
+      // Stats block
+      if(labelMode==='full'){
+        rule();adv(PAD*1.1);
+        wL('LIVE STATS',9,'rgba(200,168,74,.45)',true);adv(14);
+        const tot2=liftStats.ok+liftStats.broken;
+        const surv=tot2>0?(liftStats.ok/tot2*100).toFixed(1)+'%':'—';
+        const Cv2=PRIMES.filter(p=>p<=S.mmax).reduce((a,p)=>a*(p*p-2)/(p*p-1),1);
+        const Jv2=PRIMES.filter(p=>p<=S.mmax).reduce((a,p)=>a+1/(p*(p-1)),0);
+        let sc2=0,ls2=0;
+        for(let M=2;M<=S.mmax;M++){if(isPrime(M+1)&&M>2&&isPrime((M+1)/2)){sc2++;ls2=M;}}
+        const allPts=PRIMES.slice(0,S.mmax).reduce((a,p)=>a+phi(p),0);
+        row('Rings (M=2\u2026'+S.mmax+')', ''+(S.mmax-1));
+        row('Lifts \u2713 / \u2717', liftStats.ok.toLocaleString()+' / '+liftStats.broken.toLocaleString(),'rgba(61,200,184,.8)');
+        row('Survival rate', surv,'rgba(61,200,184,.9)');
+        row('C('+S.mmax+')', Cv2.toFixed(8),'rgba(200,168,74,.9)');
+        row('J('+S.mmax+')', Jv2.toFixed(8),'rgba(200,168,74,.8)');
+        row('Safe prime rings', sc2+(ls2?' (last M='+ls2+')':''),'rgba(255,220,80,.85)');
+        row('\u03c6(M)/M avg', phiAvgForExport.toFixed(6),'rgba(61,200,184,.7)');
+        adv(PAD*.4);
+      }
+
+      // Footer
+      rule('rgba(255,255,255,.05)');
+      f(9,false);octx.fillStyle='rgba(200,168,74,.35)';octx.textAlign='left';octx.textBaseline='bottom';
+      octx.fillText('Lift Survival Framework  \u00b7  Wessen Getachew',LX+PAD,eh-PAD*0.8);
+      octx.fillStyle='rgba(200,168,74,.2)';
+      octx.fillText('wessengetachew.github.io',LX+PAD,eh-PAD*0.3);
+    }
+
+    // Stats strip at bottom of canvas (always, regardless of legend mode)
     if(labelMode!=='none'){
-      const barH=Math.round(eh/36);
-      const fontSize=Math.round(barH*0.48);
-      const pad=Math.round(ew/80);
+      const stripH=Math.round(eh*0.028);
+      const stripY=eh-stripH;
+      octx.fillStyle='rgba(4,4,13,.85)';
+      octx.fillRect(0,stripY,ew,stripH);
+      octx.strokeStyle='rgba(200,168,74,.2)';octx.lineWidth=1;
+      octx.beginPath();octx.moveTo(0,stripY);octx.lineTo(ew,stripY);octx.stroke();
 
-      // Bar background
-      octx.fillStyle='rgba(4,4,13,0.82)';
-      octx.fillRect(0,eh-barH,ew,barH);
-      // Top border line
-      octx.strokeStyle='rgba(255,255,255,0.07)';
-      octx.lineWidth=1;
-      octx.beginPath();octx.moveTo(0,eh-barH);octx.lineTo(ew,eh-barH);octx.stroke();
-
-      octx.font=`400 ${fontSize}px 'JetBrains Mono',monospace`;
+      const fs=Math.max(11,Math.round(stripH*0.42));
+      octx.font=`400 ${fs}px JetBrains Mono,monospace`;
       octx.textBaseline='middle';
-      const cy=eh-barH/2;
+      const mid=stripY+stripH/2;
+      const Cv3=PRIMES.filter(p=>p<=S.mmax).reduce((a,p)=>a*(p*p-2)/(p*p-1),1);
+      const Jv3=PRIMES.filter(p=>p<=S.mmax).reduce((a,p)=>a+1/(p*(p-1)),0);
+      const tot3=liftStats.ok+liftStats.broken;
+      const surv3=tot3>0?(liftStats.ok/tot3*100).toFixed(1)+'%':'—';
 
-      const stats=[
-        {label:'M max',  id:'stat-mmax',  col:'#ddd8cc'},
-        {label:'±n path',id:'stat-npath', col:'#3dc8b8'},
-        {label:'Spiral p',id:'stat-spiral',col:'#c8a84a'},
-        {label:'Surviving',id:'stat-lifts',col:'#7ec87a'},
-        {label:'Broken',  id:'stat-broken',col:'#e05060'},
-        {label:'φ(M)/M avg',id:'stat-phi',col:'#ddd8cc'},
-        {label:'View',   id:'stat-view',  col:'#9b7fe8'},
+      const items=[
+        {t:'M=2…'+S.mmax, c:'rgba(200,168,74,.7)'},
+        {t:'\u00b1n='+S.n, c:'rgba(61,200,184,.7)'},
+        {t:'p='+S.prime, c:'rgba(200,168,74,.7)'},
+        {t:'C(M)='+Cv3.toFixed(6), c:'rgba(200,168,74,.9)'},
+        {t:'J(M)='+Jv3.toFixed(6), c:'rgba(200,168,74,.8)'},
+        {t:'lifts \u2713 '+liftStats.ok, c:'rgba(61,200,184,.75)'},
+        {t:'survival '+surv3, c:'rgba(61,200,184,.85)'},
+        {t:'view='+S.view, c:'rgba(155,127,232,.7)'},
+        {t:'color='+S.colorMode, c:'rgba(155,127,232,.65)'},
       ];
 
-      const colW=ew/stats.length;
-      stats.forEach((s,i)=>{
-        const val=document.getElementById(s.id)?.textContent||'—';
-        const cx=colW*i+colW/2;
-        // Label
-        octx.fillStyle='rgba(106,101,96,0.9)';
-        octx.textAlign='center';
-        octx.font=`400 ${Math.round(fontSize*0.75)}px 'JetBrains Mono',monospace`;
-        octx.fillText(s.label.toUpperCase(),cx,cy-Math.round(fontSize*0.55));
-        // Value
-        octx.fillStyle=s.col;
-        octx.font=`500 ${fontSize}px 'JetBrains Mono',monospace`;
-        octx.fillText(val,cx,cy+Math.round(fontSize*0.55));
+      const step=ew/(items.length+1);
+      items.forEach(({t,c},i)=>{
+        octx.fillStyle=c;octx.textAlign='center';
+        octx.fillText(t,(i+1)*step,mid);
       });
     }
 
@@ -2127,50 +3084,29 @@ function doExport(){
       const a=document.createElement('a');
       a.download=`lift_dynamics_${S.view}_${ew}x${eh}.png`;
       a.href=URL.createObjectURL(blob);a.click();
-      prog.textContent='Done ✓';
+      prog.textContent='Done \u2713';
       setTimeout(()=>{prog.style.display='none';closeExport();},1500);
     },'image/png',1.0);
-  },50);
+  },60);
 }
 
-function drawToContext(octx,ew,eh,labelMode){
+function drawToContext(octx,ew,eh){
   const zoom=S.zoom/100;
-  const sc=Math.min(ew,eh)/2/S.mmax;
-
   function pos(r,M){
-    if(S.view==='concentric'){
-      const rho=M*zoom*(Math.min(ew,eh)/2)/S.mmax;
-      const th=2*Math.PI*r/M+S.delta*M*2*Math.PI;
-      return [ew/2+rho*Math.cos(th),eh/2+rho*Math.sin(th)];
-    }
-    if(S.view==='fermat'){
-      const rho=Math.sqrt(M)*zoom*(Math.min(ew,eh)/2)/Math.sqrt(S.mmax);
-      const th=2*Math.PI*r/M+S.delta*M*2*Math.PI;
-      return [ew/2+rho*Math.cos(th),eh/2+rho*Math.sin(th)];
-    }
-    if(S.view==='strip'){
-      return [(r/M*2-1)*ew/2*zoom+ew/2,(S.mmax>1?1-2*(M-1)/(S.mmax-1):0)*eh/2*zoom+eh/2];
-    }
-    const logY=Math.log(2/M)/Math.log(2/S.mmax);
-    return [(r/M*2-1)*ew/2*zoom+ew/2,(logY*1.8-0.9)*eh/2*zoom+eh/2];
+    if(S.view==='concentric'){const rho=M*zoom*(Math.min(ew,eh)/2)/S.mmax,th=2*Math.PI*r/M+S.delta*M*2*Math.PI;return[ew/2+rho*Math.cos(th),eh/2+rho*Math.sin(th)];}
+    if(S.view==='fermat'){const rho=Math.sqrt(M)*zoom*(Math.min(ew,eh)/2)/Math.sqrt(S.mmax),th=2*Math.PI*r/M+S.delta*M*2*Math.PI;return[ew/2+rho*Math.cos(th),eh/2+rho*Math.sin(th)];}
+    if(S.view==='strip')return[(r/M*2-1)*ew/2*zoom+ew/2,(S.mmax>1?1-2*(M-1)/(S.mmax-1):0)*eh/2*zoom+eh/2];
+    const logY=Math.log(2/M)/Math.log(2/S.mmax);return[(r/M*2-1)*ew/2*zoom+ew/2,(logY*1.8-0.9)*eh/2*zoom+eh/2];
   }
-
-  const showNpath=MAIN_TAB==='npath'||MAIN_TAB==='both';
-  const showSpiral=MAIN_TAB==='spiral'||MAIN_TAB==='both';
-  const showLift=MAIN_TAB==='lift'||MAIN_TAB==='both';
-
-  // Lift lines
+  const showN=MAIN_TAB==='npath'||MAIN_TAB==='both';
+  const showSp=MAIN_TAB==='spiral'||MAIN_TAB==='both';
   if(S.lifts||S.broken){
     for(let M=2;M<S.mmax;M++){
-      const cops=coprimes(M);
-      const cop2=new Set(coprimes(M+1));
+      const cops=coprimes(M),cop2=new Set(coprimes(M+1));
       for(const r of cops){
-        const r2=r%(M+1);
-        const lifted=cop2.has(r2);
-        if(lifted&&!S.lifts)continue;
-        if(!lifted&&!S.broken)continue;
-        const [x1,y1]=pos(r,M);
-        const [x2,y2]=pos(r2,M+1);
+        const r2=r%(M+1),lifted=cop2.has(r2);
+        if(lifted&&!S.lifts)continue;if(!lifted&&!S.broken)continue;
+        const[x1,y1]=pos(r,M),[x2,y2]=pos(r2,M+1);
         octx.beginPath();octx.moveTo(x1,y1);octx.lineTo(x2,y2);
         octx.lineWidth=S.liftThick/3;
         octx.strokeStyle=lifted?`rgba(61,200,184,${S.liftAlpha})`:`rgba(224,80,96,${S.liftAlpha})`;
@@ -2178,73 +3114,24 @@ function drawToContext(octx,ew,eh,labelMode){
       }
     }
   }
-
-  // Points
   const ps=S.ptSize;
-  const anyH=showNpath||showSpiral;
   for(let M=2;M<=S.mmax;M++){
-    const cops=coprimes(M);
-    const cop2=new Set(coprimes(M+1));
+    const cops=coprimes(M),cop2=new Set(coprimes(M+1));
     for(const r of cops){
-      const [x,y]=pos(r,M);
-      const r2=r%(M+1);
-      let onNpath=false,onSpiral=false,onMirror=false,isDropout=false;
-      if(showNpath){
-        if(S.allN){for(const nn of [1,3,5,7,9]){if((M%2)===(nn%2)&&(r===(M+nn)/2||r===(M-nn)/2)){onNpath=true;break;}}}
-        else if((M%2)===(S.n%2)&&(r===(M+S.n)/2||r===(M-S.n)/2)) onNpath=true;
-      }
-      if(showSpiral){
-        if(S.allP){for(const pp of PRIMES){if(pp>=M)break;if(r===pp%M){onSpiral=true;break;}}}
-        else{ if(r===S.prime%M) onSpiral=true; if(S.mirror&&r===(M-S.prime%M)%M) onMirror=true; }
-        if(S.dropout&&M===S.prime&&r===0) isDropout=true;
-      }
-
-      let col,size=ps,alpha=1;
-      if(isDropout){col='255,80,80';size=ps*2.2;alpha=.95;}
-      else if(onNpath&&onSpiral){col='255,220,80';size=ps*2.5;alpha=1;}
-      else if(onNpath){col='61,200,184';size=ps*2;alpha=.95;}
-      else if(onSpiral){col='200,168,74';size=ps*2;alpha=.9;}
-      else if(onMirror){col='155,127,232';size=ps*1.6;alpha=.8;}
-      else if(S.allCoprime){col='80,80,130';alpha=anyH?.2:.5;}
+      const[x,y]=pos(r,M),r2=r%(M+1),lifted=cop2.has(r2);
+      let onN=false,onSp=false,onMir=false,isDrop=false;
+      if(showN){if(S.allN){for(const nn of[1,3,5,7,9]){if((M%2)===(nn%2)&&(r===(M+nn)/2||r===(M-nn)/2)){onN=true;break;}}}else if((M%2)===(S.n%2)&&(r===(M+S.n)/2||r===(M-S.n)/2))onN=true;}
+      if(showSp){if(S.allP){for(const pp of PRIMES){if(pp>=M)break;if(r===pp%M){onSp=true;break;}}}else{if(r===S.prime%M)onSp=true;if(S.mirror&&r===(M-S.prime%M)%M)onMir=true;}if(S.dropout&&M===S.prime&&r===0)isDrop=true;}
+      let col,size=ps;
+      if(isDrop){col='rgba(255,80,80,.95)';size=ps*2.2;}
+      else if(onN&&onSp){col='rgba(255,220,80,1)';size=ps*2.5;}
+      else if(onN){col='rgba(61,200,184,.95)';size=ps*2;}
+      else if(onSp){col='rgba(200,168,74,.9)';size=ps*2;}
+      else if(onMir){col='rgba(155,127,232,.85)';size=ps*1.6;}
+      else if(S.allCoprime){col='rgba(80,80,130,.4)';size=ps*.8;}
       else continue;
-
-      octx.fillStyle=`rgba(${col},${alpha})`;
-      octx.beginPath();octx.arc(x,y,size,0,6.28);octx.fill();
-      if(onNpath||onSpiral||isDropout){
-        octx.fillStyle=`rgba(${col},${alpha*0.15})`;
-        octx.beginPath();octx.arc(x,y,size*3,0,6.28);octx.fill();
-      }
-    }
-  }
-
-  // Labels in export
-  if(labelMode==='full'||labelMode==='minimal'){
-    const fs=Math.round(ew/200);
-    octx.font=`400 ${fs}px 'JetBrains Mono',monospace`;
-
-    // Legend
-    const legend=[
-      {col:'rgba(61,200,184,.9)',txt:'±n path: r=(M±n)/2'},
-      {col:'rgba(200,168,74,.9)',txt:'Prime spiral: r=p mod M'},
-      {col:'rgba(155,127,232,.85)',txt:'Mirror: σ(r)=M−r'},
-      {col:'rgba(255,80,80,.9)',txt:'Dropout: p mod p=0 (Jump Theorem)'},
-      {col:'rgba(255,220,80,.9)',txt:'Intersection (safe prime signature)'},
-    ];
-    legend.forEach(({col,txt},i)=>{
-      octx.fillStyle=col;
-      octx.beginPath();octx.arc(40,eh-40-i*(fs+14),fs*.7,0,6.28);octx.fill();
-      octx.fillStyle=col;octx.textAlign='left';octx.textBaseline='middle';
-      octx.fillText(txt,56,eh-40-i*(fs+14));
-    });
-
-    if(labelMode==='full'){
-      // Title block
-      octx.font=`400 ${Math.round(ew/80)}px 'JetBrains Mono',monospace`;
-      octx.fillStyle='rgba(200,168,74,.8)';octx.textAlign='left';octx.textBaseline='top';
-      octx.fillText('Lift Dynamics · (ℤ/Mℤ)* · M=2…'+S.mmax,30,30);
-      octx.font=`400 ${Math.round(ew/130)}px 'JetBrains Mono',monospace`;
-      octx.fillStyle='rgba(200,168,74,.45)';
-      octx.fillText(`n=${S.n}  p=${S.prime}  view=${S.view}  δ=${S.delta.toFixed(3)}`,30,30+Math.round(ew/70));
+      octx.fillStyle=col;octx.beginPath();octx.arc(x,y,size,0,6.28);octx.fill();
+      if(onN||onSp||isDrop){octx.fillStyle=col.replace(/[\d.]+\)$/,'0.13)');octx.beginPath();octx.arc(x,y,size*2.8,0,6.28);octx.fill();}
     }
   }
 }
@@ -2270,6 +3157,304 @@ function exportSVGLabels(){
   const a=document.createElement('a');a.download='lift_labels.json';a.href=URL.createObjectURL(blob);a.click();
 }
 
+// ── Point cache ────────────────────────────────────────────────────────────
+let PT_CACHE=[], PINNED_PTS=[];
+function buildCache(pts){PT_CACHE=pts;}
+
+// ── Point helpers ──────────────────────────────────────────────────────────
+function ptColor(pt){
+  if(pt.isDropout) return {col:'#e05060',label:'Dropout'};
+  if(pt.onNpath&&pt.onSpiral) return {col:'#ffe050',label:'Intersection'};
+  if(pt.onNpath) return {col:'#3dc8b8',label:'±n path'};
+  if(pt.onSpiral) return {col:'#c8a84a',label:'Spiral'};
+  if(pt.onMirror) return {col:'#9b7fe8',label:'Mirror'};
+  return {col:'#6a8ab8',label:'Coprime'};
+}
+function ptInfo(pt){
+  const {r,M}=pt;
+  const th=(2*Math.PI*r/M+S.delta*M*2*Math.PI);
+  const thDeg=((th*180/Math.PI)%360+360)%360;
+  const r2=r%(M+1);
+  const cop2=new Set(coprimes(M+1));
+  const lifted=cop2.has(r2);
+  const isEq=(M%2)===(S.n%2)&&(r===(M+S.n)/2||r===(M-S.n)/2);
+  const eqType=r===(M+S.n)/2?'r=(M+n)/2':r===(M-S.n)/2?'r=(M\u2212n)/2':null;
+  const phase=r===S.prime%M?(M<=S.prime?'Phase 1 (CRT)':'Phase 2 (stable)'):null;
+  const Mprime=isPrime(M);
+  const safePrime=isPrime(M+1)&&M>2&&isPrime((M+1)/2);
+  const jumpSize=Mprime?(1/(M*(M-1))).toFixed(8):null;
+  const {col,label}=ptColor(pt);
+  return {r,M,r2,lifted,thDeg,col,label,isEq,eqType,phase,Mprime,safePrime,phiM:phi(M),jumpSize};
+}
+
+// ── Tooltip ────────────────────────────────────────────────────────────────
+const TT=document.getElementById('tooltip');
+let hoveredPt=null;
+
+function showTooltip(pt,mx,my){
+  if(!pt) return;
+  const info=ptInfo(pt);
+  const isPinned=PINNED_PTS.some(p=>p.r===pt.r&&p.M===pt.M);
+  let h=`<div class="tt-title">${info.label} \xb7 M=${info.M}</div>`;
+  h+=`<div class="tt-row"><span class="tt-k">r</span><span class="tt-v">${info.r}</span></div>`;
+  h+=`<div class="tt-row"><span class="tt-k">r/M</span><span class="tt-v">${(info.r/info.M).toFixed(5)}</span></div>`;
+  h+=`<div class="tt-row"><span class="tt-k">\u03b8</span><span class="tt-v">${info.thDeg.toFixed(2)}\xb0 (${(info.thDeg/180).toFixed(4)}\u03c0)</span></div>`;
+  h+=`<div class="tt-row"><span class="tt-k">\u03c6(M)/M</span><span class="tt-v">${(info.phiM/info.M).toFixed(4)}</span></div>`;
+  h+=`<div class="tt-sep"></div>`;
+  h+=`<div class="tt-row"><span class="tt-k">r' mod M+1</span><span class="tt-v">${info.r2}</span></div>`;
+  h+=`<div class="tt-row"><span class="tt-k">lift</span><span class="tt-v ${info.lifted?'teal':'coral'}">${info.lifted?'\u2713 survives':'\u2717 broken'}</span></div>`;
+  if(info.isEq) h+=`<div class="tt-row"><span class="tt-k">\xb1n path</span><span class="tt-v teal">${info.eqType}</span></div>`;
+  if(info.phase) h+=`<div class="tt-row"><span class="tt-k">spiral</span><span class="tt-v" style="color:var(--gold)">${info.phase}</span></div>`;
+  if(info.isDropout) h+=`<div class="tt-row"><span class="tt-k">\u0394_p</span><span class="tt-v coral">1/${info.M*(info.M-1)}</span></div>`;
+  if(info.Mprime) h+=`<div class="tt-row"><span class="tt-k">ring type</span><span class="tt-v lime">prime</span></div>`;
+  if(info.safePrime) h+=`<div class="tt-row"><span class="tt-k">M+1=2p</span><span class="tt-v" style="color:var(--gold)">safe prime ring</span></div>`;
+  h+=`<div class="tt-hint">${isPinned?'Click to unpin':'Click to pin \xb7 right-click ring'}</div>`;
+  TT.innerHTML=h; TT.style.display='block';
+  const wrap=document.getElementById('canvas-wrap');
+  let tx=mx+14, ty=my-10;
+  if(tx+244>wrap.offsetWidth) tx=mx-254;
+  if(ty+210>wrap.offsetHeight-60) ty=my-210;
+  if(ty<0) ty=4;
+  TT.style.left=tx+'px'; TT.style.top=ty+'px';
+}
+function hideTooltip(){TT.style.display='none'; hoveredPt=null;}
+
+// ── Pin panel ──────────────────────────────────────────────────────────────
+function openPinPanel(){document.getElementById('pin-panel').classList.add('open');}
+function closePinPanel(){document.getElementById('pin-panel').classList.remove('open');}
+
+function renderPinList(){
+  const list=document.getElementById('pin-list');
+  const cnt=document.getElementById('pin-header-count');
+  cnt.textContent=PINNED_PTS.length+' point'+(PINNED_PTS.length!==1?'s':'');
+  if(!PINNED_PTS.length){
+    list.innerHTML='<div style="padding:10px 14px;font-size:9px;color:var(--cream3)">No pinned points. Click any point on canvas.</div>';
+    return;
+  }
+  list.innerHTML=PINNED_PTS.map((pt,i)=>{
+    const info=ptInfo(pt);
+    const {col}=ptColor(pt);
+    const badge=info.isDropout?'DROPOUT':info.isEq?'\xb1n PATH':pt.onSpiral?'SPIRAL':info.Mprime?'PRIME':'';
+    const bc=info.isDropout?'var(--coral)':info.isEq?'var(--teal)':pt.onSpiral?'var(--gold)':info.Mprime?'var(--lime)':'var(--cream3)';
+    return `<div class="pin-item" id="pinitem_${i}">
+      <div class="pin-summary" onclick="togglePinDetail(${i})">
+        <div style="width:7px;height:7px;border-radius:50%;background:${col};flex-shrink:0;margin-right:4px"></div>
+        <span class="pin-label-text">#${i+1} &nbsp;r=${info.r}, M=${info.M}</span>
+        ${badge?`<span class="pin-badge" style="color:${bc};border-color:${bc}">${badge}</span>`:''}
+        <span class="pin-remove" onclick="event.stopPropagation();unpinPoint(${i})">\u2715</span>
+      </div>
+      <div class="pin-detail">
+        <div class="pd-row"><span class="pd-k">r/M</span><span class="pd-v">${(info.r/info.M).toFixed(6)}</span></div>
+        <div class="pd-row"><span class="pd-k">\u03b8</span><span class="pd-v">${info.thDeg.toFixed(3)}\xb0</span></div>
+        <div class="pd-row"><span class="pd-k">\u03b8/\u03c0</span><span class="pd-v">${(info.thDeg/180).toFixed(5)}</span></div>
+        <div class="pd-row"><span class="pd-k">\u03c6(M)</span><span class="pd-v">${info.phiM}</span></div>
+        <div class="pd-row"><span class="pd-k">\u03c6/M</span><span class="pd-v">${(info.phiM/info.M).toFixed(5)}</span></div>
+        <div class="pd-row"><span class="pd-k">r' mod M+1</span><span class="pd-v">${info.r2}</span></div>
+        <div class="pd-row"><span class="pd-k">lift</span><span class="pd-v ${info.lifted?'lime':'coral'}">${info.lifted?'\u2713':'\u2717'} \u2192 ${info.r2}</span></div>
+        ${info.jumpSize?`<div class="pd-row"><span class="pd-k">\u0394_p</span><span class="pd-v coral">${info.jumpSize}</span></div>`:''}
+        ${info.safePrime?`<div class="pd-row"><span class="pd-k">safe ring</span><span class="pd-v gold">\u2713</span></div>`:''}
+        ${info.isEq?`<div class="pd-row"><span class="pd-k">path</span><span class="pd-v" style="color:var(--teal)">${info.eqType}</span></div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function togglePinDetail(i){
+  const el=document.getElementById('pinitem_'+i);
+  if(el) el.classList.toggle('open');
+}
+
+function pinPoint(pt){
+  const idx=PINNED_PTS.findIndex(p=>p.r===pt.r&&p.M===pt.M);
+  if(idx>=0){unpinPoint(idx);return;}
+  PINNED_PTS.push(pt);
+  openPinPanel(); renderPinList(); dirty=true;
+}
+function unpinPoint(i){
+  PINNED_PTS.splice(i,1); renderPinList();
+  if(!PINNED_PTS.length) closePinPanel();
+  dirty=true;
+}
+function clearAllPins(){
+  PINNED_PTS=[]; renderPinList(); closePinPanel();
+  highlightedRing=null; dirty=true;
+}
+
+// ── Ring highlight ─────────────────────────────────────────────────────────
+let highlightedRing=null;
+function highlightRing(M){
+  highlightedRing=highlightedRing===M?null:M; dirty=true;
+}
+
+// ── Hit testing ────────────────────────────────────────────────────────────
+function findNearest(mx,my,radius=18){
+  let best=null,bestD=radius*radius;
+  for(const pt of PT_CACHE){
+    const dx=pt.x-mx,dy=pt.y-my,d2=dx*dx+dy*dy;
+    if(d2<bestD){bestD=d2;best=pt;}
+  }
+  return best;
+}
+function findNearestRing(mx,my,threshold=12){
+  if(S.view!=='concentric') return null;
+  const dx=mx-W/2,dy=my-H/2,dist=Math.sqrt(dx*dx+dy*dy);
+  const zoom=S.zoom/100,scale=(Math.min(W,H)/2)/S.mmax;
+  let bestM=null,bestErr=threshold;
+  for(let M=2;M<=S.mmax;M++){
+    const err=Math.abs(dist-M*zoom*scale);
+    if(err<bestErr){bestErr=err;bestM=M;}
+  }
+  return bestM;
+}
+
+// ── Events ────────────────────────────────────────────────────────────────
+canvas.addEventListener('mousemove',e=>{
+  if(MAIN_TAB==='math') return;
+  const rect=canvas.getBoundingClientRect(),mx=e.clientX-rect.left,my=e.clientY-rect.top;
+  const pt=findNearest(mx,my);
+  if(pt){hoveredPt=pt;canvas.classList.add('hovering');showTooltip(pt,mx,my);}
+  else{hoveredPt=null;canvas.classList.remove('hovering');hideTooltip();}
+});
+canvas.addEventListener('mouseleave',()=>{hideTooltip();canvas.classList.remove('hovering');});
+canvas.addEventListener('click',e=>{
+  if(MAIN_TAB==='math') return;
+  const rect=canvas.getBoundingClientRect(),mx=e.clientX-rect.left,my=e.clientY-rect.top;
+  const pt=findNearest(mx,my);
+  if(pt){pinPoint(pt);}
+  else{const M=findNearestRing(mx,my);if(M)highlightRing(M);}
+});
+canvas.addEventListener('contextmenu',e=>{
+  e.preventDefault();
+  if(MAIN_TAB==='math') return;
+  const rect=canvas.getBoundingClientRect();
+  const M=findNearestRing(e.clientX-rect.left,e.clientY-rect.top);
+  if(M)highlightRing(M);
+});
+let lastTap=0;
+canvas.addEventListener('touchstart',e=>{
+  if(MAIN_TAB==='math') return;
+  const t=e.touches[0],rect=canvas.getBoundingClientRect();
+  const mx=t.clientX-rect.left,my=t.clientY-rect.top,now=Date.now();
+  const pt=findNearest(mx,my,30);
+  if(now-lastTap<300&&pt){pinPoint(pt);}
+  else if(pt){showTooltip(pt,mx,my);}
+  else{const M=findNearestRing(mx,my,20);if(M)highlightRing(M);}
+  lastTap=now;
+},{passive:true});
+canvas.addEventListener('touchend',()=>setTimeout(hideTooltip,1400),{passive:true});
+
+
+// ── Gap chords ──────────────────────────────────────────────────────────────
+function drawChords(ctx,W,H){
+  if(!S.chords||S.view!=='concentric') return;
+  const gaps=S.gapStr.split(',').map(s=>parseInt(s.trim())).filter(n=>n>0&&n<S.mmax);
+  if(!gaps.length) return;
+  const zoom=S.zoom/100,scale=(Math.min(W,H)/2)/S.mmax;
+  const cols=['rgba(61,200,184','rgba(200,168,74','rgba(192,132,252','rgba(224,80,96','rgba(126,200,122'];
+  for(let M=2;M<=S.mmax;M++){
+    const cops=coprimes(M);
+    const rho=M*zoom*scale;
+    gaps.forEach((g,gi)=>{
+      const gCol=cols[gi%cols.length];
+      cops.forEach(r=>{
+        if(cops.indexOf(r+g)>=0){
+          const th1=2*Math.PI*r/M+S.delta*M*2*Math.PI;
+          const th2=2*Math.PI*(r+g)/M+S.delta*M*2*Math.PI;
+          ctx.strokeStyle=`${gCol},${S.chordAlpha})`;
+          ctx.lineWidth=0.5;
+          ctx.beginPath();
+          ctx.moveTo(W/2+rho*Math.cos(th1),H/2+rho*Math.sin(th1));
+          ctx.lineTo(W/2+rho*Math.cos(th2),H/2+rho*Math.sin(th2));
+          ctx.stroke();
+        }
+      });
+    });
+  }
+}
+
+// ── Night animation ─────────────────────────────────────────────────────────
+(function(){
+  const nc=document.getElementById('night-canvas');
+  if(!nc) return;
+  const nctx=nc.getContext('2d');
+  let nW,nH,nT=0,nAnimId;
+  const NP=[];
+  function mkParts(){NP.length=0;for(let i=0;i<70;i++)NP.push({x:Math.random()*nW,y:Math.random()*nH,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*1.3+.3,col:Math.random()<.5?'61,200,184':'200,168,74'});}
+  function nResize(){nW=nc.width=innerWidth;nH=nc.height=innerHeight;mkParts();}
+  function nRing(cx,cy,rad,M,ph){
+    const phi_=[]; for(let r=1;r<M;r++){let a=r,b=M;while(b){let t=b;b=a%b;a=t;}if(a===1)phi_.push(r);}
+    phi_.forEach((r,i)=>{
+      const ang=(r/M)*6.28-1.57+ph;
+      nctx.fillStyle=`rgba(61,200,184,${.08+.14*(.5+.5*Math.sin(nT*.04+i*.3))})`;
+      nctx.beginPath();nctx.arc(cx+Math.cos(ang)*rad,cy+Math.sin(ang)*rad,1.4,0,6.28);nctx.fill();
+    });
+    nctx.strokeStyle='rgba(200,168,74,.05)';nctx.lineWidth=.5;
+    nctx.beginPath();nctx.arc(cx,cy,rad,0,6.28);nctx.stroke();
+  }
+  function nFrame(){
+    nctx.fillStyle='rgba(3,3,10,.15)';nctx.fillRect(0,0,nW,nH);
+    const cx1=nW*.76,cy1=nH*.28,cx2=nW*.22,cy2=nH*.72;
+    [2,3,5,7,11,13].forEach((p,i)=>nRing(cx1,cy1,38+i*24,p,nT*.007));
+    [2,3,5,7,11].forEach((p,i)=>nRing(cx2,cy2,30+i*19,p,nT*.009));
+    NP.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0)p.x=nW;if(p.x>nW)p.x=0;if(p.y<0)p.y=nH;if(p.y>nH)p.y=0;
+      nctx.fillStyle=`rgba(${p.col},${p.r*.25*(.6+.4*Math.sin(nT*.02))})`;
+      nctx.beginPath();nctx.arc(p.x,p.y,p.r,0,6.28);nctx.fill();
+    });
+    nT++;nAnimId=requestAnimationFrame(nFrame);
+  }
+  nResize();addEventListener('resize',nResize);nFrame();
+  window._nightStop=()=>cancelAnimationFrame(nAnimId);
+  // Staggered popups
+  [['np1',2200],['np2',4000],['np3',5800],['np4',7500],['np5',9000]].forEach(([id,d])=>{
+    const el=document.getElementById(id);if(!el)return;
+    const show=()=>{el.classList.add('visible');setTimeout(()=>el.classList.remove('visible'),3800);};
+    setTimeout(()=>{show();setInterval(show,13000);},d);
+  });
+})();
+
+function enterPage(){
+  window._nightStop&&window._nightStop();
+  const ns=document.getElementById('night-screen');
+  ns.classList.add('fade-out');
+  setTimeout(()=>{ns.style.display='none';},860);
+}
+
+// ── Theorem presets ─────────────────────────────────────────────────────────
+function applyThm(name){
+  if(name==='lift_survival'){
+    S.colorMode='phi';S.lifts=true;S.broken=false;S.mmax=40;MAIN_TAB='lift';
+    document.getElementById('sel-color').value='phi';
+    setMainTab('lift',document.querySelectorAll('.tb-tab')[3]);
+  } else if(name==='jump_thm'){
+    S.colorMode='jump';S.lifts=false;S.dropout=true;MAIN_TAB='spiral';
+    document.getElementById('sel-color').value='jump';
+    setMainTab('spiral',document.querySelectorAll('.tb-tab')[1]);
+  } else if(name==='chi4'){
+    S.colorMode='chi4';S.mirror=true;MAIN_TAB='spiral';
+    document.getElementById('sel-color').value='chi4';
+    document.getElementById('chk-mirror').checked=true;
+    setMainTab('spiral',document.querySelectorAll('.tb-tab')[1]);
+  } else if(name==='error_mode'){
+    S.colorMode='error_corr';S.lifts=true;MAIN_TAB='lift';
+    document.getElementById('sel-color').value='error_corr';
+    setMainTab('lift',document.querySelectorAll('.tb-tab')[3]);
+  } else if(name==='primorial'){
+    S.colorMode='primorial';S.lifts=true;S.chords=true;S.gapStr='6';MAIN_TAB='both';
+    document.getElementById('sel-color').value='primorial';
+    document.getElementById('chk-chords').checked=true;
+    document.getElementById('txt-gaps').value='6';
+    setMainTab('both',document.querySelectorAll('.tb-tab')[2]);
+  } else if(name==='safe_chain'){
+    S.colorMode='safeprime';S.n=1;S.lifts=true;S.mmax=60;MAIN_TAB='both';
+    document.getElementById('sel-color').value='safeprime';
+    document.getElementById('sl-mmax').value=60;document.getElementById('val-mmax').textContent=60;
+    setMainTab('both',document.querySelectorAll('.tb-tab')[2]);
+  }
+  dirty=true;
+}
+
 // ── Animation ──────────────────────────────────────────────────────────────
 const ANIM={active:false,type:null,speed:5,frame:0};
 
@@ -2279,6 +3464,7 @@ function playAnim(type){
   document.getElementById('btn-play-n').style.display=type==='n'?'none':'';
   document.getElementById('btn-play-p').style.display=type==='p'?'none':'';
   document.getElementById('btn-play-m').style.display=type==='m'?'none':'';
+  document.getElementById('float-export').classList.add('visible');
 }
 
 function stopAnim(){
@@ -2287,6 +3473,8 @@ function stopAnim(){
   document.getElementById('btn-play-n').style.display='';
   document.getElementById('btn-play-p').style.display='';
   document.getElementById('btn-play-m').style.display='';
+  // Keep visible on desktop, hide on mobile
+  if(window.innerWidth<=420) document.getElementById('float-export').classList.remove('visible');
 }
 
 // ── Render loop ────────────────────────────────────────────────────────────
@@ -2311,7 +3499,7 @@ function loop(){
       } else if(ANIM.type==='m'){
         S.mmax=Math.max(4,S.mmax+(sp>10?3:1));
         if(S.mmax>200) S.mmax=4;
-        document.getElementById('sl-mmax').value=S.mmax;document.getElementById('num-mmax').value=S.mmax;
+        document.getElementById('sl-mmax').value=S.mmax;
         document.getElementById('val-mmax').textContent=S.mmax;
       }
       dirty=true;
@@ -2322,11 +3510,6 @@ function loop(){
   requestAnimationFrame(loop);
 }
 loop();
-
-// ── Expose to HTML ─────────────────────────────────────────────────────────
-window.setMainTab=setMainTab;window.setView=setView;window.toggleTheory=toggleTheory;
-window.applyPreset=applyPreset;window.openExport=openExport;window.closeExport=closeExport;
-window.doExport=doExport;window.exportSVGLabels=exportSVGLabels;
 
 // ── Mobile bar ─────────────────────────────────────────────────────────────
 const MB_VIEWS=['concentric','fermat','strip','farey'];
@@ -2707,6 +3890,174 @@ function drawEnChart(){
   if(document.readyState==='complete') attachEnHover();
   else window.addEventListener('load', attachEnHover);
 })();
+
+
+// ── F(u) Analytic Lift Function ─────────────────────────────────────────────
+let FU_U=2.0,FU_ANIM_ID=null,FU_CURVE=null;
+
+function evalF(u,n=200){
+  let f=1;
+  for(let i=0;i<Math.min(n,PRIMES.length);i++){const p=PRIMES[i];f*=(p*p-u)/(p*p-1);}
+  return f;
+}
+
+function buildFUCurve(){
+  FU_CURVE=[];
+  for(let i=0;i<=500;i++){const u=-6+(i/500)*16;FU_CURVE.push({u,f:evalF(u,150)});}
+}
+
+function drawFUCanvas(u){
+  const cv=document.getElementById('fu-canvas');if(!cv)return;
+  const ctx2=cv.getContext('2d');
+  cv.width=cv.offsetWidth;cv.height=300;
+  const W=cv.width,H=cv.height;
+  if(!FU_CURVE)buildFUCurve();
+  ctx2.fillStyle='#07071a';ctx2.fillRect(0,0,W,H);
+  const uMin=-2,uMax=12,fMin=-0.3,fMax=1.9;
+  const toX=uu=>(uu-uMin)/(uMax-uMin)*W;
+  const toY=f=>H-(f-fMin)/(fMax-fMin)*H;
+  ctx2.strokeStyle='rgba(255,255,255,.05)';ctx2.lineWidth=.5;
+  for(let g=-2;g<=12;g+=2){ctx2.beginPath();ctx2.moveTo(toX(g),0);ctx2.lineTo(toX(g),H);ctx2.stroke();}
+  [0,.5,1,1.5].forEach(f=>{ctx2.beginPath();ctx2.moveTo(0,toY(f));ctx2.lineTo(W,toY(f));ctx2.stroke();});
+  ctx2.strokeStyle='rgba(255,255,255,.15)';ctx2.lineWidth=1;ctx2.setLineDash([4,4]);
+  ctx2.beginPath();ctx2.moveTo(0,toY(0));ctx2.lineTo(W,toY(0));ctx2.stroke();ctx2.setLineDash([]);
+  PRIMES.slice(0,8).forEach(p=>{
+    const p2=p*p;if(p2>uMax)return;
+    ctx2.strokeStyle='rgba(224,80,96,.35)';ctx2.lineWidth=1;ctx2.setLineDash([3,4]);
+    ctx2.beginPath();ctx2.moveTo(toX(p2),0);ctx2.lineTo(toX(p2),H);ctx2.stroke();ctx2.setLineDash([]);
+    ctx2.fillStyle='rgba(224,80,96,.55)';ctx2.font=`8px ${MONO}`;ctx2.textAlign='center';
+    ctx2.fillText('p\xb2='+p2,toX(p2),10);
+  });
+  ctx2.strokeStyle='rgba(126,200,122,.85)';ctx2.lineWidth=2;ctx2.beginPath();let st=false;
+  FU_CURVE.filter(d=>d.u>=uMin&&d.u<=uMax&&d.f>fMin&&d.f<fMax).forEach(d=>{
+    if(!st){ctx2.moveTo(toX(d.u),toY(d.f));st=true;}else ctx2.lineTo(toX(d.u),toY(d.f));
+  });
+  ctx2.stroke();
+  [{u:0,f:evalF(0),l:'F(0)=\u03b6(2)',c:'rgba(155,127,232,.9)'},{u:1,f:1,l:'F(1)=1',c:'rgba(200,168,74,.9)'},{u:2,f:evalF(2),l:'F(2)=C',c:'rgba(61,200,184,.9)'}].forEach(({u:ku,f:kf,l,c})=>{
+    ctx2.fillStyle=c;ctx2.beginPath();ctx2.arc(toX(ku),toY(kf),6,0,6.28);ctx2.fill();
+    ctx2.font=`9px ${MONO}`;ctx2.fillStyle=c;ctx2.textAlign='center';ctx2.fillText(l,toX(ku),toY(kf)-12);
+  });
+  const fu2=evalF(u),cx2=toX(u),cy2=toY(Math.max(fMin+.05,Math.min(fMax-.05,fu2)));
+  ctx2.strokeStyle='rgba(255,255,255,.8)';ctx2.lineWidth=1.5;ctx2.setLineDash([3,4]);
+  ctx2.beginPath();ctx2.moveTo(cx2,0);ctx2.lineTo(cx2,H);ctx2.stroke();ctx2.setLineDash([]);
+  ctx2.fillStyle='#fff';ctx2.beginPath();ctx2.arc(cx2,cy2,5,0,6.28);ctx2.fill();
+  ctx2.fillStyle='rgba(126,200,122,.5)';ctx2.font=`8px ${MONO}`;ctx2.textAlign='left';
+  ctx2.fillText('F(u) = \u220f_p (p\xb2\u2212u)/(p\xb2\u22121)',6,16);
+  ctx2.fillStyle='rgba(255,255,255,.3)';ctx2.textAlign='center';ctx2.fillText('u',W-8,toY(0)-4);
+}
+
+function drawFUZeros(){
+  const cv=document.getElementById('fu-u-canvas');if(!cv)return;
+  const ctx2=cv.getContext('2d');
+  cv.width=cv.offsetWidth;cv.height=220;
+  const W=cv.width,H=cv.height;
+  ctx2.fillStyle='#07071a';ctx2.fillRect(0,0,W,H);
+  const uMin=0,uMax=180,midY=H/2+20;
+  const toX=u=>(u-uMin)/(uMax-uMin)*W;
+  ctx2.strokeStyle='rgba(255,255,255,.15)';ctx2.lineWidth=1;
+  ctx2.beginPath();ctx2.moveTo(0,midY);ctx2.lineTo(W,midY);ctx2.stroke();
+  PRIMES.filter(p=>p*p<=uMax).forEach((p,i)=>{
+    const x=toX(p*p);
+    ctx2.strokeStyle='rgba(224,80,96,.7)';ctx2.lineWidth=2;
+    ctx2.beginPath();ctx2.moveTo(x,midY-16);ctx2.lineTo(x,midY+16);ctx2.stroke();
+    ctx2.fillStyle='rgba(224,80,96,.9)';ctx2.beginPath();ctx2.arc(x,midY,4,0,6.28);ctx2.fill();
+    ctx2.fillStyle='rgba(224,80,96,.7)';ctx2.font=`8px ${MONO}`;ctx2.textAlign='center';
+    ctx2.fillText('p='+p,x,midY-(i%2===0?28:38));
+    ctx2.fillText(p*p,x,midY+(i%2===0?26:36));
+  });
+  [{u:0,c:'rgba(155,127,232,.85)',l:'\u03b6(2)'},{u:1,c:'rgba(200,168,74,.85)',l:'1'},{u:2,c:'rgba(61,200,184,.9)',l:'C'}].forEach(({u:ku,c,l})=>{
+    const x=toX(ku*8+2);
+    ctx2.fillStyle=c;ctx2.beginPath();ctx2.arc(x,midY,5,0,6.28);ctx2.fill();
+    ctx2.fillStyle=c;ctx2.font=`9px ${MONO}`;ctx2.textAlign='center';
+    ctx2.fillText('F('+ku+')='+l,x,midY-48);
+  });
+  const rzY=midY-70;
+  ctx2.strokeStyle='rgba(155,127,232,.12)';ctx2.lineWidth=.5;ctx2.setLineDash([2,4]);
+  ctx2.beginPath();ctx2.moveTo(0,rzY);ctx2.lineTo(W,rzY);ctx2.stroke();ctx2.setLineDash([]);
+  ctx2.fillStyle='rgba(155,127,232,.35)';ctx2.font=`7.5px ${MONO}`;ctx2.textAlign='left';
+  ctx2.fillText('Riemann zeros (Re(s)=\xbd conjectural \u2014 RH)',6,rzY-4);
+  [14.13,21.02,25.01,30.42,32.93,37.59,40.92,43.33].forEach(t=>{
+    ctx2.fillStyle='rgba(155,127,232,.5)';
+    ctx2.beginPath();ctx2.arc(toX(t*1.0),rzY,3,0,6.28);ctx2.fill();
+  });
+  ctx2.fillStyle='rgba(126,200,122,.5)';ctx2.font=`8px ${MONO}`;ctx2.textAlign='left';
+  ctx2.fillText('Zeros of F(u): prime squares {4,9,25,49,121,169,\u2026} \u2014 all real \u2714 Laguerre\u2013P\xf3lya class',6,H-8);
+}
+
+function updateFU(u){
+  FU_U=u;
+  const fuv=document.getElementById('fu-u-val');if(fuv)fuv.textContent=u.toFixed(2);
+  const f=evalF(u);
+  const label=Math.abs(u)<.01?'= \u03b6(2)':Math.abs(u-1)<.01?'= 1':Math.abs(u-2)<.01?'= C':'= '+f.toFixed(6);
+  const fr=document.getElementById('fu-result');if(fr)fr.textContent='F('+u.toFixed(2)+') '+label;
+  drawFUCanvas(u);
+}
+
+function jumpFU(u){
+  if(FU_ANIM_ID){cancelAnimationFrame(FU_ANIM_ID);FU_ANIM_ID=null;}
+  const sl=document.getElementById('fu-u-sl');if(sl)sl.value=u;
+  updateFU(u);
+}
+
+function animateFU(){
+  if(FU_ANIM_ID){cancelAnimationFrame(FU_ANIM_ID);FU_ANIM_ID=null;}
+  const pts=[0,.4,.8,1,1.4,1.8,2,1.6,1.2,.8,.4,0];
+  let t=0;const fr=pts.length*18;
+  function step(){
+    const prog=t/fr*(pts.length-1);
+    const i=Math.floor(prog),frac=prog%1;
+    const u=pts[i]+(pts[Math.min(i+1,pts.length-1)]-pts[i])*frac;
+    const sl=document.getElementById('fu-u-sl');if(sl)sl.value=u;
+    updateFU(u);t++;
+    if(t<fr)FU_ANIM_ID=requestAnimationFrame(step);else jumpFU(2);
+  }
+  step();
+}
+
+function initFU(){
+  buildFUCurve();
+  drawFUCanvas(FU_U);
+  drawFUZeros();
+}
+
+// ── Expose to HTML ─────────────────────────────────────────────────────────
+window.setMainTab=setMainTab;window.setView=setView;window.toggleTheory=toggleTheory;
+window.applyPreset=applyPreset;window.openExport=openExport;window.closeExport=closeExport;
+window.doExport=doExport;window.exportSVGLabels=exportSVGLabels;
+window.removePin=unpinPoint;window.clearAllPins=clearAllPins;
+window.closePinPanel=closePinPanel;window.togglePinDetail=togglePinDetail;
+window.mbStepN=mbStepN;window.mbStepPrime=mbStepPrime;window.mbStepM=mbStepM;
+window.mbToggle=mbToggle;window.mbCycleView=mbCycleView;
+window.enterPage=enterPage;window.applyThm=applyThm;
+window.updateFU=updateFU;window.jumpFU=jumpFU;window.animateFU=animateFU;
+window.toggleOtherWorks=function(){
+  const m=document.getElementById('other-works-menu');
+  if(m) m.style.display=m.style.display==='none'?'block':'none';
+};
+document.addEventListener('click',e=>{
+  const m=document.getElementById('other-works-menu');
+  if(m&&!e.target.closest('#other-works-menu')&&!e.target.textContent.includes('Other Works')) m.style.display='none';
+});
+
+// Show floating export on desktop always; on mobile only during animation
+(function(){
+  const fe=document.getElementById('float-export');
+  if(!fe) return;
+  function checkShow(){
+    if(window.innerWidth>420) fe.classList.add('visible');
+    else if(!ANIM.active) fe.classList.remove('visible');
+  }
+  checkShow();
+  window.addEventListener('resize',checkShow);
+})();window.snapNow=snapNow;
+
+// Keyboard shortcuts
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT') return;
+  if(e.key==='Escape'){clearAllPins();}
+  if(e.key==='h'||e.key==='H'){highlightedRing=null;dirty=true;}
+  if(e.key==='s'||e.key==='S'){snapNow();}
+});
 </script>
 </body>
 </html>
