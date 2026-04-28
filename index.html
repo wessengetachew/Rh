@@ -639,7 +639,70 @@ body.fs-mode #fs-restore { display:flex; }
   <div class="mb-group">
     <button class="mb-btn" onclick="enterFullscreen()" title="Fullscreen canvas" style="font-size:14px">⛶</button>
   </div>
+  <div class="mb-sep"></div>
+  <!-- Export -->
+  <div class="mb-group">
+    <button class="mb-btn gold" onclick="openMobileExport()" title="Export image" style="font-size:13px;letter-spacing:.02em">↓</button>
+  </div>
 </div>
+
+<!-- ══ MOBILE EXPORT SHEET ══ -->
+<div id="mob-export-overlay" style="display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.6);" onclick="closeMobileExport()"></div>
+<div id="mob-export-sheet" style="
+  display:none;position:fixed;bottom:0;left:0;right:0;z-index:401;
+  background:rgba(5,5,20,.98);border-top:1px solid rgba(200,168,74,.4);
+  padding:18px 16px 32px;backdrop-filter:blur(12px);
+  transform:translateY(100%);transition:transform .28s cubic-bezier(.32,.72,0,1);
+">
+  <div style="width:36px;height:3px;background:rgba(255,255,255,.2);border-radius:2px;margin:0 auto 16px;"></div>
+  <div style="font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);opacity:.65;margin-bottom:14px;border-bottom:1px solid var(--edge);padding-bottom:8px;">Export Image</div>
+
+  <!-- Size presets -->
+  <div style="font-size:7.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--cream3);margin-bottom:8px;">Size</div>
+  <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;">
+    <button class="mob-sz-btn active" data-w="1920" data-h="1080" onclick="selectMobSize(this)">1080p</button>
+    <button class="mob-sz-btn" data-w="2560" data-h="1440" onclick="selectMobSize(this)">1440p</button>
+    <button class="mob-sz-btn" data-w="3840" data-h="2160" onclick="selectMobSize(this)">4K</button>
+    <button class="mob-sz-btn" data-w="1080" data-h="1080" onclick="selectMobSize(this)">Square</button>
+    <button class="mob-sz-btn" data-w="1080" data-h="1920" onclick="selectMobSize(this)">Portrait</button>
+  </div>
+
+  <!-- Options -->
+  <div style="font-size:7.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--cream3);margin-bottom:8px;">Options</div>
+  <div style="display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap;">
+    <button class="mob-opt-btn active" id="mob-legend-btn" onclick="this.classList.toggle('active')">Legend</button>
+    <button class="mob-opt-btn active" id="mob-statsbar-btn" onclick="this.classList.toggle('active')">Stats bar</button>
+    <button class="mob-opt-btn" id="mob-dark-btn" onclick="this.classList.toggle('active')">Paper bg</button>
+  </div>
+
+  <!-- Action buttons -->
+  <div style="display:flex;gap:8px;">
+    <button onclick="doMobileExport('png')" style="flex:2;padding:12px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;border:1px solid rgba(200,168,74,.5);color:var(--gold);background:rgba(200,168,74,.1);">↓ Save PNG</button>
+    <button onclick="doMobileExport('snap')" style="flex:1;padding:12px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;border:1px solid rgba(126,200,122,.4);color:var(--lime);background:rgba(126,200,122,.07);">⚡ Snap</button>
+    <button onclick="closeMobileExport()" style="flex:1;padding:12px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;border:1px solid var(--edge2);color:var(--cream3);background:transparent;">Cancel</button>
+  </div>
+
+  <div id="mob-export-progress" style="display:none;margin-top:14px;text-align:center;font-family:var(--mono);font-size:10px;color:var(--teal);"></div>
+</div>
+
+<style>
+.mob-sz-btn {
+  padding:7px 12px;font-family:var(--mono);font-size:9px;letter-spacing:.08em;
+  border:1px solid var(--edge2);color:var(--cream3);background:transparent;
+  cursor:pointer;border-radius:2px;transition:all .12s;
+}
+.mob-sz-btn.active {
+  color:var(--gold);border-color:rgba(200,168,74,.5);background:rgba(200,168,74,.1);
+}
+.mob-opt-btn {
+  padding:6px 12px;font-family:var(--mono);font-size:9px;letter-spacing:.08em;
+  border:1px solid var(--edge2);color:var(--cream3);background:transparent;
+  cursor:pointer;border-radius:2px;transition:all .12s;
+}
+.mob-opt-btn.active {
+  color:var(--teal);border-color:rgba(61,200,184,.45);background:rgba(61,200,184,.08);
+}
+</style>
 
 <!-- TOP BAR -->
 
@@ -1008,7 +1071,7 @@ body.fs-mode #fs-restore { display:flex; }
         <thead><tr><th>Regime</th><th>Condition</th><th>Residue r(M)</th><th>Behaviour</th></tr></thead>
         <tbody>
           <tr><td class="teal">Before</td><td>M ≤ p</td><td class="hl">p mod M  (varies)</td><td>Encodes p via CRT · irregular spiral</td></tr>
-          <tr><td class="coral">Dropout</td><td>M = p</td><td class="coral">p mod p = 0</td><td>Non-coprime · spiral gap · D(x) jumps at x = p−1</td></tr>
+          <tr><td class="coral">Dropout</td><td>M = p</td><td class="coral">p mod p = 0</td><td>Non-coprime · spiral gap · D(x) jumps at x = p−1 <span style="color:var(--cream3)">(separate events, not identical — see §2)</span></td></tr>
           <tr><td class="violet">After</td><td>M > p</td><td class="hl">r = p  (fixed)</td><td>θ = 2πp/M → 0 · converges to origin</td></tr>
         </tbody>
       </table>
@@ -1258,7 +1321,7 @@ body.fs-mode #fs-restore { display:flex; }
         <div class="math-rule"></div>
         <div class="math-tag">Lift Dynamics · Mathematical Foundations</div>
         <div class="math-h1">Two Lifts:<br><em>The ±n Path</em> &amp; The Prime Spiral</div>
-        <div class="math-subtitle">A complete account of the two primary geometric structures on the modular ring sequence (ℤ/Mℤ)* — their definitions, theorems, proofs, and connection to the Jump Theorem, safe primes, and the Gaussian integers.</div>
+        <div class="math-subtitle">The two primary geometric structures on the modular ring sequence (ℤ/Mℤ)* — definitions, theorems, proofs, and connections to the Jump Theorem, safe primes, and the Gaussian integers.</div>
         <div class="math-divider"></div>
 
         <!-- §1 Setup -->
@@ -1325,23 +1388,18 @@ body.fs-mode #fs-restore { display:flex; }
           </div>
 
           <div class="math-block thm">
-            <div class="math-block-tag">Theorem 2.2 — Lift Survival of the Equatorial Path (n = 1)</div>
+            <div class="math-block-tag">Theorem 2.2 — Non-Survival of the Equatorial Residue (n = 1)</div>
             <div class="math-block-body">
               For n = 1, the upper equatorial residue r₊(M) = (M+1)/2 maps under the lift to:
               <div style="margin:8px 0;font-family:var(--mono);font-size:11px;color:var(--gold)">r₊ mod (M+1) = (M+1)/2</div>
-              This survives the lift to ring M+1 if and only if gcd((M+1)/2, M+1) = 1, which holds if and only if <em>(M+1)/2 is coprime to M+1</em> — equivalently, M+1 = 2q for some odd number q with gcd(q, 2q) = 1, i.e. <strong>q is an odd prime</strong>. Therefore r₊(M) survives the lift if and only if M+1 is twice a prime — the safe prime condition.
+              For all M ≥ 3, this residue <em>never</em> lies in (ℤ/(M+1)ℤ)*. Since gcd((M+1)/2, M+1) = (M+1)/2 > 1, the equatorial residue always fails the lift — the gcd condition is never met for M ≥ 3.
+              <br><br>
+              The safe prime rings M = 2p−1 are distinguished not by residue survival but by the local lift weight L(M) = φ(M)·φ(M+1)/(M+1) deviating most from C. The equatorial path marks the axis of symmetry of each ring; its role in the error term peaks is conjectural (see Conjecture 2.1), not a consequence of lift survival.
             </div>
           </div>
 
           <div class="math-proof">
-            We must determine when r₊ = (M+1)/2 lies in (ℤ/(M+1)ℤ)*, i.e. when gcd((M+1)/2, M+1) = 1.
-            <br><br>
-            Write N = M+1 and k = N/2 (an integer since M is odd, so N is even). We compute gcd(k, N) = gcd(N/2, N). Since N/2 divides N (as 2·(N/2) = N), every divisor of N/2 divides N. Hence gcd(N/2, N) = N/2. This equals 1 if and only if N/2 = 1, i.e. N = 2 (M = 1).
-            <br><br>
-            Therefore for M ≥ 3, the residue r₊ = (M+1)/2 is <em>never</em> in (ℤ/(M+1)ℤ)* — it is always divisible by the same factors as M+1. The equatorial residue does not directly survive the lift in the naive sense.
-            <br><br>
-            <em>Correct statement of the connection.</em> The numerical observation is that the rings M where |E(N)·N| is largest are safe prime rings (M+1 = 2p). The geometric mechanism is that at these rings, the lift weight L(M) = φ(M)·φ(M+1)/(M+1) deviates most from C. The equatorial path r = (M±1)/2 tracks <em>which residues are closest to the axis of symmetry</em> of the ring — not which residues survive the lift. The connection to safe primes is empirical and structural, not via the simple gcd condition above. The precise algebraic proof of the safe prime peak structure remains an open problem in this framework. ⚠
-            <span class="qed">□</span>
+            We determine gcd((M+1)/2, M+1). Write N = M+1 and k = N/2 (an integer since M is odd, so N is even). Since 2k = N, every divisor of k also divides N, so gcd(k, N) = k = N/2. For M ≥ 3 we have N ≥ 4, hence N/2 ≥ 2 > 1. Therefore gcd((M+1)/2, M+1) > 1 for all M ≥ 3, and r₊(M) never lies in (ℤ/(M+1)ℤ)*. The only exception is M = 1 (N = 2, k = 1). <span class="qed">□</span>
           </div>
 
           <div class="math-block cor">
@@ -1354,7 +1412,7 @@ body.fs-mode #fs-restore { display:flex; }
           <table class="math-table">
             <thead><tr><th>n</th><th>Path formula</th><th>Angular limit</th><th>Survives to M+1 when</th><th>Connection</th></tr></thead>
             <tbody>
-              <tr><td class="teal">1</td><td class="gold">(M±1)/2</td><td>θ→π</td><td class="lime">M+1 = 2p (safe prime)</td><td>E(N) peaks (empirical)</td></tr>
+              <tr><td class="teal">1</td><td class="gold">(M±1)/2</td><td>θ→π</td><td class="coral">Never (M ≥ 3) — Thm 2.2</td><td>E(N) peaks at safe prime rings (empirical — Conj. 2.1)</td></tr>
               <tr><td class="teal">3</td><td class="gold">(M±3)/2</td><td>θ→π</td><td>M+1 ≡ 0 mod 2, gcd((M+3)/2, M+1)=1</td><td>Twin prime cousin</td></tr>
               <tr><td class="teal">5</td><td class="gold">(M±5)/2</td><td>θ→π</td><td>gcd((M+5)/2, M+1)=1</td><td>Near-equator band</td></tr>
               <tr><td class="violet">n→∞</td><td class="gold">(M±n)/2</td><td>θ→π±nπ/M</td><td>Depends on M+n,M+1</td><td>Off-equator channel</td></tr>
@@ -1690,7 +1748,7 @@ body.fs-mode #fs-restore { display:flex; }
       <div class="dc-rule"></div>
       <div class="dc-tag">Lift Dynamics · Analytic Number Theory</div>
       <div class="dc-h1">D<sub>χ</sub>(x) and the Riemann Hypothesis</div>
-      <div class="dc-sub">A single elementary function that encodes the prime race mod 4 — and whose cumulative jump sums are equivalent to RH for L(s, χ₄)</div>
+      <div class="dc-sub">A single elementary function that encodes the prime race mod 4 — and whose cumulative jump sums are equivalent to the Riemann Hypothesis for L(s, χ₄)</div>
       <div class="dc-divider"></div>
 
       <!-- §1 The function -->
@@ -1699,7 +1757,7 @@ body.fs-mode #fs-restore { display:flex; }
         <div class="dc-sec-title">The Character-Weighted Jump Function</div>
 
         <div class="dc-body">
-          The prime race mod 4 — Dirichlet's observation that primes ≡ 3 (mod 4) seem to "lead" primes ≡ 1 (mod 4) for most initial segments — is encoded, with exact arithmetic precision, in a single elementary real-variable function.
+          The prime race mod 4 — the observation that primes ≡ 3 (mod 4) appear to lead primes ≡ 1 (mod 4) over most initial segments — is encoded, with exact arithmetic precision, in a single elementary real-variable function.
         </div>
 
         <div class="dc-block def">
@@ -1716,7 +1774,7 @@ body.fs-mode #fs-restore { display:flex; }
         </div>
 
         <div class="dc-body">
-          This function has three properties that, taken together, appear to be new in the literature:
+          Three properties of D<sub>χ</sub>(x), taken together, distinguish it from existing constructions in the literature:
         </div>
 
         <div class="dc-table-wrap" style="overflow-x:auto">
@@ -1775,6 +1833,8 @@ body.fs-mode #fs-restore { display:flex; }
             <strong>E(N) = ∑<sub>q ≤ N, q prime</sub>  χ₄(q) / q(q − 1)</strong>
             <br><br>
             This is the total signed area accumulated in D<sub>χ</sub> up to x = N − 1: positive contributions from primes ≡ 1 (mod 4), negative from primes ≡ 3 (mod 4).
+            <br><br>
+            <span style="color:var(--cream3);font-size:13px"><em>Note:</em> This E(N) is not the same as the lift-ratio error term E(N) = R(N) − C used in the main canvas panels. Both measure a kind of residual, but they are defined differently and indexed by different objects.</span>
           </div>
         </div>
 
@@ -1820,16 +1880,16 @@ body.fs-mode #fs-restore { display:flex; }
         </div>
 
         <div class="dc-body">
-          Combining Theorem 3.1 with the identity E(N) = ∑ χ₄(q)/q + O(1/N) from Section 2:
+          Combining Theorem 3.1 with the identity E(N) = ∑ χ₄(q)/q + O(1/N):
         </div>
 
         <div class="dc-boxed">
           <span class="dc-boxed-label">Main Equivalence</span>
-          RH for L(s, χ₄) &nbsp;⟺&nbsp; E(N) = O(N<sup>−1/2 + ε</sup>)
+          The Riemann Hypothesis for L(s, χ₄) &nbsp;⟺&nbsp; E(N) = O(N<sup>−1/2 + ε</sup>)
         </div>
 
         <div class="dc-body">
-          The Riemann Hypothesis for the L-function is equivalent to the <em>decay rate of the cumulative jump sums of D<sub>χ</sub>(x)</em>. No complex analysis is needed to state the condition — only the signed sum of the jumps of an elementary real-variable function.
+          The Riemann Hypothesis for the L-function is equivalent to the <em>decay rate of the cumulative jump sums of D<sub>χ</sub>(x)</em> — stated without complex analysis in a single closed-form expression.
         </div>
 
         <div class="dc-block rmk">
@@ -1925,26 +1985,25 @@ body.fs-mode #fs-restore { display:flex; }
         </div>
 
         <div class="dc-block honest">
-          <div class="dc-block-tag">What this framework provides</div>
+          <div class="dc-block-tag">Scope and Contributions</div>
           <div class="dc-block-body">
-            · A new <em>packaging</em> of the Franel–Landau equivalence into an explicit real-variable function<br>
-            · A direct geometric interpretation of the jump signs via Gaussian integers and the ring canvas<br>
-            · A computable, elementary quantity E(N) that numerically witnesses RH<br>
-            · The invertible recovery formula p = (1 + √(1+4/|s|))/2 for primes from jump sizes (new)<br>
+            · A new packaging of the Franel–Landau equivalence into an explicit real-variable function<br>
+            · A direct geometric interpretation of jump signs via Gaussian integers and the modular ring canvas<br>
+            · A computable, elementary quantity E(N) that numerically witnesses the Riemann Hypothesis for L(s, χ₄)<br>
+            · The invertible prime-recovery formula p = (1 + √(1+4/|s|))/2 from jump sizes
           </div>
         </div>
 
         <div class="dc-block honest">
-          <div class="dc-block-tag">What this framework does not provide</div>
+          <div class="dc-block-tag">What Remains Open</div>
           <div class="dc-block-body">
-            · A new <em>equivalence</em> — the Franel–Landau theorem is classical (1924); the equivalence is translated, not proved anew<br>
-            · A proof that E(N) decays at rate N<sup>−1/2</sup> — this remains as hard as RH itself<br>
-            · A simpler path to proving RH — obvious from the above<br>
+            · The Franel–Landau equivalence is classical (1924); the present work translates it into a new form, not re-proves it<br>
+            · The decay rate E(N) = O(N<sup>−1/2</sup>) is unproved — equivalent in difficulty to the Riemann Hypothesis itself<br>
           </div>
         </div>
 
         <div class="dc-body">
-          The unique contribution is this: <em>a Dirichlet-series analogue on the real line where primes are the jump discontinuities, signed by their residue class mod 4, and the Riemann Hypothesis for L(s, χ₄) is equivalent to the decay rate of the resulting jump sums</em> — expressed without complex analysis in a single closed-form expression.
+          The unique contribution of this framework: <em>a Dirichlet-series analogue on the real line where primes are the jump discontinuities, signed by their residue class mod 4, and the Riemann Hypothesis for L(s, χ₄) is equivalent to the decay rate of the resulting jump sums</em> — expressed in a single closed-form expression requiring no complex analysis.
         </div>
       </div>
 
@@ -2016,7 +2075,7 @@ body.fs-mode #fs-restore { display:flex; }
   <div class="fu-rule"></div>
   <div class="fu-tag">Analytic Number Theory &middot; 2026</div>
   <div class="fu-h1">The Analytic Lift Function F(u)</div>
-  <div class="fu-sub">A rigorous treatment from first principles: Weierstrass products, absolute convergence, order, genus, the Hadamard factorisation theorem, and the Laguerre&ndash;P&oacute;lya class. Every definition is stated axiomatically. All proofs are complete.</div>
+        <div class="fu-sub">A rigorous treatment: Weierstrass products, absolute convergence, order, genus, the Hadamard factorisation theorem, and the Laguerre&ndash;P&oacute;lya class. Every definition is stated axiomatically; all proofs are complete.</div>
   <div class="fu-divider"></div>
 
   <!-- §0 Prerequisites -->
@@ -2307,7 +2366,7 @@ body.fs-mode #fs-restore { display:flex; }
 
     <!-- Zero spectrum canvas -->
     <div class="fu-canvas-wrap">
-      <div class="fu-canvas-ann">Zero spectrum &middot; Red marks = zeros of F at prime squares (all real, proved) &middot; Violet schematic = Riemann zeros (on Re(s)=&frac12; under RH, unproved) &middot; These are distinct objects on different scales</div>
+      <div class="fu-canvas-ann">Zero spectrum &middot; Red marks = zeros of F at prime squares (all real, proved) &middot; Violet schematic = Riemann zeros (on Re(s)=&frac12; under RH, unproved) &middot; Shown for visual contrast only — no logical connection to F(u) &middot; These are distinct objects on different scales</div>
       <canvas id="fu-u-canvas"></canvas>
     </div>
   </div>
@@ -2318,7 +2377,7 @@ body.fs-mode #fs-restore { display:flex; }
     <div class="fu-sec-title">Connection to the Lift Dynamics Framework</div>
 
     <div class="fu-body">
-      The function F is not merely a formal construction. It is the analytic parent of every constant in the lift dynamics framework. We record the precise connections, distinguishing proved identities from conjectures.
+      F is not merely a formal construction. It is the analytic parent of every constant in the lift dynamics framework. The precise connections are recorded below, with proved identities distinguished from conjectures.
     </div>
 
     <div class="fu-block thm">
@@ -2463,6 +2522,10 @@ let dirty=true;
 let theoryOpen=false;
 let MAIN_TAB='both';
 
+// ── Viewport pan (eyeball surface drag) ────────────────────────────────────
+const PAN={x:0,y:0,dragging:false,startX:0,startY:0,lastX:0,lastY:0,velX:0,velY:0};
+let panAnimId=null;
+
 // ── Prime chips ────────────────────────────────────────────────────────────
 (function(){
   const el=document.getElementById('prime-chips');
@@ -2499,28 +2562,29 @@ resize();
 // ── Coordinate transforms ──────────────────────────────────────────────────
 function toXY(r,M){
   const zoom=S.zoom/100;
+  const cx=W/2+PAN.x, cy=H/2+PAN.y;
   if(S.view==='concentric'){
     const rho=M*zoom*(Math.min(W,H)/2)/S.mmax;
     const th=2*Math.PI*r/M+S.delta*M*2*Math.PI;
-    return [W/2+rho*Math.cos(th), H/2+rho*Math.sin(th)];
+    return [cx+rho*Math.cos(th), cy+rho*Math.sin(th)];
   }
   if(S.view==='fermat'){
     const rho=Math.sqrt(M)*zoom*(Math.min(W,H)/2)/Math.sqrt(S.mmax);
     const th=2*Math.PI*r/M+S.delta*M*2*Math.PI;
-    return [W/2+rho*Math.cos(th), H/2+rho*Math.sin(th)];
+    return [cx+rho*Math.cos(th), cy+rho*Math.sin(th)];
   }
   if(S.view==='strip'){
-    const x=(r/M*2-1)*W/2*zoom+W/2;
-    const y=(S.mmax>1?1-2*(M-1)/(S.mmax-1):0)*H/2*zoom+H/2;
+    const x=(r/M*2-1)*W/2*zoom+cx;
+    const y=(S.mmax>1?1-2*(M-1)/(S.mmax-1):0)*H/2*zoom+cy;
     return [x,y];
   }
   if(S.view==='farey'){
     const logY=Math.log(2/M)/Math.log(2/S.mmax);
-    const x=(r/M*2-1)*W/2*zoom+W/2;
-    const y=(logY*1.8-0.9)*H/2*zoom+H/2;
+    const x=(r/M*2-1)*W/2*zoom+cx;
+    const y=(logY*1.8-0.9)*H/2*zoom+cy;
     return [x,y];
   }
-  return [W/2,H/2];
+  return [cx,cy];
 }
 
 // ── Main draw ──────────────────────────────────────────────────────────────
@@ -3381,6 +3445,7 @@ function doExport(){
 
 function drawToContext(octx,ew,eh){
   const zoom=S.zoom/100;
+  // Export always renders centered — pan offset is a viewport-only transform
   function pos(r,M){
     if(S.view==='concentric'){const rho=M*zoom*(Math.min(ew,eh)/2)/S.mmax,th=2*Math.PI*r/M+S.delta*M*2*Math.PI;return[ew/2+rho*Math.cos(th),eh/2+rho*Math.sin(th)];}
     if(S.view==='fermat'){const rho=Math.sqrt(M)*zoom*(Math.min(ew,eh)/2)/Math.sqrt(S.mmax),th=2*Math.PI*r/M+S.delta*M*2*Math.PI;return[ew/2+rho*Math.cos(th),eh/2+rho*Math.sin(th)];}
@@ -3596,9 +3661,111 @@ function findNearestRing(mx,my,threshold=12){
   return bestM;
 }
 
+// ── Pan drag — mouse ───────────────────────────────────────────────────────
+canvas.addEventListener('mousedown', e=>{
+  if(e.button!==0) return;
+  // If inspect mode is on, don't pan on left click
+  if(INSPECT_MODE) return;
+  PAN.dragging=true;
+  PAN.startX=e.clientX-PAN.x;
+  PAN.startY=e.clientY-PAN.y;
+  PAN.lastX=e.clientX; PAN.lastY=e.clientY;
+  PAN.velX=0; PAN.velY=0;
+  canvas.style.cursor='grabbing';
+  cancelAnimationFrame(panAnimId);
+});
+window.addEventListener('mousemove', e=>{
+  if(!PAN.dragging) return;
+  PAN.velX=e.clientX-PAN.lastX;
+  PAN.velY=e.clientY-PAN.lastY;
+  PAN.lastX=e.clientX; PAN.lastY=e.clientY;
+  PAN.x=e.clientX-PAN.startX;
+  PAN.y=e.clientY-PAN.startY;
+  dirty=true;
+});
+window.addEventListener('mouseup', e=>{
+  if(!PAN.dragging) return;
+  PAN.dragging=false;
+  canvas.style.cursor=INSPECT_MODE?'crosshair':'grab';
+  startPanMomentum();
+});
+
+// ── Pan drag — touch (2-finger already claimed by pinch-zoom) ─────────────
+let _panTouch=null;
+canvas.addEventListener('touchstart', e=>{
+  if(e.touches.length!==1||INSPECT_MODE) return;
+  const t=e.touches[0];
+  _panTouch={id:t.identifier, startX:t.clientX-PAN.x, startY:t.clientY-PAN.y,
+             lastX:t.clientX, lastY:t.clientY};
+  PAN.velX=0; PAN.velY=0;
+  cancelAnimationFrame(panAnimId);
+},{passive:true});
+canvas.addEventListener('touchmove', e=>{
+  if(!_panTouch||e.touches.length!==1) return;
+  const t=[...e.touches].find(tt=>tt.identifier===_panTouch.id);
+  if(!t) return;
+  PAN.velX=t.clientX-_panTouch.lastX;
+  PAN.velY=t.clientY-_panTouch.lastY;
+  _panTouch.lastX=t.clientX; _panTouch.lastY=t.clientY;
+  PAN.x=t.clientX-_panTouch.startX;
+  PAN.y=t.clientY-_panTouch.startY;
+  dirty=true;
+},{passive:true});
+canvas.addEventListener('touchend', e=>{
+  if(!_panTouch) return;
+  _panTouch=null;
+  startPanMomentum();
+},{passive:true});
+
+// ── Momentum glide ─────────────────────────────────────────────────────────
+function startPanMomentum(){
+  cancelAnimationFrame(panAnimId);
+  function glide(){
+    if(Math.abs(PAN.velX)<0.4&&Math.abs(PAN.velY)<0.4) return;
+    PAN.x+=PAN.velX;
+    PAN.y+=PAN.velY;
+    PAN.velX*=0.88;
+    PAN.velY*=0.88;
+    dirty=true;
+    panAnimId=requestAnimationFrame(glide);
+  }
+  glide();
+}
+
+// ── Double-click / double-tap to reset pan ─────────────────────────────────
+canvas.addEventListener('dblclick', e=>{
+  if(INSPECT_MODE) return;
+  cancelAnimationFrame(panAnimId);
+  // Smooth snap back to center
+  const snapFn=()=>{
+    PAN.x*=0.78; PAN.y*=0.78;
+    dirty=true;
+    if(Math.abs(PAN.x)>0.5||Math.abs(PAN.y)>0.5) panAnimId=requestAnimationFrame(snapFn);
+    else{PAN.x=0;PAN.y=0;dirty=true;}
+  };
+  snapFn();
+});
+let _dblTapTime=0;
+canvas.addEventListener('touchend', e=>{
+  const now=Date.now();
+  if(now-_dblTapTime<300&&!INSPECT_MODE){
+    cancelAnimationFrame(panAnimId);
+    const snapFn=()=>{
+      PAN.x*=0.78; PAN.y*=0.78; dirty=true;
+      if(Math.abs(PAN.x)>0.5||Math.abs(PAN.y)>0.5) panAnimId=requestAnimationFrame(snapFn);
+      else{PAN.x=0;PAN.y=0;dirty=true;}
+    };
+    snapFn();
+  }
+  _dblTapTime=now;
+},{passive:true});
+
+// Default cursor hint
+canvas.style.cursor='grab';
+
 // ── Events ────────────────────────────────────────────────────────────────
 canvas.addEventListener('mousemove',e=>{
-  if(MAIN_TAB==='math') return;
+  if(MAIN_TAB==='math'||!INSPECT_MODE) return;
   const rect=canvas.getBoundingClientRect(),mx=e.clientX-rect.left,my=e.clientY-rect.top;
   const pt=findNearest(mx,my);
   if(pt){hoveredPt=pt;canvas.classList.add('hovering');showTooltip(pt,mx,my);}
@@ -3606,7 +3773,7 @@ canvas.addEventListener('mousemove',e=>{
 });
 canvas.addEventListener('mouseleave',()=>{hideTooltip();canvas.classList.remove('hovering');});
 canvas.addEventListener('click',e=>{
-  if(MAIN_TAB==='math') return;
+  if(MAIN_TAB==='math'||!INSPECT_MODE) return;
   const rect=canvas.getBoundingClientRect(),mx=e.clientX-rect.left,my=e.clientY-rect.top;
   const pt=findNearest(mx,my);
   if(pt){pinPoint(pt);}
@@ -3614,14 +3781,14 @@ canvas.addEventListener('click',e=>{
 });
 canvas.addEventListener('contextmenu',e=>{
   e.preventDefault();
-  if(MAIN_TAB==='math') return;
+  if(MAIN_TAB==='math'||!INSPECT_MODE) return;
   const rect=canvas.getBoundingClientRect();
   const M=findNearestRing(e.clientX-rect.left,e.clientY-rect.top);
   if(M)highlightRing(M);
 });
 let lastTap=0;
 canvas.addEventListener('touchstart',e=>{
-  if(MAIN_TAB==='math') return;
+  if(MAIN_TAB==='math'||!INSPECT_MODE) return;
   const t=e.touches[0],rect=canvas.getBoundingClientRect();
   const mx=t.clientX-rect.left,my=t.clientY-rect.top,now=Date.now();
   const pt=findNearest(mx,my,30);
@@ -3630,7 +3797,7 @@ canvas.addEventListener('touchstart',e=>{
   else{const M=findNearestRing(mx,my,20);if(M)highlightRing(M);}
   lastTap=now;
 },{passive:true});
-canvas.addEventListener('touchend',()=>setTimeout(hideTooltip,1400),{passive:true});
+canvas.addEventListener('touchend',()=>{if(INSPECT_MODE)setTimeout(hideTooltip,1400);},{passive:true});
 
 
 // ── Gap chords ──────────────────────────────────────────────────────────────
@@ -3639,6 +3806,7 @@ function drawChords(ctx,W,H){
   const gaps=S.gapStr.split(',').map(s=>parseInt(s.trim())).filter(n=>n>0&&n<S.mmax);
   if(!gaps.length) return;
   const zoom=S.zoom/100,scale=(Math.min(W,H)/2)/S.mmax;
+  const cx=W/2+PAN.x, cy=H/2+PAN.y;
   const cols=['rgba(61,200,184','rgba(200,168,74','rgba(192,132,252','rgba(224,80,96','rgba(126,200,122'];
   for(let M=2;M<=S.mmax;M++){
     const cops=coprimes(M);
@@ -3652,8 +3820,8 @@ function drawChords(ctx,W,H){
           ctx.strokeStyle=`${gCol},${S.chordAlpha})`;
           ctx.lineWidth=0.5;
           ctx.beginPath();
-          ctx.moveTo(W/2+rho*Math.cos(th1),H/2+rho*Math.sin(th1));
-          ctx.lineTo(W/2+rho*Math.cos(th2),H/2+rho*Math.sin(th2));
+          ctx.moveTo(cx+rho*Math.cos(th1),cy+rho*Math.sin(th1));
+          ctx.lineTo(cx+rho*Math.cos(th2),cy+rho*Math.sin(th2));
           ctx.stroke();
         }
       });
@@ -4048,9 +4216,12 @@ function checkDropoutHaptic(){
 let INSPECT_MODE = false;
 function toggleInspect(){
   INSPECT_MODE = !INSPECT_MODE;
-  document.getElementById('pt-popup').style.display = 'none';
+  if(!INSPECT_MODE){
+    document.getElementById('pt-popup').style.display = 'none';
+    hideTooltip();
+    canvas.classList.remove('hovering');
+  }
   canvas.style.cursor = INSPECT_MODE ? 'crosshair' : 'default';
-  // Update all inspect toggle buttons
   document.querySelectorAll('.inspect-btn').forEach(b=>{
     b.classList.toggle('active', INSPECT_MODE);
     b.style.color = INSPECT_MODE ? 'var(--teal)' : '';
@@ -4505,6 +4676,145 @@ document.addEventListener('click',e=>{
   window.addEventListener('resize',checkShow);
 })();window.snapNow=snapNow;
 
+// ── Mobile Export Sheet ────────────────────────────────────────────────────
+let _mobExportW=1920, _mobExportH=1080;
+
+function openMobileExport(){
+  document.getElementById('mob-export-overlay').style.display='block';
+  const sh=document.getElementById('mob-export-sheet');
+  sh.style.display='block';
+  requestAnimationFrame(()=>sh.style.transform='translateY(0)');
+  haptic&&haptic(20);
+}
+function closeMobileExport(){
+  const sh=document.getElementById('mob-export-sheet');
+  sh.style.transform='translateY(100%)';
+  setTimeout(()=>{
+    sh.style.display='none';
+    document.getElementById('mob-export-overlay').style.display='none';
+    document.getElementById('mob-export-progress').style.display='none';
+  },300);
+}
+function selectMobSize(btn){
+  document.querySelectorAll('.mob-sz-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  _mobExportW=+btn.dataset.w;
+  _mobExportH=+btn.dataset.h;
+}
+
+function doMobileExport(mode){
+  const prog=document.getElementById('mob-export-progress');
+  prog.style.display='block';
+  prog.textContent='Rendering…';
+
+  const hasLegend=document.getElementById('mob-legend-btn').classList.contains('active');
+  const hasStats =document.getElementById('mob-statsbar-btn').classList.contains('active');
+  const paperBg  =document.getElementById('mob-dark-btn').classList.contains('active');
+
+  const ew=_mobExportW, eh=_mobExportH;
+  const bg=paperBg?'#f5f0e8':'#030310';
+  const U=Math.max(2,Math.round(ew/960));
+  const LEG=hasLegend?Math.round(ew*0.22):0;
+  const OUT_W=ew+LEG;
+
+  setTimeout(()=>{
+    const oc=document.createElement('canvas');
+    oc.width=OUT_W; oc.height=eh;
+    const octx=oc.getContext('2d');
+    octx.fillStyle=bg; octx.fillRect(0,0,OUT_W,eh);
+
+    // geometry
+    const svW=W,svH=H,svPt=S.ptSize;
+    W=ew; H=eh; S.ptSize=S.ptSize*(ew/960)*0.55;
+    drawToContext(octx,ew,eh);
+    S.ptSize=svPt; W=svW; H=svH;
+
+    // stats strip
+    if(hasStats){
+      const stripH=Math.round(eh*0.028);
+      const stripY=eh-stripH;
+      octx.fillStyle='rgba(4,4,13,.88)';
+      octx.fillRect(0,stripY,ew,stripH);
+      octx.strokeStyle='rgba(200,168,74,.2)';octx.lineWidth=1;
+      octx.beginPath();octx.moveTo(0,stripY);octx.lineTo(ew,stripY);octx.stroke();
+      const fs=Math.max(10,Math.round(stripH*0.42));
+      octx.font=`400 ${fs}px JetBrains Mono,monospace`;
+      octx.textBaseline='middle';
+      const mid=stripY+stripH/2;
+      const Cv=PRIMES.filter(p=>p<=S.mmax).reduce((a,p)=>a*(p*p-2)/(p*p-1),1);
+      const tot=liftStats.ok+liftStats.broken;
+      const surv=tot>0?(liftStats.ok/tot*100).toFixed(1)+'%':'—';
+      const items=[
+        {t:'M=2…'+S.mmax,c:'rgba(200,168,74,.7)'},
+        {t:'±n='+S.n,c:'rgba(61,200,184,.7)'},
+        {t:'p='+S.prime,c:'rgba(200,168,74,.7)'},
+        {t:'C(M)='+Cv.toFixed(6),c:'rgba(200,168,74,.9)'},
+        {t:'survival '+surv,c:'rgba(61,200,184,.85)'},
+        {t:'view='+S.view,c:'rgba(155,127,232,.7)'},
+        {t:'wessengetachew.github.io',c:'rgba(200,168,74,.3)'},
+      ];
+      const step=ew/(items.length+1);
+      items.forEach(({t,c},i)=>{octx.fillStyle=c;octx.textAlign='center';octx.fillText(t,(i+1)*step,mid);});
+    }
+
+    // legend panel (reuse desktop logic inline)
+    if(hasLegend){
+      const LX=ew,LW=LEG,PAD=U*18;
+      const textC=paperBg?'#1a1814':'rgba(220,215,205,.85)';
+      const mutedC=paperBg?'rgba(0,0,0,.35)':'rgba(255,255,255,.25)';
+      octx.fillStyle=paperBg?'#f0ebe1':'#050510';
+      octx.fillRect(LX,0,LW,eh);
+      octx.strokeStyle='rgba(200,168,74,.3)';octx.lineWidth=U*1.5;
+      octx.beginPath();octx.moveTo(LX,0);octx.lineTo(LX,eh);octx.stroke();
+      let ly=PAD*1.8;
+      const f=(sz,b)=>{octx.font=(b?'600 ':'400 ')+Math.round(sz*U)+'px JetBrains Mono,monospace';};
+      const wL=(t,sz,c,b)=>{f(sz,b);octx.fillStyle=c||textC;octx.textAlign='left';octx.textBaseline='top';octx.fillText(t,LX+PAD,ly);};
+      const wR=(t,sz,c)=>{f(sz,false);octx.fillStyle=c||textC;octx.textAlign='right';octx.textBaseline='top';octx.fillText(t,LX+LW-PAD,ly);};
+      const rule=c=>{octx.strokeStyle=c||'rgba(200,168,74,.25)';octx.lineWidth=U;octx.beginPath();octx.moveTo(LX+PAD,ly);octx.lineTo(LX+LW-PAD,ly);octx.stroke();};
+      const adv=px=>{ly+=px*U;};
+      const row=(k,v,vc)=>{wL(k,11,mutedC);wR(v,11,vc||'rgba(61,200,184,.9)');adv(15);};
+      adv(2);
+      wL('Lift Dynamics',Math.round(ew/240),'rgba(200,168,74,.9)',true);adv(Math.round(ew/190));
+      wL('(ℤ/Mℤ)*  ·  '+S.view,11,mutedC);adv(14);
+      wL('wessengetachew.github.io',10,'rgba(200,168,74,.28)');adv(PAD*1.1);
+      rule();adv(PAD*1.1);
+      wL('PARAMETERS',9,'rgba(200,168,74,.45)',true);adv(14);
+      row('M max',''+S.mmax);
+      row('±n','n='+S.n,'rgba(61,200,184,.9)');
+      row('prime p',''+S.prime,'rgba(200,168,74,.9)');
+      row('view',S.view,'rgba(155,127,232,.8)');
+      adv(PAD*.6);
+      rule('rgba(61,200,184,.2)');adv(PAD*1.0);
+      wL('LIFT SURVIVAL CONSTANT',9,'rgba(61,200,184,.45)',true);adv(14);
+      const Cv=PRIMES.filter(p=>p<=S.mmax).reduce((a,p)=>a*(p*p-2)/(p*p-1),1);
+      f(17,true);octx.fillStyle='rgba(61,200,184,.95)';octx.textAlign='left';octx.textBaseline='top';
+      octx.fillText(Cv.toFixed(10),LX+PAD,ly);adv(22);
+      wL('C(∞)=0.530711806246…',10,'rgba(61,200,184,.3)');adv(PAD*.8);
+      rule();adv(PAD*.8);
+      f(9,false);octx.fillStyle='rgba(200,168,74,.3)';octx.textAlign='left';octx.textBaseline='bottom';
+      octx.fillText('Lift Survival Framework  ·  Wessen Getachew',LX+PAD,eh-PAD*.8);
+      octx.fillStyle='rgba(200,168,74,.18)';
+      octx.fillText('wessengetachew.github.io',LX+PAD,eh-PAD*.3);
+    }
+
+    // download
+    oc.toBlob(blob=>{
+      const ts=new Date().toISOString().slice(0,16).replace(/[:T]/g,'-');
+      const a=document.createElement('a');
+      a.download=`lift_${ew}x${eh}_${ts}.png`;
+      a.href=URL.createObjectURL(blob); a.click();
+      prog.textContent='Saved ✓';
+      haptic&&haptic([20,10,40]);
+      setTimeout(closeMobileExport,1200);
+    },'image/png',1.0);
+  },60);
+}
+
+window.openMobileExport=openMobileExport;
+window.closeMobileExport=closeMobileExport;
+window.selectMobSize=selectMobSize;
+window.doMobileExport=doMobileExport;
+
 // Keyboard shortcuts
 document.addEventListener('keydown',e=>{
   if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT') return;
@@ -4514,4 +4824,4 @@ document.addEventListener('keydown',e=>{
 });
 </script>
 </body>
-</html>
+          </html>
