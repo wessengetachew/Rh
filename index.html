@@ -370,7 +370,7 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
 .pd-v.lime{color:var(--lime);}
 .pd-v.coral{color:var(--coral);}
 .pd-v.violet{color:var(--violet);}
-#main-canvas{cursor:crosshair;}
+#main-canvas{cursor:default;}
 #main-canvas.hovering{cursor:default;}
 
 #export-modal{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.75);align-items:center;justify-content:center;}
@@ -436,11 +436,131 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
 @keyframes nPulse{0%,100%{box-shadow:0 0 0 0 rgba(61,200,184,0);}50%{box-shadow:0 0 20px 4px rgba(61,200,184,.14);}}
 .n-popup{position:absolute;z-index:3;font-family:'JetBrains Mono',monospace;font-size:clamp(8px,1.2vw,11px);color:rgba(61,200,184,.9);background:rgba(4,4,12,.92);border:1px solid rgba(61,200,184,.2);padding:6px 13px;opacity:0;pointer-events:none;transition:opacity .7s;white-space:nowrap;}
 .n-popup.visible{opacity:1;}
+
+/* ── Mobile enhancements ── */
+
+/* Fullscreen mode */
+body.fs-mode #topbar,
+body.fs-mode #mobile-bar { opacity:0; pointer-events:none; transition:opacity .3s; }
+body.fs-mode #body { top:0 !important; }
+#fs-restore {
+  display:none; position:fixed; top:10px; right:10px; z-index:400;
+  width:36px; height:36px; border-radius:50%;
+  background:rgba(5,5,18,.92); border:1px solid rgba(61,200,184,.4);
+  color:var(--teal); font-size:16px; cursor:pointer;
+  align-items:center; justify-content:center;
+  backdrop-filter:blur(8px); transition:background .15s;
+}
+body.fs-mode #fs-restore { display:flex; }
+#fs-restore:active { background:rgba(61,200,184,.18); }
+
+/* Swipe indicator flash */
+#swipe-hint {
+  position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+  z-index:300; pointer-events:none;
+  font-family:var(--mono); font-size:11px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--teal);
+  background:rgba(5,5,18,.88); border:1px solid rgba(61,200,184,.3);
+  padding:8px 18px; opacity:0; transition:opacity .25s;
+  backdrop-filter:blur(6px);
+}
+#swipe-hint.show { opacity:1; }
+
+/* Preset bottom sheet */
+#preset-sheet {
+  position:fixed; bottom:0; left:0; right:0; z-index:250;
+  background:rgba(5,5,20,.98); border-top:1px solid rgba(200,168,74,.3);
+  transform:translateY(100%); transition:transform .28s cubic-bezier(.32,.72,0,1);
+  padding:16px 14px 24px; backdrop-filter:blur(12px);
+}
+#preset-sheet.open { transform:translateY(0); }
+#preset-sheet-handle {
+  width:36px; height:3px; background:rgba(255,255,255,.18);
+  border-radius:2px; margin:0 auto 14px;
+}
+#preset-sheet-title {
+  font-size:7.5px; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--gold); opacity:.6; margin-bottom:12px;
+  border-bottom:1px solid var(--edge); padding-bottom:6px;
+}
+#preset-sheet-overlay {
+  display:none; position:fixed; inset:0; z-index:249;
+  background:rgba(0,0,0,.45);
+}
+#preset-sheet-overlay.open { display:block; }
+.psh-section { margin-bottom:14px; }
+.psh-label { font-size:7px; letter-spacing:.18em; text-transform:uppercase; color:var(--cream3); margin-bottom:6px; }
+.psh-chips { display:flex; flex-wrap:wrap; gap:5px; }
+.psh-chip {
+  padding:5px 11px; font-family:var(--mono); font-size:8.5px; letter-spacing:.07em;
+  border:1px solid var(--edge2); color:var(--cream2); cursor:pointer;
+  background:transparent; border-radius:2px; transition:all .12s;
+}
+.psh-chip:active { background:rgba(61,200,184,.12); border-color:rgba(61,200,184,.4); color:var(--teal); }
+.psh-chip.gold:active { background:rgba(200,168,74,.12); border-color:rgba(200,168,74,.4); color:var(--gold); }
+.psh-chip.coral:active { background:rgba(224,80,96,.12); border-color:rgba(224,80,96,.4); color:var(--coral); }
+
+/* Landscape phone — compact mobile bar */
+@media(max-height:420px) and (orientation:landscape) {
+  #mobile-bar { height:36px; padding:0 8px; gap:6px; }
+  .mb-btn { width:24px; height:24px; font-size:11px; }
+  .mb-toggle { height:22px; font-size:7.5px; padding:0 7px; }
+  .mb-val { font-size:11px; }
+  .mb-label { display:none; }
+}
+
+/* Pinch zoom overlay indicator */
+#pinch-ring-count {
+  position:fixed; top:56px; left:50%; transform:translateX(-50%);
+  z-index:200; pointer-events:none;
+  font-family:var(--mono); font-size:10px; color:var(--gold);
+  background:rgba(5,5,18,.85); border:1px solid rgba(200,168,74,.3);
+  padding:4px 12px; opacity:0; transition:opacity .2s;
+  display:none;
+}
+@media(max-width:600px){ #pinch-ring-count { display:block; } }
+#pinch-ring-count.show { opacity:1; }
 </style>
 </head>
 <body>
 
 <!-- ══ Opening Screen ══ -->
+
+<!-- Mobile UI elements -->
+<button id="fs-restore" onclick="exitFullscreen()" title="Exit fullscreen">⤢</button>
+<div id="swipe-hint"></div>
+<div id="pinch-ring-count">M = 40</div>
+<div id="preset-sheet-overlay" onclick="closePresetSheet()"></div>
+<div id="preset-sheet">
+  <div id="preset-sheet-handle"></div>
+  <div id="preset-sheet-title">Theorem Presets</div>
+  <div class="psh-section">
+    <div class="psh-label">Equatorial Path</div>
+    <div class="psh-chips">
+      <button class="psh-chip" onclick="pshPreset('safe_prime')">Safe Primes</button>
+      <button class="psh-chip" onclick="pshPreset('equator')">Equator</button>
+      <button class="psh-chip" onclick="pshPreset('safe_chain')">Safe Chain</button>
+      <button class="psh-chip" onclick="pshPreset('twin')">Twin Primes</button>
+    </div>
+  </div>
+  <div class="psh-section">
+    <div class="psh-label">Prime Spiral</div>
+    <div class="psh-chips">
+      <button class="psh-chip gold" onclick="pshPreset('jump_thm')">Jump Thm</button>
+      <button class="psh-chip gold" onclick="pshPreset('chi4')">χ₄ / ℤ[i]</button>
+      <button class="psh-chip gold" onclick="pshPreset('error_mode')">E(N) Mode</button>
+    </div>
+  </div>
+  <div class="psh-section">
+    <div class="psh-label">Lift &amp; Convergence</div>
+    <div class="psh-chips">
+      <button class="psh-chip coral" onclick="pshPreset('lift_survival')">Lift → C</button>
+      <button class="psh-chip coral" onclick="pshPreset('primorial')">Primorial</button>
+      <button class="psh-chip coral" onclick="pshPreset('reset')">↺ Reset</button>
+    </div>
+  </div>
+</div>
+
 <div id="night-screen">
   <canvas id="night-canvas"></canvas>
   <div id="night-content">
@@ -504,6 +624,21 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
   <div class="mb-group">
     <button class="mb-toggle" id="mb-view-btn" onclick="mbCycleView()">Rings</button>
   </div>
+  <div class="mb-sep"></div>
+  <!-- Preset sheet trigger -->
+  <div class="mb-group">
+    <button class="mb-btn gold" onclick="openPresetSheet()" title="Theorem presets" style="font-size:12px">☰</button>
+  </div>
+  <div class="mb-sep"></div>
+  <!-- Inspect toggle -->
+  <div class="mb-group">
+    <button class="mb-btn inspect-btn" onclick="toggleInspect()" title="Inspect residue points" style="font-size:11px;letter-spacing:.05em">⊕</button>
+  </div>
+  <div class="mb-sep"></div>
+  <!-- Fullscreen -->
+  <div class="mb-group">
+    <button class="mb-btn" onclick="enterFullscreen()" title="Fullscreen canvas" style="font-size:14px">⛶</button>
+  </div>
 </div>
 
 <!-- TOP BAR -->
@@ -525,6 +660,7 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
   <div class="tb-sep"></div>
   <div class="tb-right">
     <div class="tb-pill" id="view-pill">concentric</div>
+    <div class="tb-tab inspect-btn" onclick="toggleInspect()" title="Toggle point inspection — click a residue to see its data" style="color:var(--cream3);border-bottom:2px solid transparent;">Inspect</div>
     <div class="tb-tab" onclick="toggleTheory()" id="theory-tab" style="color:var(--cream3)">Theory ▸</div>
     <div class="tb-tab gold" onclick="openExport()">↓ 4K Export</div>
     <div class="tb-tab" id="btn-snap" onclick="snapNow()" title="Capture current frame at 4K without stopping animation" style="color:var(--lime);border-bottom:2px solid transparent;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;padding:0 12px;height:50px;display:flex;align-items:center;cursor:pointer;white-space:nowrap;">⚡ Snap</div>
@@ -872,7 +1008,7 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
         <thead><tr><th>Regime</th><th>Condition</th><th>Residue r(M)</th><th>Behaviour</th></tr></thead>
         <tbody>
           <tr><td class="teal">Before</td><td>M ≤ p</td><td class="hl">p mod M  (varies)</td><td>Encodes p via CRT · irregular spiral</td></tr>
-          <tr><td class="coral">Dropout</td><td>M = p</td><td class="coral">p mod p = 0</td><td>Non-coprime · Jump Theorem fires</td></tr>
+          <tr><td class="coral">Dropout</td><td>M = p</td><td class="coral">p mod p = 0</td><td>Non-coprime · spiral gap · D(x) jumps at x = p−1</td></tr>
           <tr><td class="violet">After</td><td>M > p</td><td class="hl">r = p  (fixed)</td><td>θ = 2πp/M → 0 · converges to origin</td></tr>
         </tbody>
       </table>
@@ -881,14 +1017,16 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
         <div class="mp-block-tag">Theorem 2.1 — The Dropout and Jump Theorem</div>
         <div class="mp-block-body">
           At ring M = p, the spiral position is p mod p = 0, which is <em>not coprime</em> to p.
-          The prime p disappears from the reduced residue group at its own ring. This is the
-          geometric manifestation of the Jump Theorem: as x crosses p−1 in the drift function D(x),
-          the term 1/(p²−x−1) drops from the sum defining D(x), producing an exact jump:
+          The prime p disappears from the reduced residue group at its own ring. The Jump Theorem
+          governs a related but distinct phenomenon: as the continuous parameter x crosses p−1 in
+          the drift function D(x), the term 1/(p²−x−1) drops from the sum, producing:
           <br><br>
           Δ_p = 1 / p(p−1)
           <br><br>
-          The dropout is visible as a gap in the spiral at ring p. The jump size encodes p
-          via the recovery formula p = (1 + √(1 + 4/s))/2, whose discriminant (2p−1)² is always a perfect square.
+          Both the spiral dropout and the jump in D(x) are indexed by the same prime p at the
+          transition p−1 → p, though by different mechanisms: one is a divisibility condition
+          (p mod p = 0), the other is a threshold condition (q &gt; x+1 no longer excluding q = p).
+          The jump size gives the prime recovery p = (1 + √(1 + 4/s))/2.
         </div>
       </div>
 
@@ -1023,16 +1161,13 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
       </div>
 
       <div class="mp-block conn">
-        <div class="mp-block-tag">Connection — Error Term Peaks</div>
+        <div class="mp-block-tag">Conjecture — Error Term Peaks</div>
         <div class="mp-block-body">
-          Numerically, the maxima of |E(N)·N| where E(N) = R(N) − C occur at N = p−1 for
-          <em>safe primes</em> p. This is exactly the intersection condition: at ring M = p−1,
-          the ±1 equatorial path and the prime spiral for q = (p−1)/2 both pass through the same
-          residue. The geometric coincidence — two dynamical paths meeting at the same point —
-          produces the largest deviation of R(N) from C.
-          <br><br>
-          This is the conjectured K = ζ(2)·C ≈ 0.872986 bound: the supremum of |E(N)·N|
-          is set by the arithmetic of the intersection, not by zero locations of ζ(s).
+          Numerically, the largest values of |E(N)·N| (where E(N) = R(N) − C) appear to occur near
+          N = p−1 for <em>safe primes</em> p. At ring M = p−1, the ±1 equatorial path and the prime
+          spiral for q = (p+1)/2 both pass through the same residue. Whether this geometric
+          coincidence is the actual cause of the elevated error term is not established. The
+          conjectured supremum K = ζ(2)·C ≈ 0.872986 for |E(N)·N| is empirically supported but unproved.
         </div>
       </div>
 
@@ -1070,7 +1205,7 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
           <tr><td class="teal">±n path</td><td>r = (M±n)/2</td><td class="hl">Equatorial structure · safe primes · E(N) peaks</td><td>Sophie Germain primes · Mertens theorem</td></tr>
           <tr><td class="hl">Prime spiral</td><td>r = p mod M</td><td class="violet">Prime location · dropout = jump · CRT encoding</td><td>Jump Theorem · D(x) · Gaussian integers</td></tr>
           <tr><td class="coral">Lift lines</td><td>r → r mod(M+1)</td><td class="lime">Survival density → C · broken = prime structure</td><td>Euler product · R(N) → C</td></tr>
-          <tr><td class="violet">Intersection</td><td>(M+1)/2 = p</td><td class="coral">Safe primes · error maxima · K = ζ(2)·C</td><td>Hardy–Littlewood · explicit formula</td></tr>
+          <tr><td class="violet">Intersection</td><td>(M+1)/2 = p</td><td class="coral">Safe primes · conjectured E(N) peaks · K = ζ(2)·C</td><td>Hardy–Littlewood · explicit formula</td></tr>
         </tbody>
       </table>
 
@@ -1199,20 +1334,27 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
           </div>
 
           <div class="math-proof">
-            r₊ = (M+1)/2. Its image mod (M+1) is (M+1)/2 (since (M+1)/2 &lt; M+1 for M ≥ 1). We need gcd((M+1)/2, M+1) = 1. Write M+1 = 2k. Then (M+1)/2 = k, and gcd(k, 2k) = k·gcd(1,2) = k. This equals 1 iff k = 1 (giving M = 1, trivial) or gcd(k,2k)=k... more carefully: gcd(k, 2k) = k·gcd(1,2) is wrong. Correctly: gcd(k, 2k) = k. So we need k = 1, which fails for M ≥ 3. Re-examine: gcd((M+1)/2, M+1). Let d = gcd(k, 2k) where k = (M+1)/2. Every prime factor of 2k = M+1 that also divides k divides gcd(k, M+1). If M+1 = 2·p for prime p, then M+1 has factors {2, p}. k = p. gcd(p, 2p) = p. This is 1 only if p = 1... The correct statement: r₊ = (M+1)/2 is coprime to M+1 iff M+1/2 shares no prime factor with M+1 beyond what cancels — this is exactly the condition that (M+1)/2 is coprime to M+1, i.e. M+1 = 2^a · m with m odd and (M+1)/2 coprime to m — meaning M+1 is a power of 2 or twice an odd number coprime to all its odd factors — the simplest nontrivial case being M+1 = 2p for prime p. <span class="qed">□</span>
+            We must determine when r₊ = (M+1)/2 lies in (ℤ/(M+1)ℤ)*, i.e. when gcd((M+1)/2, M+1) = 1.
+            <br><br>
+            Write N = M+1 and k = N/2 (an integer since M is odd, so N is even). We compute gcd(k, N) = gcd(N/2, N). Since N/2 divides N (as 2·(N/2) = N), every divisor of N/2 divides N. Hence gcd(N/2, N) = N/2. This equals 1 if and only if N/2 = 1, i.e. N = 2 (M = 1).
+            <br><br>
+            Therefore for M ≥ 3, the residue r₊ = (M+1)/2 is <em>never</em> in (ℤ/(M+1)ℤ)* — it is always divisible by the same factors as M+1. The equatorial residue does not directly survive the lift in the naive sense.
+            <br><br>
+            <em>Correct statement of the connection.</em> The numerical observation is that the rings M where |E(N)·N| is largest are safe prime rings (M+1 = 2p). The geometric mechanism is that at these rings, the lift weight L(M) = φ(M)·φ(M+1)/(M+1) deviates most from C. The equatorial path r = (M±1)/2 tracks <em>which residues are closest to the axis of symmetry</em> of the ring — not which residues survive the lift. The connection to safe primes is empirical and structural, not via the simple gcd condition above. The precise algebraic proof of the safe prime peak structure remains an open problem in this framework. ⚠
+            <span class="qed">□</span>
           </div>
 
           <div class="math-block cor">
-            <div class="math-block-tag">Corollary 2.1 — Safe Prime Signature</div>
+            <div class="math-block-tag">Conjecture 2.1 — Safe Prime Signature</div>
             <div class="math-block-body">
-              The rings M where the n=1 equatorial path <em>successfully lifts</em> are exactly the rings M = p−1 for safe primes p = 2q+1 (q prime). These are the same rings where |E(N)·N| achieves its numerical maxima — the equatorial lift geometry and the error term peaks are the same arithmetic phenomenon.
+              The rings M where |E(N)·N| achieves its largest numerical values are the safe prime rings M = p−1 (where p = 2q+1, q prime). The equatorial path r = (M±1)/2 passes through the axis of symmetry of these rings, and the local lift weight L(M) = φ(M)·φ(M+1)/(M+1) deviates most from C at these positions. The precise algebraic mechanism connecting the equatorial geometry to the error term peaks remains an open problem.
             </div>
           </div>
 
           <table class="math-table">
             <thead><tr><th>n</th><th>Path formula</th><th>Angular limit</th><th>Survives to M+1 when</th><th>Connection</th></tr></thead>
             <tbody>
-              <tr><td class="teal">1</td><td class="gold">(M±1)/2</td><td>θ→π</td><td class="lime">M+1 = 2p (safe prime)</td><td>E(N) maxima</td></tr>
+              <tr><td class="teal">1</td><td class="gold">(M±1)/2</td><td>θ→π</td><td class="lime">M+1 = 2p (safe prime)</td><td>E(N) peaks (empirical)</td></tr>
               <tr><td class="teal">3</td><td class="gold">(M±3)/2</td><td>θ→π</td><td>M+1 ≡ 0 mod 2, gcd((M+3)/2, M+1)=1</td><td>Twin prime cousin</td></tr>
               <tr><td class="teal">5</td><td class="gold">(M±5)/2</td><td>θ→π</td><td>gcd((M+5)/2, M+1)=1</td><td>Near-equator band</td></tr>
               <tr><td class="violet">n→∞</td><td class="gold">(M±n)/2</td><td>θ→π±nπ/M</td><td>Depends on M+n,M+1</td><td>Off-equator channel</td></tr>
@@ -1250,13 +1392,13 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
           <div class="math-block thm">
             <div class="math-block-tag">Theorem 3.2 — The Dropout and the Jump Theorem</div>
             <div class="math-block-body">
-              At ring M = p, the residue r_p(p) = p mod p = 0 is <em>not coprime</em> to p. The spiral <strong>drops out</strong> of (ℤ/Mℤ)* at exactly this ring. This dropout is the geometric manifestation of the Jump Theorem:
+              At ring M = p, the residue r_p(p) = p mod p = 0 is <em>not coprime</em> to p. The spiral <strong>drops out</strong> of (ℤ/Mℤ)* at exactly this ring. The Jump Theorem records an analogous transition: as the continuous parameter x crosses p−1, the prime p exits the sum defining D(x). Both events are indexed by the same prime p at the threshold p−1 → p, though by distinct mechanisms.
             </div>
           </div>
 
           <div class="math-eq">
             D(x) = −∑<sub>q &gt; x+1</sub> 1/(q² − x − 1)
-            <span class="ann">As x crosses p−1, the prime p crosses the threshold q &gt; x+1. The term 1/(p²−x−1) drops out of the sum — exactly as the spiral drops out at ring M = p.</span>
+            <span class="ann">As x crosses p−1, the prime p crosses the threshold q &gt; x+1. The term 1/(p²−x−1) drops out of the sum. The spiral drops out at ring M = p (divisibility). D(x) jumps at x = p−1 (threshold). These are adjacent events indexed by the same prime.</span>
           </div>
 
           <div class="math-eq">
@@ -1339,9 +1481,9 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
           </div>
 
           <div class="math-block key">
-            <div class="math-block-tag">Key Observation — Error Term Peaks</div>
+            <div class="math-block-tag">Empirical Observation — Error Term Peaks</div>
             <div class="math-block-body">
-              Numerically, the maxima of |E(N)·N| = |R(N)−C|·N occur at N = p−1 for safe primes p. This is exactly the ring M = p−1 = 2q−1 (with q = (p−1)/2+1... the Sophie Germain prime q such that 2q+1 = p). The geometry explains why: at safe prime rings, both the equatorial path and the prime spiral concentrate, creating the largest deviation of the local lift weight L(M)/φ(M) from the average C.
+              Numerically, the largest values of |E(N)·N| = |R(N)−C|·N appear near N = p−1 for safe primes p — exactly the intersection rings M = p−1. The geometry suggests an explanation: at safe prime rings, both the equatorial path and the prime spiral concentrate, creating the largest deviation of the local lift weight L(M)/φ(M) from the average C. Whether this geometric concentration is the actual cause of the elevated error, and whether the supremum equals K = ζ(2)·C, are open conjectures.
             </div>
           </div>
 
@@ -1447,7 +1589,7 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
           For M ≤ p: r cycles through reductions, encoding p via CRT. For M > p: r = p is fixed, and its angular position θ = 2πp/M → 0. The spiral <em>converges to the origin</em> as M grows — each prime becomes negligible relative to M.
         </div>
         <div class="rp-note">
-          The dropout at M=p (where p mod p = 0, non-coprime) is exactly the Jump Theorem: as x crosses p−1 in D(x), the term 1/(p²−x−1) drops out, producing the jump Δ_p = 1/p(p−1).
+          The dropout at M=p (where p mod p = 0, non-coprime) and the Jump Theorem are indexed by the same prime: as x crosses p−1 in D(x), the term 1/(p²−x−1) exits the sum, producing Δ_p = 1/p(p−1). The spiral dropout (divisibility) and the jump (threshold) are distinct mechanisms at adjacent values of the ring index.
         </div>
       </div>
 
@@ -1471,7 +1613,7 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
           p ≡ 3 (mod 4) → inert in ℤ[i] → conjugate-symmetric spiral
         </div>
         <div class="rp-note">
-          The intersection of the ±1 equatorial path with the prime spiral occurs at M+1 = 2p — exactly the safe prime condition. These are the rings where |E(N)·N| is maximized numerically.
+          The intersection of the ±1 equatorial path with the prime spiral occurs at M+1 = 2p — exactly the safe prime condition. Numerically, these are the rings where |E(N)·N| appears largest, though the precise algebraic connection remains conjectural.
         </div>
       </div>
 
@@ -1613,7 +1755,7 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
             · <em>Elementary rational form</em> — single closed-form expression<br>
             · <em>Directly invertible</em> — jump sizes are algebraic fingerprints of each prime<br>
             <br>
-            No other function in the standard literature achieves all four simultaneously in one expression.
+            The combination of all four properties in a single closed-form expression does not appear to have a direct antecedent in the standard literature, though we do not claim uniqueness.
           </div>
         </div>
       </div>
@@ -1816,281 +1958,428 @@ button.action.coral{border-color:rgba(224,80,96,.35);color:var(--coral);backgrou
 <div id="fu-pane" style="display:none;position:fixed;top:50px;left:0;right:0;bottom:0;z-index:50;overflow-y:auto;background:var(--bg);scrollbar-width:thin;">
 <style>
 #fu-pane::-webkit-scrollbar{width:5px;}
-#fu-pane::-webkit-scrollbar-thumb{background:rgba(126,200,122,.25);}
-#fu-inner{max-width:860px;margin:0 auto;padding:52px 40px 100px;}
+#fu-pane::-webkit-scrollbar-thumb{background:rgba(126,200,122,.22);}
+#fu-inner{max-width:820px;margin:0 auto;padding:52px 40px 100px;}
 .fu-rule{width:32px;height:2px;background:var(--lime);margin-bottom:20px;}
-.fu-tag{font-size:8px;letter-spacing:.26em;text-transform:uppercase;color:var(--lime);opacity:.7;margin-bottom:10px;}
-.fu-h1{font-family:var(--disp);font-size:clamp(1.5rem,3.2vw,2.2rem);font-weight:400;color:var(--cream);line-height:1.2;letter-spacing:.06em;margin-bottom:8px;}
+.fu-tag{font-size:8px;letter-spacing:.26em;text-transform:uppercase;color:var(--lime);opacity:.65;margin-bottom:10px;}
+.fu-h1{font-family:var(--disp);font-size:clamp(1.4rem,3vw,2.1rem);font-weight:400;color:var(--cream);line-height:1.2;letter-spacing:.06em;margin-bottom:8px;}
 .fu-sub{font-family:var(--serif);font-size:1rem;font-style:italic;color:var(--cream3);margin-bottom:36px;line-height:1.65;}
-.fu-divider{width:100%;height:1px;background:linear-gradient(90deg,var(--lime),transparent);opacity:.3;margin-bottom:48px;}
-.fu-sec{margin-bottom:52px;}
-.fu-sec-tag{font-size:7.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--lime);opacity:.5;margin-bottom:8px;}
-.fu-sec-title{font-family:var(--disp);font-size:1.05rem;font-weight:400;color:var(--cream);letter-spacing:.05em;margin-bottom:18px;padding-bottom:8px;border-bottom:1px solid var(--edge);}
-.fu-body{font-family:var(--serif);font-size:15px;color:rgba(200,195,185,.85);line-height:1.88;margin-bottom:14px;}
+.fu-divider{width:100%;height:1px;background:linear-gradient(90deg,var(--lime),transparent);opacity:.25;margin-bottom:48px;}
+.fu-sec{margin-bottom:56px;}
+.fu-sec-tag{font-size:7.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--lime);opacity:.45;margin-bottom:8px;}
+.fu-sec-title{font-family:var(--disp);font-size:1rem;font-weight:400;color:var(--cream);letter-spacing:.05em;margin-bottom:18px;padding-bottom:8px;border-bottom:1px solid var(--edge);}
+.fu-body{font-family:var(--serif);font-size:15px;color:rgba(200,195,185,.85);line-height:1.9;margin-bottom:16px;text-align:justify;}
 .fu-body strong{color:var(--cream);font-weight:500;}
 .fu-body em{color:var(--lime);font-style:normal;}
-.fu-eq{font-family:var(--mono);font-size:12px;color:var(--lime);background:rgba(126,200,122,.06);border:1px solid rgba(126,200,122,.18);padding:14px 22px;margin:20px 0;text-align:center;line-height:2.1;overflow-x:auto;}
-.fu-eq .ann{display:block;text-align:left;font-size:10px;color:var(--cream3);margin-top:6px;font-family:var(--serif);font-style:italic;}
-.fu-block{margin:20px 0;padding:16px 20px;background:var(--bg1);border:1px solid var(--edge);border-left:3px solid;}
+.fu-body a{color:var(--teal);text-decoration:none;}
+.fu-eq{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--lime);background:rgba(126,200,122,.05);border:1px solid rgba(126,200,122,.16);padding:14px 22px;margin:20px 0;text-align:center;line-height:2;overflow-x:auto;}
+.fu-eq .ann{display:block;text-align:left;font-size:10px;color:var(--cream3);margin-top:6px;font-family:var(--serif);font-style:italic;line-height:1.6;}
+.fu-block{margin:22px 0;padding:16px 20px;background:var(--bg1);border:1px solid var(--edge);border-left:3px solid;}
+.fu-block.def{border-left-color:var(--teal);}
+.fu-block.lem{border-left-color:var(--violet);}
 .fu-block.thm{border-left-color:var(--lime);}
+.fu-block.cor{border-left-color:var(--coral);}
 .fu-block.rmk{border-left-color:var(--gold);}
-.fu-block.key{border-left-color:var(--teal);}
-.fu-block.conn{border-left-color:var(--violet);}
-.fu-block-tag{font-size:7.5px;letter-spacing:.17em;text-transform:uppercase;margin-bottom:8px;}
+.fu-block.warn{border-left-color:var(--coral);background:rgba(224,80,96,.04);}
+.fu-block-tag{font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.17em;text-transform:uppercase;margin-bottom:9px;}
+.def .fu-block-tag{color:var(--teal);}
+.lem .fu-block-tag{color:var(--violet);}
 .thm .fu-block-tag{color:var(--lime);}
+.cor .fu-block-tag{color:var(--coral);}
 .rmk .fu-block-tag{color:var(--gold);}
-.key .fu-block-tag{color:var(--teal);}
-.conn .fu-block-tag{color:var(--violet);}
+.warn .fu-block-tag{color:var(--coral);}
 .fu-block-body{font-family:var(--serif);font-size:14.5px;color:var(--cream);line-height:1.85;}
 .fu-block-body em{color:var(--lime);font-style:normal;}
-.fu-vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:20px 0;}
-.fu-val-card{background:var(--bg2);border:1px solid var(--edge);padding:14px 16px;text-align:center;}
-.fu-val-label{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--cream3);margin-bottom:8px;}
-.fu-val-num{font-family:var(--mono);font-size:1.3rem;color:var(--lime);font-weight:500;}
+.fu-block-body strong{color:var(--cream);font-weight:500;}
+.fu-proof{margin:4px 0 16px;padding:12px 18px;background:var(--bg2);border:1px solid var(--edge);font-family:var(--serif);font-size:13.5px;color:rgba(200,195,185,.75);line-height:1.8;}
+.fu-proof::before{content:'Proof.\00a0';color:var(--cream3);font-style:italic;}
+.fu-vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin:20px 0;}
+.fu-val-card{background:var(--bg2);border:1px solid var(--edge);padding:12px 14px;text-align:center;}
+.fu-val-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--cream3);margin-bottom:6px;}
+.fu-val-num{font-family:'JetBrains Mono',monospace;font-size:1.2rem;color:var(--lime);}
 .fu-val-desc{font-family:var(--serif);font-size:11px;color:var(--cream3);margin-top:4px;font-style:italic;}
-/* Interactive canvas */
-.fu-canvas-wrap{background:var(--bg1);border:1px solid var(--edge);margin:20px 0;position:relative;}
-.fu-canvas-ann{font-family:var(--mono);font-size:8.5px;color:var(--cream3);padding:6px 12px;border-bottom:1px solid var(--edge);}
-#fu-canvas{display:block;width:100%;height:300px;}
-#fu-u-canvas{display:block;width:100%;height:220px;}
-.fu-slider-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-top:1px solid var(--edge);}
-.fu-slider-row label{font-family:var(--mono);font-size:9px;color:var(--cream3);min-width:50px;}
-.fu-slider-row input[type=range]{flex:1;accent-color:var(--lime);}
-.fu-slider-val{font-family:var(--mono);font-size:11px;color:var(--lime);min-width:60px;text-align:right;}
-.fu-jump-btn{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border:1px solid rgba(126,200,122,.35);color:var(--lime);background:rgba(126,200,122,.06);cursor:pointer;transition:background .15s;}
-.fu-jump-btn:hover{background:rgba(126,200,122,.14);}
-@media(max-width:600px){#fu-inner{padding:32px 18px 80px;}}
+.fu-canvas-wrap{background:var(--bg1);border:1px solid var(--edge);margin:20px 0;}
+.fu-canvas-ann{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--cream3);padding:5px 12px;border-bottom:1px solid var(--edge);}
+#fu-canvas{display:block;width:100%;height:280px;}
+#fu-u-canvas{display:block;width:100%;height:200px;}
+.fu-ctrl{display:flex;align-items:center;gap:10px;padding:9px 14px;border-top:1px solid var(--edge);flex-wrap:wrap;}
+.fu-ctrl label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--cream3);}
+.fu-ctrl input[type=range]{flex:1;min-width:80px;accent-color:var(--lime);}
+.fu-ctrl-val{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--lime);min-width:55px;}
+.fu-btn{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;border:1px solid rgba(126,200,122,.3);color:var(--lime);background:rgba(126,200,122,.05);cursor:pointer;}
+.fu-btn:hover{background:rgba(126,200,122,.13);}
+.fu-ref{font-size:12px;color:var(--cream3);font-style:italic;font-family:var(--serif);}
+@media(max-width:600px){#fu-inner{padding:32px 16px 80px;}}
 </style>
 <div id="fu-inner">
 
   <div class="fu-rule"></div>
-  <div class="fu-tag">Analytic Number Theory · 2026</div>
+  <div class="fu-tag">Analytic Number Theory &middot; 2026</div>
   <div class="fu-h1">The Analytic Lift Function F(u)</div>
-  <div class="fu-sub">An entire function connecting ζ(2), C, and the prime squares — the Laguerre–Pólya class object underlying all lift dynamics</div>
+  <div class="fu-sub">A rigorous treatment from first principles: Weierstrass products, absolute convergence, order, genus, the Hadamard factorisation theorem, and the Laguerre&ndash;P&oacute;lya class. Every definition is stated axiomatically. All proofs are complete.</div>
   <div class="fu-divider"></div>
 
-  <!-- §1 Definition -->
+  <!-- §0 Prerequisites -->
   <div class="fu-sec">
-    <div class="fu-sec-tag">Section 1</div>
-    <div class="fu-sec-title">Definition and Key Values</div>
+    <div class="fu-sec-tag">Preliminaries &mdash; §0</div>
+    <div class="fu-sec-title">Foundations: Infinite Products, Entire Functions, Order, and Genus</div>
 
     <div class="fu-body">
-      The lift survival constant C ≈ 0.5307 appears as a fixed point of the modular ring sequence — the asymptotic density to which R(N) converges. But C is not merely a constant. It is a single evaluation of a coherent analytic function defined over all complex u:
+      We establish all background definitions needed to treat F rigorously. Nothing is assumed beyond the definition of a holomorphic function and the statement of the Weierstrass product theorem. A reader with graduate complex analysis background may proceed to &sect;1.
     </div>
 
-    <div class="fu-eq">
-      F(u) = ∏<sub>p prime</sub> (p² − u) / (p² − 1)
-      <span class="ann">Product over all primes. Converges absolutely for all u ∈ ℂ because Σ 1/p² &lt; ∞.</span>
+    <div class="fu-block def">
+      <div class="fu-block-tag">Definition 0.1 &mdash; Absolutely Convergent Infinite Product</div>
+      <div class="fu-block-body">
+        Let (a<sub>n</sub>)<sub>n&ge;1</sub> be a sequence of complex numbers with a<sub>n</sub> &ne; &minus;1 for all n. The infinite product &prod;<sub>n=1</sub><sup>&infin;</sup>(1 + a<sub>n</sub>) is said to <em>converge absolutely</em> if the series &sum;<sub>n=1</sub><sup>&infin;</sup> |a<sub>n</sub>| converges.
+        <br><br>
+        Absolute convergence of the product implies ordinary convergence and implies that the value of the product is independent of the order of the factors. Furthermore, &prod;(1+a<sub>n</sub>) = 0 if and only if at least one factor vanishes; since all 1+a<sub>n</sub> &ne; 0, an absolutely convergent product of the form &prod;(1&minus;u/b<sub>n</sub>) is zero precisely when u = b<sub>n</sub> for some n.
+        <br><br>
+        <span class="fu-ref">Rudin, W. (1987). <em>Real and Complex Analysis</em>, 3rd ed., Theorem 15.4. McGraw-Hill.</span>
+      </div>
     </div>
+
+    <div class="fu-block def">
+      <div class="fu-block-tag">Definition 0.2 &mdash; Entire Function</div>
+      <div class="fu-block-body">
+        A function f : &Copf; &rarr; &Copf; is <em>entire</em> if it is holomorphic (complex-differentiable) at every point of &Copf;. Polynomials, e<sup>z</sup>, sin z, and cos z are entire. The functions 1/z, log z, and &Gamma;(z) are not entire (they possess poles or branch points).
+        <br><br>
+        A uniformly convergent product of holomorphic functions is holomorphic. In particular, if &sum;<sub>n</sub> |a<sub>n</sub>(z)| &lt; M for z in a compact set K, and each factor is holomorphic, then the product converges uniformly on K to an entire function.
+      </div>
+    </div>
+
+    <div class="fu-block def">
+      <div class="fu-block-tag">Definition 0.3 &mdash; The Weierstrass Product Theorem</div>
+      <div class="fu-block-body">
+        Let (z<sub>n</sub>)<sub>n&ge;1</sub> be a sequence of non-zero complex numbers with |z<sub>n</sub>| &rarr; &infin;. If
+        <div style="text-align:center;margin:10px 0;font-family:'JetBrains Mono',monospace;color:var(--lime);font-size:12px">&sum;<sub>n=1</sub><sup>&infin;</sup> 1/|z<sub>n</sub>|<sup>2</sup> &lt; &infin;,</div>
+        then the product &prod;<sub>n</sub>(1 &minus; z/z<sub>n</sub>) converges absolutely and uniformly on every compact subset of &Copf;, and defines an entire function whose zero set is exactly {z<sub>n</sub>}, each zero being simple.
+        <br><br>
+        More generally (Weierstrass, 1876): given any sequence with |z<sub>n</sub>| &rarr; &infin;, there exist <em>primary factors</em> E<sub>p</sub>(z/z<sub>n</sub>) such that &prod; E<sub>p</sub>(z/z<sub>n</sub>) converges and has precisely these zeros. The case above uses p=1 (no exponential correction) and suffices when &sum; 1/|z<sub>n</sub>|<sup>2</sup> &lt; &infin;.
+        <br><br>
+        <span class="fu-ref">Conway, J.B. (1978). <em>Functions of One Complex Variable</em>, 2nd ed., Ch. VII. Springer. &bull; Ahlfors, L.V. (1979). <em>Complex Analysis</em>, 3rd ed., &sect;5.2. McGraw-Hill.</span>
+      </div>
+    </div>
+
+    <div class="fu-block def">
+      <div class="fu-block-tag">Definition 0.4 &mdash; Order of an Entire Function</div>
+      <div class="fu-block-body">
+        Let f be a non-constant entire function. Write M(r) = max<sub>|z|=r</sub>|f(z)| for the maximum modulus on the circle of radius r. The <em>order</em> of f is
+        <div style="text-align:center;margin:10px 0;font-family:'JetBrains Mono',monospace;color:var(--lime);font-size:12px">&rho;(f) = limsup<sub>r&rarr;&infin;</sub> &nbsp; log log M(r) / log r &nbsp;&isin;&nbsp; [0, +&infin;].</div>
+        Informally: f has order &rho; if M(r) grows roughly like e<sup>r<sup>&rho;</sup></sup> as r &rarr; &infin;. Polynomials have order 0; e<sup>z</sup> has order 1; e<sup>e<sup>z</sup></sup> has infinite order.
+      </div>
+    </div>
+
+    <div class="fu-block def">
+      <div class="fu-block-tag">Definition 0.5 &mdash; Exponent of Convergence and Genus</div>
+      <div class="fu-block-body">
+        Let f be an entire function with zeros z<sub>1</sub>, z<sub>2</sub>, &hellip; (listed with multiplicity, z<sub>n</sub> &ne; 0). The <em>exponent of convergence</em> of the zero sequence is
+        <div style="text-align:center;margin:10px 0;font-family:'JetBrains Mono',monospace;color:var(--lime);font-size:12px">&lambda; = inf { s &gt; 0 : &sum;<sub>n</sub> 1/|z<sub>n</sub>|<sup>s</sup> &lt; &infin; }.</div>
+        The <em>genus</em> of the zero sequence is the smallest non-negative integer p such that &sum; 1/|z<sub>n</sub>|<sup>p+1</sup> &lt; &infin;; equivalently, p = &lfloor;&lambda;&rfloor; when &lambda; is not an integer, and p = &lambda; or p = &lambda;&minus;1 otherwise.
+        <br><br>
+        The genus determines which Weierstrass primary factors are needed:
+        <br>&bull; Genus 0: &sum; 1/|z<sub>n</sub>| &lt; &infin;. The factors (1&minus;z/z<sub>n</sub>) suffice; no exponential corrections.
+        <br>&bull; Genus 1: &sum; 1/|z<sub>n</sub>| diverges but &sum; 1/|z<sub>n</sub>|<sup>2</sup> &lt; &infin;. Factors (1&minus;z/z<sub>n</sub>)e<sup>z/z<sub>n</sub></sup> are required.
+        <br><br>
+        <span class="fu-ref">Levin, B.Ya. (1964/1980). <em>Distribution of Zeros of Entire Functions</em>, Ch. I, &sect;1&ndash;4. AMS Translations.</span>
+      </div>
+    </div>
+
+    <div class="fu-block def">
+      <div class="fu-block-tag">Theorem 0.1 &mdash; Hadamard Factorisation Theorem</div>
+      <div class="fu-block-body">
+        Let f be an entire function of finite order &rho; with zeros z<sub>1</sub>, z<sub>2</sub>, &hellip; (z<sub>n</sub> &ne; 0) of multiplicity m<sub>0</sub> at z = 0. Let p = genus of the zero sequence. Then
+        <div style="text-align:center;margin:10px 0;font-family:'JetBrains Mono',monospace;color:var(--lime);font-size:12px">f(z) = z<sup>m<sub>0</sub></sup> e<sup>g(z)</sup> &prod;<sub>n</sub> E<sub>p</sub>(z/z<sub>n</sub>),</div>
+        where g is a polynomial of degree at most &lfloor;&rho;&rfloor;, and E<sub>p</sub>(u) = (1&minus;u)e<sup>u + u<sup>2</sup>/2 + &hellip; + u<sup>p</sup>/p</sup> is the p-th Weierstrass primary factor. In particular, when p = 0: E<sub>0</sub>(u) = (1&minus;u), so f(z) = z<sup>m<sub>0</sub></sup> e<sup>g(z)</sup> &prod;<sub>n</sub>(1&minus;z/z<sub>n</sub>).
+        <br><br>
+        The polynomial g has degree &le; &rho;; when &rho; &lt; 1, g must be a constant.
+        <br><br>
+        <span class="fu-ref">Ahlfors (1979), &sect;5.3. &bull; Stein, E. &amp; Shakarchi, R. (2003). <em>Complex Analysis</em>, Ch. 5. Princeton.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- §1 Definition and Convergence -->
+  <div class="fu-sec">
+    <div class="fu-sec-tag">Section 1 &mdash; §1</div>
+    <div class="fu-sec-title">Definition, Convergence, and Factorisation</div>
+
+    <div class="fu-block def">
+      <div class="fu-block-tag">Definition 1.1 &mdash; The Analytic Lift Function</div>
+      <div class="fu-block-body">
+        For u &isin; &Copf;, define
+        <div style="text-align:center;margin:14px 0;font-family:'JetBrains Mono',monospace;color:var(--lime);font-size:14px">F(u) &nbsp;=&nbsp; &prod;<sub>p prime</sub> (p<sup>2</sup> &minus; u) / (p<sup>2</sup> &minus; 1),</div>
+        where the product is taken over all rational primes p = 2, 3, 5, 7, 11, &hellip; in increasing order. The denominator p<sup>2</sup>&minus;1 = (p&minus;1)(p+1) is strictly positive for all primes p &ge; 2.
+      </div>
+    </div>
+
+    <div class="fu-block thm">
+      <div class="fu-block-tag">Theorem 1.1 &mdash; F is an Entire Function of Order 1/2 and Genus 0</div>
+      <div class="fu-block-body">
+        The product defining F(u) converges absolutely and uniformly on every compact subset of &Copf;. The function F is entire. Its order is &rho; = 1/2 and the genus of its zero sequence is 0. Specifically:
+        <br><br>
+        (a) &sum;<sub>p</sub> 1/p<sup>2</sup> &lt; &infin; &nbsp;&rArr;&nbsp; genus 0 (no exponential correction factors needed).
+        <br>(b) The exponent of convergence of {p<sup>2</sup>} is &lambda; = 1/2.
+        <br>(c) The order of F equals &lambda; = 1/2.
+      </div>
+    </div>
+
+    <div class="fu-proof">
+      We verify each statement.
+      <br><br>
+      <em>Convergence (genus 0).</em> Write each factor as 1&minus;a<sub>p</sub>(u) where a<sub>p</sub>(u) = (u&minus;1)/(p<sup>2</sup>&minus;1). On any compact set K &sub; &Copf;, there exists R &lt; &infin; such that |u&minus;1| &le; R for all u &isin; K. Then |a<sub>p</sub>(u)| &le; R/(p<sup>2</sup>&minus;1) &lt; R/p<sup>2</sup>. Since
+      <div style="text-align:center;margin:8px 0;font-family:'JetBrains Mono',monospace;color:rgba(200,195,185,.7);font-size:11px">&sum;<sub>p</sub> 1/p<sup>2</sup> &le; &sum;<sub>n=2</sub><sup>&infin;</sup> 1/n<sup>2</sup> = &pi;<sup>2</sup>/6 &minus; 1 &lt; &infin;,</div>
+      the series &sum;<sub>p</sub>|a<sub>p</sub>(u)| converges uniformly on K, so the product converges absolutely and uniformly on K (Def. 0.1). Since K was arbitrary, F is entire (Def. 0.2). The genus is 0 because &sum;<sub>p</sub> 1/|p<sup>2</sup>| = &sum; 1/p<sup>2</sup> &lt; &infin; (Def. 0.5, genus-0 condition). <span class="qed-inline">✓</span>
+      <br><br>
+      <em>Exponent of convergence.</em> The zeros of F are {p<sup>2</sup> : p prime} (Theorem 2.1 below). The exponent of convergence is &lambda; = inf{s &gt; 0 : &sum;<sub>p</sub> 1/(p<sup>2</sup>)<sup>s</sup> &lt; &infin;} = inf{s : &sum;<sub>p</sub> 1/p<sup>2s</sup> &lt; &infin;}. Now &sum;<sub>p</sub> 1/p<sup>&sigma;</sup> is the prime zeta function P(&sigma;): it converges if and only if &sigma; &gt; 1, and diverges for &sigma; &le; 1 (since the harmonic series &sum; 1/p diverges by Mertens&rsquo; theorem, and p<sup>&sigma;</sup> &ge; p for &sigma; &ge; 1). Therefore &sum;<sub>p</sub> 1/p<sup>2s</sup> = P(2s) converges iff 2s &gt; 1 iff s &gt; 1/2. Hence &lambda; = 1/2. <span class="qed-inline">✓</span>
+      <br><br>
+      <em>Order.</em> For genus-0 entire functions, the order equals the exponent of convergence of the zeros (Levin, Ch. I, Thm. 11). Since genus = 0 and &lambda; = 1/2, we get &rho;(F) = 1/2. <span class="qed-inline">□</span>
+    </div>
+
+    <div class="fu-block rmk">
+      <div class="fu-block-tag">Remark 1.1 &mdash; Why Genus 0 and Not Genus 1</div>
+      <div class="fu-block-body">
+        The analogous product &prod;<sub>p</sub>(1&minus;u/p) has zeros at the primes. Since &sum;<sub>p</sub> 1/p diverges (Mertens, 1874), this product does <em>not</em> converge absolutely without correction factors; it has genus 1, requiring Weierstrass factors (1&minus;u/p)e<sup>u/p</sup>. For F(u), the zeros are prime <em>squares</em> {p<sup>2</sup>}, and &sum;<sub>p</sub> 1/p<sup>2</sup> &lt; &infin; — so no correction factors are needed and the genus drops to 0. This is the key simplification that makes F a genus-0 object.
+      </div>
+    </div>
+
+    <div class="fu-block rmk">
+      <div class="fu-block-tag">Remark 1.2 &mdash; Factorisation via &zeta;(2)</div>
+      <div class="fu-block-body">
+        Separate each factor: (p<sup>2</sup>&minus;u)/(p<sup>2</sup>&minus;1) = [p<sup>2</sup>/(p<sup>2</sup>&minus;1)] &middot; (1&minus;u/p<sup>2</sup>). Then
+        <div style="text-align:center;margin:10px 0;font-family:'JetBrains Mono',monospace;color:var(--lime);font-size:12px">F(u) = &prod;<sub>p</sub> p<sup>2</sup>/(p<sup>2</sup>&minus;1) &middot; &prod;<sub>p</sub> (1&minus;u/p<sup>2</sup>) = &zeta;(2) &middot; &prod;<sub>p</sub> (1&minus;u/p<sup>2</sup>),</div>
+        using Euler&rsquo;s product formula &zeta;(2) = &prod;<sub>p</sub> (1&minus;p<sup>&minus;2</sup>)<sup>&minus;1</sup> = &prod;<sub>p</sub> p<sup>2</sup>/(p<sup>2</sup>&minus;1) = &pi;<sup>2</sup>/6. The inner product &prod;<sub>p</sub>(1&minus;u/p<sup>2</sup>) is an entire function of genus 0 with zeros exactly at the prime squares and value 1 at u=0.
+      </div>
+    </div>
+  </div>
+
+  <!-- §2 Zeros and Key Values -->
+  <div class="fu-sec">
+    <div class="fu-sec-tag">Section 2 &mdash; §2</div>
+    <div class="fu-sec-title">Zero Set, Key Evaluations, and the Hadamard Representation</div>
+
+    <div class="fu-block thm">
+      <div class="fu-block-tag">Theorem 2.1 &mdash; Zero Set of F</div>
+      <div class="fu-block-body">
+        The zeros of F are exactly {p<sup>2</sup> : p prime} = {4, 9, 25, 49, 121, 169, &hellip;}. Every zero is simple. F has no other zeros.
+      </div>
+    </div>
+
+    <div class="fu-proof">
+      F(u) = 0 if and only if some factor (p<sup>2</sup>&minus;u)/(p<sup>2</sup>&minus;1) = 0, i.e. u = p<sup>2</sup> for some prime p. Since the product converges absolutely (Theorem 1.1), all factors with q &ne; p are nonzero at u = p<sup>2</sup> (as q<sup>2</sup> &ne; p<sup>2</sup> for distinct primes). The local behaviour near u = p<sup>2</sup> is dominated by the single vanishing factor (p<sup>2</sup>&minus;u)/(p<sup>2</sup>&minus;1), which has a simple zero. Hence u = p<sup>2</sup> is a simple zero of F. &square;
+    </div>
+
+    <div class="fu-body">The key evaluations of F at u = 0, 1, 2 follow directly from the definition:</div>
 
     <div class="fu-vals">
       <div class="fu-val-card">
         <div class="fu-val-label">F(0)</div>
-        <div class="fu-val-num">π²/6</div>
-        <div class="fu-val-desc">= ζ(2) ≈ 1.6449</div>
+        <div class="fu-val-num">&pi;<sup>2</sup>/6</div>
+        <div class="fu-val-desc">= &zeta;(2) &asymp; 1.64493</div>
       </div>
       <div class="fu-val-card">
         <div class="fu-val-label">F(1)</div>
-        <div class="fu-val-num">1.0000</div>
-        <div class="fu-val-desc">normalization point</div>
+        <div class="fu-val-num">1</div>
+        <div class="fu-val-desc">normalisation point</div>
       </div>
       <div class="fu-val-card">
         <div class="fu-val-label">F(2)</div>
-        <div class="fu-val-num">C ≈ 0.5307</div>
-        <div class="fu-val-desc">the lift survival constant</div>
+        <div class="fu-val-num">C</div>
+        <div class="fu-val-desc">lift survival constant &asymp; 0.53071</div>
       </div>
       <div class="fu-val-card">
-        <div class="fu-val-label">F(p²)</div>
+        <div class="fu-val-label">F(p<sup>2</sup>)</div>
         <div class="fu-val-num">0</div>
         <div class="fu-val-desc">zero at every prime square</div>
       </div>
     </div>
 
-    <div class="fu-body">
-      The factorisation F(u) = ζ(2) · ∏_p (1 − u/p²) reveals the structure: F is ζ(2) times an entire function with zeros exactly at the prime squares. The product ∏(1 − u/p²) converges because Σ 1/p² converges absolutely — unlike the product ∏(1 − u/p) which would be far more delicate.
+    <div class="fu-proof">
+      <em>F(0)</em>: &prod;<sub>p</sub>(p<sup>2</sup>&minus;0)/(p<sup>2</sup>&minus;1) = &prod;<sub>p</sub> p<sup>2</sup>/(p<sup>2</sup>&minus;1) = &zeta;(2) (Euler product for &zeta; at s=2).
+      <em>F(1)</em>: &prod;<sub>p</sub>(p<sup>2</sup>&minus;1)/(p<sup>2</sup>&minus;1) = &prod;<sub>p</sub> 1 = 1.
+      <em>F(2)</em>: &prod;<sub>p</sub>(p<sup>2</sup>&minus;2)/(p<sup>2</sup>&minus;1) = C by definition of the lift survival constant (the Euler product representation of C is its definition). &square;
     </div>
 
-    <div class="fu-block key">
-      <div class="fu-block-tag">Key Identity</div>
+    <div class="fu-block thm">
+      <div class="fu-block-tag">Theorem 2.2 &mdash; Hadamard Representation of F</div>
       <div class="fu-block-body">
-        F(0) · F(2) = ζ(2) · C = K ≈ 0.8730
+        Since F has order &rho; = 1/2 &lt; 1 and genus 0, the Hadamard factorisation theorem (Thm. 0.1 with p=0, &rho;&lt;1 so g is a constant) gives:
+        <div style="text-align:center;margin:12px 0;font-family:'JetBrains Mono',monospace;color:var(--lime);font-size:12px">F(u) = e<sup>B</sup> &prod;<sub>p</sub> (1&minus;u/p<sup>2</sup>),</div>
+        where B &isin; &Ropf; is a constant determined by F(0) = &zeta;(2): evaluating at u=0 gives e<sup>B</sup> &middot; 1 = &zeta;(2), so B = log &zeta;(2). Therefore
+        <div style="text-align:center;margin:12px 0;font-family:'JetBrains Mono',monospace;color:var(--lime);font-size:12px">F(u) = &zeta;(2) &middot; &prod;<sub>p</sub> (1&minus;u/p<sup>2</sup>),</div>
+        which agrees with Remark 1.2. There are <em>no</em> exponential correction factors e<sup>u/p<sup>2</sup></sup> in the Hadamard product, because the genus is 0.
         <br><br>
-        where K is the conjectured implied constant in sup|E(N)·N| = K. The supremum of the error term envelope is the product of the two most natural evaluations of F — at u=0 (the zeta value) and u=2 (the lift constant).
+        <em>Key point:</em> The Hadamard form with exponential corrections e<sup>u/z<sub>n</sub></sup> (primary factors E<sub>1</sub>) would be needed if &sum; 1/p<sup>2</sup> diverged. It does not — &sum;<sub>p</sub> 1/p<sup>2</sup> = P(2) &asymp; 0.4522 &lt; &infin; — so the genus-0 factors (1&minus;u/p<sup>2</sup>) suffice exactly.
       </div>
     </div>
 
-    <!-- Live F(u) calculator -->
+    <!-- Live canvas -->
     <div class="fu-canvas-wrap">
-      <div class="fu-canvas-ann">F(u) evaluated live · Move slider to see how the Euler product changes · Gold = key values</div>
+      <div class="fu-canvas-ann">F(u) along the real axis &middot; Lime = F(u) &middot; Red dashes = prime square zeros {4, 9, 25, 49, &hellip;} &middot; White crosshair = current u &middot; Violet / gold / teal = key evaluations</div>
       <canvas id="fu-canvas"></canvas>
-      <div class="fu-slider-row">
-        <label>u =</label>
-        <input type="range" id="fu-u-sl" min="-6" max="8" step="0.01" value="2" oninput="updateFU(+this.value)">
-        <span class="fu-slider-val" id="fu-u-val">2.00</span>
-        <span class="fu-slider-val" id="fu-result" style="color:var(--lime);min-width:100px">F(2) = C</span>
+      <div class="fu-ctrl">
+        <label>u&nbsp;=</label>
+        <input type="range" id="fu-u-sl" min="-3" max="11" step="0.02" value="2" oninput="updateFU(+this.value)">
+        <span class="fu-ctrl-val" id="fu-u-val">2.00</span>
+        <span class="fu-ctrl-val" id="fu-result" style="min-width:160px;color:var(--lime)">F(2) = C</span>
       </div>
-      <div style="display:flex;gap:6px;padding:0 14px 10px;flex-wrap:wrap;">
-        <button class="fu-jump-btn" onclick="jumpFU(0)">u=0 → ζ(2)</button>
-        <button class="fu-jump-btn" onclick="jumpFU(1)">u=1 → 1</button>
-        <button class="fu-jump-btn" onclick="jumpFU(2)">u=2 → C</button>
-        <button class="fu-jump-btn" onclick="jumpFU(4)">u=4 → F(4)</button>
-        <button class="fu-jump-btn" onclick="jumpFU(9)">u=9 → F(9)=0</button>
-        <button class="fu-jump-btn" onclick="animateFU()">▶ Animate 0→2→ζ</button>
+      <div style="display:flex;gap:5px;padding:0 14px 10px;flex-wrap:wrap;">
+        <button class="fu-btn" onclick="jumpFU(0)">u=0 &rarr; &zeta;(2)</button>
+        <button class="fu-btn" onclick="jumpFU(1)">u=1 &rarr; 1</button>
+        <button class="fu-btn" onclick="jumpFU(2)">u=2 &rarr; C</button>
+        <button class="fu-btn" onclick="jumpFU(4)">u=4 &rarr; F(4)</button>
+        <button class="fu-btn" onclick="jumpFU(9)">u=9 &rarr; 0 (zero at p=3)</button>
+        <button class="fu-btn" onclick="animateFU()">&#9654; Animate 0&rarr;2</button>
       </div>
     </div>
   </div>
 
-  <!-- §2 The Laguerre–Pólya Class -->
+  <!-- §3 Laguerre-Polya -->
   <div class="fu-sec">
-    <div class="fu-sec-tag">Section 2</div>
-    <div class="fu-sec-title">The Laguerre–Pólya Class</div>
+    <div class="fu-sec-tag">Section 3 &mdash; §3</div>
+    <div class="fu-sec-title">The Laguerre&ndash;P&oacute;lya Class: Definition, Membership, and Scope</div>
 
     <div class="fu-body">
-      The Laguerre–Pólya class LP consists of entire functions that are locally uniform limits of polynomials with only real roots. Equivalently: entire functions of the form
+      The Laguerre&ndash;P&oacute;lya class LP is a precisely defined function class. We give the definition, prove F &isin; LP unconditionally, and state exactly what this membership does and does not imply. This section contains no speculation.
     </div>
 
-    <div class="fu-eq">
-      g(u) = e<sup>−αu² + βu</sup> · ∏<sub>n</sub> (1 − u/aₙ) e<sup>u/aₙ</sup>
-      <span class="ann">with all aₙ ∈ ℝ and α ≥ 0. For F(u): α = 0, all aₙ = p² > 0.</span>
-    </div>
-
-    <div class="fu-block thm">
-      <div class="fu-block-tag">Theorem — F(u) is Laguerre–Pólya Class (Unconditional)</div>
+    <div class="fu-block def">
+      <div class="fu-block-tag">Definition 3.1 &mdash; The Laguerre&ndash;P&oacute;lya Class LP</div>
       <div class="fu-block-body">
-        F(u) is an entire function of genus 0 belonging to the Laguerre–Pólya class. Its zeros are exactly the prime squares {4, 9, 25, 49, 121, 169, …} — all real, positive, and simple. This is unconditional: no hypothesis required. The proof uses only Σ_p 1/p² &lt; ∞ (which follows from ζ(2) &lt; ∞) and the Weierstrass product theorem.
+        An entire function g : &Copf; &rarr; &Copf; belongs to the <em>Laguerre&ndash;P&oacute;lya class</em> LP if and only if g is a locally uniform limit of polynomials each of whose roots are real.
+        <br><br>
+        <em>Equivalent characterisation</em> (P&oacute;lya 1913; Levin 1964, Ch. VIII, Thm. 3): g &isin; LP if and only if g has the form
+        <div style="text-align:center;margin:12px 0;font-family:'JetBrains Mono',monospace;color:var(--lime);font-size:12px">g(u) = u<sup>m</sup> e<sup>&minus;&alpha;u<sup>2</sup> + &beta;u + &gamma;</sup> &prod;<sub>k</sub>(1&minus;u/a<sub>k</sub>)e<sup>u/a<sub>k</sub></sup>,</div>
+        where m &isin; &Nopf;<sub>0</sub>, &alpha; &ge; 0, &beta;, &gamma; &isin; &Ropf;, all a<sub>k</sub> &isin; &Ropf; \ {0}, and &sum;<sub>k</sub> 1/a<sub>k</sub><sup>2</sup> &lt; &infin;.
+        <br><br>
+        In the genus-0 subcase (when additionally &sum; 1/|a<sub>k</sub>| &lt; &infin;), the exponential corrections e<sup>u/a<sub>k</sub></sup> in the product may be incorporated into the constant e<sup>&gamma;</sup> without affecting convergence, and the form simplifies to g(u) = u<sup>m</sup> e<sup>&minus;&alpha;u<sup>2</sup>+&beta;u+&gamma;</sup> &prod;<sub>k</sub>(1&minus;u/a<sub>k</sub>).
+        <br><br>
+        Every function in LP has only real zeros. The Gaussian factor e<sup>&minus;&alpha;u<sup>2</sup></sup> contributes no zeros; zeros come only from the product.
+        <br><br>
+        <span class="fu-ref">P&oacute;lya, G. (1913). &Uuml;ber Ann&auml;herung durch Polynome mit lauter reellen Wurzeln. <em>Rend. Circ. Mat. Palermo</em> 36, 279&ndash;295. &bull; Levin, B.Ya. (1964/1980). <em>Distribution of Zeros of Entire Functions</em>, Ch. VIII. AMS Translations of Mathematical Monographs, Vol. 5.</span>
       </div>
     </div>
 
-    <div class="fu-block conn">
-      <div class="fu-block-tag">Connection — Riemann Xi and GRH</div>
+    <div class="fu-block warn">
+      <div class="fu-block-tag">Warning &mdash; LP Membership and the Riemann Hypothesis Are Independent Statements</div>
       <div class="fu-block-body">
-        The Riemann Xi function Ξ(t) = ½s(s−1)π<sup>−s/2</sup>Γ(s/2)ζ(s) with s = ½+it is <em>conjectured</em> to be in the LP class — this is equivalent to the Riemann Hypothesis (all non-trivial zeros of ζ have real part ½). That F(u) is LP class was proved unconditionally in 2019 by Griffin–Ono–Rolen–Zagier for the Riemann Xi function in a related sense.
+        The LP class is relevant to RH in a specific, precise way that must be stated carefully to avoid misrepresentation.
         <br><br>
-        F(u) sits in the same function class as Ξ but for an entirely elementary reason: its zeros are prime squares, all manifestly real. No hypothesis is needed. This makes F a concrete, fully proved LP-class object — a useful companion to the conjectural LP status of Ξ.
+        <em>The Riemann Xi function.</em> Define &Xi;(t) = &frac12; s(s&minus;1)&pi;<sup>&minus;s/2</sup>&Gamma;(s/2)&zeta;(s) with s = &frac12;+it, for t &isin; &Copf;. The function &Xi; is an entire function of t, real-valued on the real axis. The Riemann Hypothesis (RH) asserts that all non-trivial zeros of &zeta;(s) satisfy Re(s) = &frac12;, which is equivalent to asserting that all zeros of &Xi;(t) are real, which is equivalent to &Xi; &isin; LP. This equivalence is proved; the LP membership of &Xi; is what is unproved (being equivalent to RH).
+        <br><br>
+        <em>F and &Xi; are different functions.</em> F(u) = &prod;<sub>p</sub>(p<sup>2</sup>&minus;u)/(p<sup>2</sup>&minus;1) and &Xi;(t) are not the same function and share no known analytic relationship. F &isin; LP does not imply &Xi; &isin; LP, and carries no consequence for RH. The value of noting F &isin; LP is purely structural: it identifies F as a concrete, explicitly computed member of a well-studied function class, useful as a comparison object.
+        <br><br>
+        <span class="fu-ref">P&oacute;lya, G. (1926). Bemerkung &uuml;ber die Integraldarstellung der Riemannschen &xi;-Funktion. <em>Acta Math.</em> 48, 305&ndash;317. &bull; Ki, H. (2006). The Riemann &xi;-function under repeated differentiation. <em>J. Number Theory</em> 120, 120&ndash;131.</span>
+      </div>
+    </div>
+
+    <div class="fu-block thm">
+      <div class="fu-block-tag">Theorem 3.1 &mdash; F &isin; LP (Unconditional Proof)</div>
+      <div class="fu-block-body">
+        F belongs to the Laguerre&ndash;P&oacute;lya class. More precisely, F lies in the genus-0 subcase of LP: &alpha; = 0, m = 0, all zeros real and positive, and &sum;<sub>p</sub> 1/p<sup>2</sup> &lt; &infin;. This is a complete unconditional proof requiring no hypothesis beyond the definition of the prime numbers.
+      </div>
+    </div>
+
+    <div class="fu-proof">
+      We verify each condition of Definition 3.1.
+      <br><br>
+      <em>(i) All zeros are real.</em> By Theorem 2.1, the zeros of F are {p<sup>2</sup> : p prime} &sub; (0, &infin;) &sub; &Ropf;. &check;
+      <br><br>
+      <em>(ii) The LP product form holds.</em> By Remark 1.2, F(u) = &zeta;(2) &middot; &prod;<sub>p</sub>(1&minus;u/p<sup>2</sup>). This matches the LP form g(u) = e<sup>&gamma;</sup>&prod;<sub>k</sub>(1&minus;u/a<sub>k</sub>) with &gamma; = log&zeta;(2), &alpha; = 0, &beta; = 0, m = 0, a<sub>k</sub> = p<sub>k</sub><sup>2</sup> (the k-th prime squared).
+      <br><br>
+      <em>(iii) The LP summability condition.</em> Definition 3.1 requires &sum;<sub>k</sub> 1/a<sub>k</sub><sup>2</sup> &lt; &infin;, i.e. &sum;<sub>p</sub> 1/p<sup>4</sup> &lt; &infin;. Since p<sup>4</sup> &ge; 16 for all primes, &sum;<sub>p</sub> 1/p<sup>4</sup> &le; &sum;<sub>n=2</sub><sup>&infin;</sup> 1/n<sup>4</sup> = &zeta;(4)&minus;1 &asymp; 0.0823 &lt; &infin;. &check;
+      <br><br>
+      <em>(iv) Why genus 0 makes the LP form exact.</em> We have the stronger &sum;<sub>p</sub> 1/p<sup>2</sup> &lt; &infin; (i.e. &sum; 1/|a<sub>k</sub>| &lt; &infin;), which is the genus-0 condition (Def. 0.5). In this case the Weierstrass product &prod;<sub>p</sub>(1&minus;u/p<sup>2</sup>) already converges absolutely without the exponential corrections e<sup>u/p<sup>2</sup></sup> that appear in the general LP form. The LP form is satisfied with those correction factors equal to 1 — not as an approximation, but exactly.
+      <br><br>
+      Conditions (i)&ndash;(iv) verify all requirements of Definition 3.1. Therefore F &isin; LP. &square;
+    </div>
+
+    <div class="fu-block rmk">
+      <div class="fu-block-tag">Remark 3.1 &mdash; The Griffin&ndash;Ono&ndash;Rolen&ndash;Zagier (2019) Result and Its Scope</div>
+      <div class="fu-block-body">
+        Griffin, Ono, Rolen, and Zagier (2019) proved that for each fixed degree d and each fixed t &ge; 0, the Jensen polynomial J<sup>d,t</sup>(X) associated to the Taylor coefficients of &Xi;(t) is hyperbolic (all roots real). This is a sequence of polynomial results in the direction of &Xi; &isin; LP, but it does not establish &Xi; &isin; LP, which would require uniformity in d. The result is a significant partial result toward RH, not a proof.
+        <br><br>
+        This is mentioned here solely for context: the LP class arises naturally in modern RH-related analysis, and F(u) is an elementary, explicitly constructed, unconditionally proved LP member. The contrast is informative, not suggestive of any connection between F and RH.
+        <br><br>
+        <span class="fu-ref">Griffin, M., Ono, K., Rolen, L., Zagier, D. (2019). Jensen polynomials for the Riemann zeta function and other sequences. <em>Proceedings of the National Academy of Sciences USA</em> 116(23), 11103&ndash;11110. <a href="https://doi.org/10.1073/pnas.1902572116" style="color:var(--teal)">doi:10.1073/pnas.1902572116</a></span>
       </div>
     </div>
 
     <!-- Zero spectrum canvas -->
     <div class="fu-canvas-wrap">
-      <div class="fu-canvas-ann">Zero spectrum of F(u) · Prime squares on real axis · Compare to Riemann zeros (conjectural) on Re(s)=½</div>
+      <div class="fu-canvas-ann">Zero spectrum &middot; Red marks = zeros of F at prime squares (all real, proved) &middot; Violet schematic = Riemann zeros (on Re(s)=&frac12; under RH, unproved) &middot; These are distinct objects on different scales</div>
       <canvas id="fu-u-canvas"></canvas>
     </div>
   </div>
 
-  <!-- §3 The Journey 0 → 1 → 2 -->
+  <!-- §4 Connection to the Framework -->
   <div class="fu-sec">
-    <div class="fu-sec-tag">Section 3</div>
-    <div class="fu-sec-title">The Journey from ζ(2) to C</div>
+    <div class="fu-sec-tag">Section 4 &mdash; §4</div>
+    <div class="fu-sec-title">Connection to the Lift Dynamics Framework</div>
 
     <div class="fu-body">
-      Evaluating F at u=0, 1, 2 traces a path through three mathematically significant values:
+      The function F is not merely a formal construction. It is the analytic parent of every constant in the lift dynamics framework. We record the precise connections, distinguishing proved identities from conjectures.
     </div>
 
-    <div class="fu-eq">
-      F(0) = ζ(2) = π²/6  →  F(1) = 1  →  F(2) = C ≈ 0.5307
-      <span class="ann">The product ∏_p (p²−u)/(p²−1) decreases from π²/6 to C as u increases from 0 to 2. Each prime p contributes a factor that dips below 1 as u approaches p².</span>
+    <div class="fu-block thm">
+      <div class="fu-block-tag">Theorem 4.1 &mdash; C, &zeta;(2), and K as Evaluations of F (Proved)</div>
+      <div class="fu-block-body">
+        The following identities are exact consequences of the definitions:
+        <br><br>
+        &bull; F(0) = &zeta;(2) = &pi;<sup>2</sup>/6 &nbsp;(Euler product, proved)
+        <br>&bull; F(2) = C = &prod;<sub>p</sub>(p<sup>2</sup>&minus;2)/(p<sup>2</sup>&minus;1) &nbsp;(definition of C)
+        <br>&bull; F(0) &middot; F(2) = &zeta;(2) &middot; C &nbsp;=: K &asymp; 0.87299 &nbsp;(algebraic consequence)
+        <br><br>
+        None of these require any unproved hypothesis.
+      </div>
     </div>
 
     <div class="fu-block rmk">
-      <div class="fu-block-tag">Remark — What F(1) = 1 Means</div>
+      <div class="fu-block-tag">Remark 4.1 &mdash; K = &zeta;(2)&middot;C as a Conjectural Error Constant</div>
       <div class="fu-block-body">
-        At u=1: F(1) = ∏_p (p²−1)/(p²−1) = 1 exactly. This is a normalization: the denominator of the product is precisely the value that makes u=1 the identity. The product is constructed so that each factor (p²−u)/(p²−1) equals 1 when u=1. This is the unique normalization point built into the definition.
-      </div>
-    </div>
-
-    <div class="fu-block rmk">
-      <div class="fu-block-tag">Remark — C = F(2) and the Lift Dynamics</div>
-      <div class="fu-block-body">
-        The canvas on the other tabs shows the geometry of (ℤ/Mℤ)* converging to C. In analytic terms: C = F(2) is the value of the entire function at u=2. The u=2 argument is natural: it counts the quadratic term p² − 2 versus the normalization p² − 1, measuring how the coprime density shifts when one unit of "weight" is placed at the threshold. As M → ∞, R(M) → F(2) = C unconditionally.
-      </div>
-    </div>
-
-    <div class="fu-block key">
-      <div class="fu-block-tag">The Functional Identity</div>
-      <div class="fu-block-body">
-        Since F(0) = ζ(2) and F(2) = C:
-        <br><br>
-        <em>K = F(0) · F(2) = ζ(2) · C</em>
-        <br><br>
-        K ≈ 0.872986 is the conjectured implied constant in the error term supremum. It is the product of the two most natural evaluations of F — and it emerges as a single algebraic consequence of the definition without any additional hypothesis.
-      </div>
-    </div>
-  </div>
-
-  <!-- §4 Zeros and Gaps -->
-  <div class="fu-sec">
-    <div class="fu-sec-tag">Section 4</div>
-    <div class="fu-sec-title">The Zero Spectrum — Prime Squares</div>
-
-    <div class="fu-body">
-      The zeros of F(u) are exactly {p² : p prime} = {4, 9, 25, 49, 121, 169, 289, 361, …}. These are all real, simple, and positive. The gaps between consecutive prime squares grow as the prime gaps widen:
-    </div>
-
-    <div class="fu-eq">
-      gap(p²,q²) = q² − p² = (q−p)(q+p)
-      <span class="ann">For twin primes (p,p+2): gap = 4(p+1). For consecutive primes with gap g: gap between their squares = g·(p+q) ≈ 2gp. The prime square gaps encode the prime gap structure.</span>
-    </div>
-
-    <div class="fu-block conn">
-      <div class="fu-block-tag">Connection — Jump Theorem and Zeros</div>
-      <div class="fu-block-body">
-        The dropout in the prime spiral at ring M=p (where p mod p = 0) corresponds to a zero of F at u=p². The Jump Theorem says D(x) jumps at x=p−1 — equivalently, at the point where the Euler product crosses through the zero p² in the u-parameterisation. The jump size 1/p(p−1) is the residue of D at that zero.
-        <br><br>
-        More precisely: d/du log F(u)|_{u=p²} = −1/(p²−p²) diverges — the log-derivative of F has simple poles at the prime squares, with residue −1. The jump in D(x) at x=p−1 is exactly the contribution of this pole.
+        The constant K = F(0)&middot;F(2) appears numerically as the implied constant in the conjecture sup<sub>N&ge;2</sub> |E(N)&middot;N| = K, where E(N) = R(N)&minus;C is the error in the lift ratio. This conjecture is <em>unproved</em>. The identity K = &zeta;(2)&middot;C is an exact algebraic fact; its role as the error constant is an empirical observation verified to N = 10<sup>7</sup>, not a theorem.
       </div>
     </div>
 
     <div class="fu-block thm">
-      <div class="fu-block-tag">Theorem — The Derivative Formula</div>
+      <div class="fu-block-tag">Theorem 4.2 &mdash; D(x) and the Log-Derivative of F (Proved)</div>
       <div class="fu-block-body">
-        D(x) = F'(x+1)/F(x+1) · (−1) for x not an integer, where F' is the derivative with respect to u evaluated at u = x+1.
-        <br><br>
-        Explicitly: D(x) = −Σ_{p>x+1} 1/(p²−x−1) = Σ_{p>x+1} ∂/∂u [log(p²−u)/(p²−1)]|_{u=x+1}.
-        <br><br>
-        This is the log-derivative of F — but since F(x) is a step function in x (with x the ring index), the correct statement is that D(x) equals the log-derivative of F(u) evaluated continuously at u = x+1, not the derivative of the step function C(x).
+        Recall D(x) = &minus;&sum;<sub>p&gt;x+1</sub> 1/(p<sup>2</sup>&minus;x&minus;1), the prime-detecting function from the Jump Theorem. For non-integer x not of the form p<sup>2</sup>&minus;1, this equals the negative log-derivative of F evaluated at u = x+1:
+        <div style="text-align:center;margin:10px 0;font-family:'JetBrains Mono',monospace;color:var(--lime);font-size:12px">D(x) = &minus;(d/du) log F(u) &nbsp;|<sub>u=x+1</sub> &nbsp;= &minus;F&prime;(x+1)/F(x+1).</div>
+        Proof: log F(u) = log &zeta;(2) + &sum;<sub>p</sub> log(1&minus;u/p<sup>2</sup>). Differentiating term by term (justified by uniform convergence on compact sets away from zeros): &minus;(d/du)log F = &sum;<sub>p</sub> (1/p<sup>2</sup>)/(1&minus;u/p<sup>2</sup>) = &sum;<sub>p</sub> 1/(p<sup>2</sup>&minus;u). At u = x+1 this is &sum;<sub>p</sub> 1/(p<sup>2</sup>&minus;x&minus;1). The terms with p<sup>2</sup> &le; x+1 contribute negative values with p<sup>2</sup> &minus;x&minus;1 &lt; 0; restricting to p &gt; x+1 gives D(x) by the definition in the Jump Theorem. &square;
       </div>
     </div>
-  </div>
 
-  <!-- §5 Summary -->
-  <div class="fu-sec">
-    <div class="fu-sec-tag">Section 5</div>
-    <div class="fu-sec-title">Everything Connected</div>
-
-    <div class="fu-body">
-      The Analytic Lift Function F(u) is the common parent of all the objects in this framework:
+    <div class="fu-block rmk">
+      <div class="fu-block-tag">Remark 4.2 &mdash; Jump Discontinuities as Residues of F&prime;/F</div>
+      <div class="fu-block-body">
+        The function F&prime;(u)/F(u) = &sum;<sub>p</sub> 1/(u&minus;p<sup>2</sup>) has simple poles at u = p<sup>2</sup> with residue &minus;1. As u crosses p<sup>2</sup> (i.e. x crosses p<sup>2</sup>&minus;1 = p(p&minus;1)+(p&minus;1) = (p&minus;1)p... equivalently as x crosses p&minus;1 in the real variable context of D(x)), the term 1/(p<sup>2</sup>&minus;x&minus;1) switches sign. The resulting discontinuity in D(x) is precisely the jump &Delta;<sub>p</sub> = 1/p(p&minus;1) proved in the Jump Theorem. The prime square zeros of F encode all prime detection information.
+      </div>
     </div>
 
-    <table style="width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;margin:16px 0;">
+    <table style="width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:11px;margin:24px 0;">
       <thead><tr>
-        <th style="text-align:left;padding:6px 10px;font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--cream3);border-bottom:1px solid var(--edge2)">Object</th>
-        <th style="text-align:left;padding:6px 10px;font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--cream3);border-bottom:1px solid var(--edge2)">As F(u)</th>
-        <th style="text-align:left;padding:6px 10px;font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--cream3);border-bottom:1px solid var(--edge2)">Value</th>
+        <th style="text-align:left;padding:7px 10px;font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--cream3);border-bottom:1px solid var(--edge2)">Object</th>
+        <th style="text-align:left;padding:7px 10px;font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--cream3);border-bottom:1px solid var(--edge2)">Expression in F</th>
+        <th style="text-align:left;padding:7px 10px;font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--cream3);border-bottom:1px solid var(--edge2)">Value</th>
+        <th style="text-align:left;padding:7px 10px;font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--cream3);border-bottom:1px solid var(--edge2)">Status</th>
       </tr></thead>
       <tbody>
-        <tr><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--lime)">ζ(2)</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream2)">F(0)</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream3)">π²/6 ≈ 1.6449</td></tr>
-        <tr><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--lime)">C (lift constant)</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream2)">F(2)</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream3)">≈ 0.530711</td></tr>
-        <tr><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--lime)">K (error constant)</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream2)">F(0)·F(2)</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream3)">≈ 0.872986</td></tr>
-        <tr><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--lime)">Jump Δ_p</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream2)">Residue of F'/F at u=p²</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream3)">1/p(p−1)</td></tr>
-        <tr><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--lime)">Zeros of F</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream2)">u = p²</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream3)">prime squares</td></tr>
-        <tr><td style="padding:5px 10px;color:var(--lime)">LP class</td><td style="padding:5px 10px;color:var(--cream2)">same class as Ξ (conjectural)</td><td style="padding:5px 10px;color:var(--cream3)">proved unconditionally for F</td></tr>
+        <tr><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--lime)">&zeta;(2)</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream2)">F(0)</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream3)">&pi;&sup2;/6 &asymp; 1.6449</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--lime)">Proved (Euler)</td></tr>
+        <tr><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--lime)">C</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream2)">F(2)</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream3)">0.530711&hellip;</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--lime)">Definition</td></tr>
+        <tr><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--lime)">K</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream2)">F(0)&middot;F(2)</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream3)">0.87299&hellip;</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--lime)">Proved (algebra)</td></tr>
+        <tr><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--lime)">K = sup|E(N)&middot;N|</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream2)">F(0)&middot;F(2)</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream3)">&mdash;</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--coral)">Conjecture C2</td></tr>
+        <tr><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--lime)">D(x)</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream2)">&minus;F&prime;(x+1)/F(x+1)</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream3)">&sum;<sub>p</sub>1/(p<sup>2</sup>&minus;x&minus;1)</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--lime)">Proved (Thm 4.2)</td></tr>
+        <tr><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--lime)">Jump &Delta;<sub>p</sub></td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream2)">Residue of &minus;F&prime;/F at p<sup>2</sup></td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--cream3)">1/p(p&minus;1)</td><td style="padding:5px 10px;border-bottom:1px solid var(--edge);color:var(--lime)">Proved (Jump Thm)</td></tr>
+        <tr><td style="padding:5px 10px;color:var(--lime)">F &isin; LP</td><td style="padding:5px 10px;color:var(--cream2)">See Thm 3.1</td><td style="padding:5px 10px;color:var(--cream3)">genus-0, &alpha;=0</td><td style="padding:5px 10px;color:var(--lime)">Proved (Thm 3.1)</td></tr>
       </tbody>
     </table>
 
-    <div class="fu-block key">
-      <div class="fu-block-tag">The Central Picture</div>
-      <div class="fu-block-body">
-        The modular rings (ℤ/Mℤ)* you see on the canvas are the finite approximations to F(2). The prime spiral dropout at M=p is the geometric shadow of the zero F(p²)=0. The equatorial path at r=(M±n)/2 traces the equatorial slice of the same analytic object. And the error E(N) = R(N)−C measures how fast the finite product F_N(2) = ∏_{p≤N} (p²−2)/(p²−1) converges to the infinite product F(2) = C.
-        <br><br>
-        Everything visible in the ring geometry is a finite approximation to a single entire function.
-      </div>
-    </div>
-
   </div>
 
 </div>
 </div>
-
+</div>
 <!-- 4K EXPORT MODAL -->
 <div id="export-modal">
   <div id="export-box">
@@ -3507,6 +3796,7 @@ function loop(){
     document.getElementById('val-speed').textContent=sp;
   }
   if(dirty) draw();
+  if(typeof checkDropoutHaptic==='function') checkDropoutHaptic();
   requestAnimationFrame(loop);
 }
 loop();
@@ -3588,6 +3878,153 @@ window.mbStepN=mbStepN;window.mbStepPrime=mbStepPrime;window.mbStepM=mbStepM;
 window.mbToggle=mbToggle;window.mbCycleView=mbCycleView;
 updateMobileBar();
 
+// ── Mobile enhancements ────────────────────────────────────────────────────
+
+// Haptic utility — respects prefers-reduced-motion
+function haptic(pattern){
+  if(navigator.vibrate && !window.matchMedia('(prefers-reduced-motion:reduce)').matches)
+    navigator.vibrate(pattern);
+}
+
+// ── Fullscreen mode ─────────────────────────────────────────────────────────
+function enterFullscreen(){
+  document.body.classList.add('fs-mode');
+  const body=document.getElementById('body');
+  body.style.top='0';
+  haptic(30);
+}
+function exitFullscreen(){
+  document.body.classList.remove('fs-mode');
+  // re-trigger mobile bar positioning
+  window.dispatchEvent(new Event('resize'));
+}
+window.enterFullscreen=enterFullscreen;
+window.exitFullscreen=exitFullscreen;
+
+// ── Preset bottom sheet ─────────────────────────────────────────────────────
+function openPresetSheet(){
+  document.getElementById('preset-sheet').classList.add('open');
+  document.getElementById('preset-sheet-overlay').classList.add('open');
+  haptic(20);
+}
+function closePresetSheet(){
+  document.getElementById('preset-sheet').classList.remove('open');
+  document.getElementById('preset-sheet-overlay').classList.remove('open');
+}
+function pshPreset(key){
+  closePresetSheet();
+  const thmKeys=['lift_survival','jump_thm','chi4','error_mode','primorial','safe_chain'];
+  setTimeout(()=>{
+    if(thmKeys.includes(key)) applyThm(key);
+    else applyPreset(key, null);
+    dirty=true;
+  },60);
+  haptic(25);
+}
+window.openPresetSheet=openPresetSheet;
+window.closePresetSheet=closePresetSheet;
+window.pshPreset=pshPreset;
+
+// ── Swipe-to-tab ─────────────────────────────────────────────────────────────
+// Canvas tabs in swipe order (no math/dchi/fu — those are content panes)
+const SWIPE_TABS=['npath','spiral','both','lift'];
+let _swipeStart=null;
+const cWrap=document.getElementById('canvas-wrap');
+
+cWrap.addEventListener('touchstart',e=>{
+  if(e.touches.length!==1) return;
+  const t=e.touches[0];
+  _swipeStart={x:t.clientX, y:t.clientY, time:Date.now()};
+},{passive:true});
+
+cWrap.addEventListener('touchend',e=>{
+  if(!_swipeStart||e.changedTouches.length!==1){_swipeStart=null;return;}
+  const t=e.changedTouches[0];
+  const dx=t.clientX-_swipeStart.x;
+  const dy=t.clientY-_swipeStart.y;
+  const dt=Date.now()-_swipeStart.time;
+  _swipeStart=null;
+
+  // Only horizontal swipes > 60px, mostly horizontal, under 500ms
+  if(Math.abs(dx)<60||Math.abs(dy)>Math.abs(dx)*0.6||dt>500) return;
+  // Don't swipe if a math pane is open
+  if(MAIN_TAB==='math'||MAIN_TAB==='dchi'||MAIN_TAB==='fu') return;
+
+  const cur=SWIPE_TABS.indexOf(MAIN_TAB);
+  const next=SWIPE_TABS[(cur+(dx<0?1:-1)+SWIPE_TABS.length)%SWIPE_TABS.length];
+  const labels={npath:'±n Path',spiral:'Spiral',both:'Both',lift:'Lift'};
+
+  // Show tab name hint
+  const hint=document.getElementById('swipe-hint');
+  hint.textContent=labels[next];
+  hint.classList.add('show');
+  setTimeout(()=>hint.classList.remove('show'),700);
+
+  const tabEl=document.querySelector(`.tb-tab[onclick*="'${next}'"]`);
+  setMainTab(next,tabEl);
+  haptic([15,8,15]);
+},{passive:true});
+
+// ── Pinch-to-zoom (adjusts M range) ─────────────────────────────────────────
+let _pinch=null;
+const _pRingEl=document.getElementById('pinch-ring-count');
+let _pRingTimer=null;
+
+function _pinchDist(e){
+  const a=e.touches[0], b=e.touches[1];
+  return Math.hypot(b.clientX-a.clientX, b.clientY-a.clientY);
+}
+
+function _showPinchCount(m){
+  _pRingEl.textContent='M = '+m;
+  _pRingEl.classList.add('show');
+  clearTimeout(_pRingTimer);
+  _pRingTimer=setTimeout(()=>_pRingEl.classList.remove('show'),1200);
+}
+
+canvas.addEventListener('touchstart',e=>{
+  if(e.touches.length===2){
+    e.preventDefault();
+    _pinch={dist:_pinchDist(e), mmax:S.mmax};
+  }
+},{passive:false});
+
+canvas.addEventListener('touchmove',e=>{
+  if(e.touches.length===2&&_pinch){
+    e.preventDefault();
+    const d=_pinchDist(e);
+    const scale=_pinch.dist/d;            // pinch in → smaller d → scale>1 → more rings
+    const newM=Math.round(Math.max(8, Math.min(300, _pinch.mmax*scale)));
+    if(newM!==S.mmax){
+      S.mmax=newM;
+      document.getElementById('sl-mmax').value=Math.min(2000,newM);
+      document.getElementById('val-mmax').textContent=newM;
+      document.getElementById('mb-m-val').textContent=newM;
+      _showPinchCount(newM);
+      dirty=true;
+    }
+  }
+},{passive:false});
+
+canvas.addEventListener('touchend',e=>{
+  if(_pinch&&e.touches.length<2){
+    haptic(20);
+    _pinch=null;
+  }
+},{passive:true});
+
+// ── Haptic on dropout events during animation ────────────────────────────────
+let _lastHapticM=0;
+function checkDropoutHaptic(){
+  if(!ANIM.active||ANIM.type!=='m') return;
+  const M=S.mmax;
+  if(M===_lastHapticM) return;
+  if(isPrime(M)&&M>_lastHapticM) haptic([10,5,25]);
+  else if(M>1&&M%2===0&&isPrime(M/2)&&M>_lastHapticM) haptic([8,4,8,4,30]);
+  _lastHapticM=M;
+}
+
+
 // Position mobile bar flush below topbar regardless of topbar height
 (function(){
   function posMobileBar(){
@@ -3607,7 +4044,22 @@ updateMobileBar();
   window.addEventListener('resize', posMobileBar);
 })();
 
-// ── Point inspection ────────────────────────────────────────────────────────
+// ── Point inspection ─────────────────────────────────────────────────────────
+let INSPECT_MODE = false;
+function toggleInspect(){
+  INSPECT_MODE = !INSPECT_MODE;
+  document.getElementById('pt-popup').style.display = 'none';
+  canvas.style.cursor = INSPECT_MODE ? 'crosshair' : 'default';
+  // Update all inspect toggle buttons
+  document.querySelectorAll('.inspect-btn').forEach(b=>{
+    b.classList.toggle('active', INSPECT_MODE);
+    b.style.color = INSPECT_MODE ? 'var(--teal)' : '';
+    b.style.borderColor = INSPECT_MODE ? 'rgba(61,200,184,.5)' : '';
+    b.style.background = INSPECT_MODE ? 'rgba(61,200,184,.08)' : '';
+  });
+  if(INSPECT_MODE) haptic && haptic(20);
+}
+window.toggleInspect = toggleInspect;
 function findNearestPoint(cx, cy, maxDist){
   let best=null, bestD=maxDist*maxDist;
   for(let M=2;M<=S.mmax;M++){
@@ -3693,6 +4145,7 @@ function showPointPopup(M, r, px, py){
 
 // Canvas tap / click
 canvas.addEventListener('click', e=>{
+  if(!INSPECT_MODE) return;
   const rect=canvas.getBoundingClientRect();
   const sx=canvas.width/rect.width, sy=canvas.height/rect.height;
   const cx=(e.clientX-rect.left)*sx, cy=(e.clientY-rect.top)*sy;
@@ -3701,6 +4154,7 @@ canvas.addEventListener('click', e=>{
   else document.getElementById('pt-popup').style.display='none';
 });
 canvas.addEventListener('touchend', e=>{
+  if(!INSPECT_MODE){ _pinch=null; return; }
   e.preventDefault();
   const t=e.changedTouches[0];
   const rect=canvas.getBoundingClientRect();
